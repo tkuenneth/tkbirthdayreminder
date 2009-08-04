@@ -1,0 +1,2 @@
+einstellbar ob beim Start Liste angezeigt wird oder nicht
+Kontak in eigener Kalendergruppe

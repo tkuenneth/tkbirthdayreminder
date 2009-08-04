@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- 
+    <PreferenceCategory
+            android:title="@string/startup">
+            
+        <CheckBoxPreference
+                android:key="checkbox_show_list"
+                android:defaultValue="true"
+                android:title="@string/title_checkbox_show_list" />
+            
+    </PreferenceCategory>
+ -->
+     
+</PreferenceScreen>

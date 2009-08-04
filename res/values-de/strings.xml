@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">Geburtstage</string>
+	<string name="no_birthday_set">kein Geburtstag eingetragen</string>
+	<string name="yesterday">gestern</string>
+	<string name="today">heute</string>
+	<string name="tomorrow">morgen</string>
+	<string name="in_n_days">in %d Tagen</string>
+	<string name="n_days_ago">vor %d Tagen</string>
+	<string name="present_and_future">wird %2$s %1$d (%3$s)</string>
+	<string name="past">wurde %2$s %1$d (%3$s)</string>
+	<string name="tab1">Geburtstage</string>
+	<string name="tab2">nicht eingetragen</string>
+    <string name="welcome">Willkommen</string>	
+    <string name="alert_dialog_continue">Weiter</string>
+    <string name="alert_dialog_abort">Abbrechen</string>
+    <string name="alert_dialog_ok">OK</string>
+    <string name="alert_dialog_cancel">Abbruch</string>
+ 	<string name="menu_set_date">Geburtsdatum eingeben</string>
+ 	<string name="menu_change_date">Geburtsdatum ändern</string>
+    <string name="menu_remove_date">Geburtsdatum entfernen</string>
+    <string name="menu_dial">Kontakt anrufen</string>
+    <string name="menu_send_sms">SMS an %1$s</string>
+    <string name="menu_set_alarm">Erinnerungsuhrzeit einstellen</string>
+    <string name="menu_set_notification_days">Erinnerungstage einstellen</string>
+    <string name="menu_preferences">Einstellungen</string>
+    <string name="menu_new_entry">Neuer Kontakt</string>
+    <string name="alarmreceiver_tickertext">Geburtstagserinnerung</string>
+    <string name="alarmreceiver_message">%1$d Geburtstage. Hier klicken.</string>
+    <string name="alarmreceiver_message_1">%1$d Geburtstag. Hier klicken.</string>
+    <string name="days_7">7 Tage</string>
+    <string name="days_6">6 Tage</string>
+    <string name="days_5">5 Tage</string>
+    <string name="days_4">4 Tage</string>
+    <string name="days_3">3 Tage</string>
+    <string name="days_2">2 Tage</string>
+    <string name="days_1">1 Tage</string>
+	<string name="next_notification">Nächste Erinnerung am %1$s um %2$s</string>
+        
+</resources>

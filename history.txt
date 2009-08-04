@@ -1,0 +1,39 @@
+1.2.1
+- you can now create new contacts
+- improved support for landscape mode
+
+1.2.0
+- improved stability and startup behaviour
+
+1.1.9
+- minor refactoring
+- shows when next notification will occur
+- shorter german notification text
+- use application context for references
+- can send sms
+
+1.1.8
+- option to hide TKBirthdayReminder during startup
+- no duplicate notifications if run from Home screen
+- refactoring
+
+1.1.7
+- refactoring
+
+1.1.6
+- clarified notification message
+
+1.1.5
+- no more duplicate entries
+
+1.1.4
+- can specify notification days
+
+1.1.3
+- no longer startManagingCursor() in readContacts()
+- some checks for null
+- no longer accidentally overwrites notes entries
+
+1.1.2
+- reads the contacts database faster
+- uses another field for obtaining the display name
