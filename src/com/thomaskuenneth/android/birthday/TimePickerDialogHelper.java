@@ -20,8 +20,6 @@ import android.content.SharedPreferences.Editor;
  */
 public class TimePickerDialogHelper {
 
-	public static final String TKBIRTHDAY_REMINDER = "TKBirthdayReminder";
-
 	private static final String NOTIFICATION_TIME_HOUR = "notificationTimeHour";
 	private static final String NOTIFICATION_TIME_MINUTE = "notificationTimeMinute";
 
@@ -37,7 +35,7 @@ public class TimePickerDialogHelper {
 
 	public static void readFromPreferences(Context context) {
 		SharedPreferences prefs = context.getSharedPreferences(
-				TKBIRTHDAY_REMINDER, Context.MODE_PRIVATE);
+				Constants.SHARED_PREFS_KEY, Context.MODE_PRIVATE);
 		hour = prefs.getInt(NOTIFICATION_TIME_HOUR, 12);
 		minute = prefs.getInt(NOTIFICATION_TIME_MINUTE, 0);
 	}
@@ -46,7 +44,7 @@ public class TimePickerDialogHelper {
 		TimePickerDialogHelper.hour = hour;
 		TimePickerDialogHelper.minute = minute;
 		SharedPreferences prefs = context.getSharedPreferences(
-				TKBIRTHDAY_REMINDER, Context.MODE_PRIVATE);
+				Constants.SHARED_PREFS_KEY, Context.MODE_PRIVATE);
 		Editor editor = prefs.edit();
 		editor.putInt(NOTIFICATION_TIME_HOUR, hour);
 		editor.putInt(NOTIFICATION_TIME_MINUTE, minute);

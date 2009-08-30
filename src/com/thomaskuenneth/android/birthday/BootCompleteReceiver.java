@@ -2,7 +2,6 @@
  * BootCompleteReceiver.java
  * 
  * TKBirthdayReminder (c) Thomas Künneth 2009
- * 
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -24,7 +23,7 @@ import android.widget.Toast;
  * wird.
  * 
  * @author Thomas Künneth
- * 
+ * @see BroadcastReceiver
  */
 public class BootCompleteReceiver extends BroadcastReceiver {
 
@@ -48,7 +47,6 @@ public class BootCompleteReceiver extends BroadcastReceiver {
 		PendingIntent sender = PendingIntent
 				.getBroadcast(context, 0, intent, 0);
 
-		// Liegt die Alarmzeit in der Vergangenheit?
 		Calendar cal = new GregorianCalendar();
 		int minCurrent = (cal.get(Calendar.HOUR_OF_DAY) * 60)
 				+ cal.get(Calendar.MINUTE);
@@ -59,6 +57,7 @@ public class BootCompleteReceiver extends BroadcastReceiver {
 				+ cal.get(Calendar.MINUTE);
 
 		if (nextDay) {
+			// Liegt die Alarmzeit in der Vergangenheit?
 			if (minCurrent >= minAlarm) {
 				cal.add(Calendar.DAY_OF_MONTH, 1);
 			}
@@ -69,13 +68,10 @@ public class BootCompleteReceiver extends BroadcastReceiver {
 		am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(),
 				DateUtils.DAY_IN_MILLIS, sender);
 
-		if (TKBirthdayReminder.instance == null) {
-			TKBirthdayReminder.instance = context;
-		}
 		// ggf. den nächsten Alarmzeitpunkt anzeigen
 		if (nextDay) {
 			Toast toast = Toast.makeText(context, TKDateUtils
-					.getNotificationDateAsString(cal.getTime()),
+					.getNotificationDateAsString(context, cal.getTime()),
 					Toast.LENGTH_LONG);
 			toast.show();
 		}

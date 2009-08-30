@@ -15,9 +15,11 @@ import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.content.Context;
+
 public class TKDateUtils {
 
-	private static final SimpleDateFormat FORMAT_YYYYMMDD = new SimpleDateFormat(
+	public static final SimpleDateFormat FORMAT_YYYYMMDD = new SimpleDateFormat(
 			"yyyyMMdd");
 
 	private static final DateFormat FORMAT_SHORT_DATE = SimpleDateFormat
@@ -26,35 +28,37 @@ public class TKDateUtils {
 	private static final DateFormat FORMAT_SHORT_TIME = SimpleDateFormat
 			.getTimeInstance(DateFormat.SHORT);
 
-	public static String getNotificationDateAsString(Date date) {
-		return TKBirthdayReminder.getStringFromResources(
+	public static String getNotificationDateAsString(Context context, Date date) {
+		return TKBirthdayReminder.getStringFromResources(context,
 				R.string.next_notification, FORMAT_SHORT_DATE.format(date),
 				FORMAT_SHORT_TIME.format(date));
 	}
 
-	public static String getBirthdayAsString(Date birthday) {
+	public static String getBirthdayAsString(Context context, Date birthday) {
 		if (birthday == null) {
-			return TKBirthdayReminder
-					.getStringFromResources(R.string.no_birthday_set);
+			return TKBirthdayReminder.getStringFromResources(context,
+					R.string.no_birthday_set);
 		}
 		int days = getBirthdayInDays(birthday);
 		String when;
 		if (days == 0) {
-			when = TKBirthdayReminder.getStringFromResources(R.string.today);
+			when = TKBirthdayReminder.getStringFromResources(context,
+					R.string.today);
 		} else if (days == 1) {
-			when = TKBirthdayReminder.getStringFromResources(R.string.tomorrow);
+			when = TKBirthdayReminder.getStringFromResources(context,
+					R.string.tomorrow);
 		} else if (days == -1) {
-			when = TKBirthdayReminder
-					.getStringFromResources(R.string.yesterday);
+			when = TKBirthdayReminder.getStringFromResources(context,
+					R.string.yesterday);
 		} else if (days > 1) {
-			when = TKBirthdayReminder.getStringFromResources(
+			when = TKBirthdayReminder.getStringFromResources(context,
 					R.string.in_n_days, days);
 		} else {
-			when = TKBirthdayReminder.getStringFromResources(
+			when = TKBirthdayReminder.getStringFromResources(context,
 					R.string.n_days_ago, -days);
 		}
 		int resId = (days < 0) ? R.string.past : R.string.present_and_future;
-		return TKBirthdayReminder.getStringFromResources(resId,
+		return TKBirthdayReminder.getStringFromResources(context, resId,
 				getAge(birthday), when, FORMAT_SHORT_DATE.format(birthday));
 	}
 
@@ -83,7 +87,8 @@ public class TKDateUtils {
 		StringBuilder sb = new StringBuilder();
 		if (string != null) {
 			Pattern p = Pattern.compile(
-					"(.*)Birthday=\\d\\d\\d\\d\\d\\d\\d\\d(.*)$", Pattern.DOTALL);
+					"(.*)Birthday=\\d\\d\\d\\d\\d\\d\\d\\d(.*)$",
+					Pattern.DOTALL);
 			Matcher m = p.matcher(string.subSequence(0, string.length()));
 			if (m.matches()) {
 				sb.append(m.group(1).trim());

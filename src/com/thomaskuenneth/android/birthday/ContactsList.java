@@ -2,144 +2,91 @@
  * ContactsList.java
  * 
  * TKBirthdayReminder (c) Thomas Künneth 2009
- * 
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.Hashtable;
-import java.util.List;
 
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.BaseColumns;
 import android.provider.Contacts;
 import android.provider.Contacts.People;
 import android.util.Log;
 
+/**
+ * Diese Klasse liest Kontakte ein. Außerdem stellt sie die Listen zur
+ * Verfügung, die in den entsprechenden Activities angezeigt werden.
+ * 
+ * @author Thomas Künneth
+ * 
+ */
 public class ContactsList {
 
 	/*
-	 * Diese Listen werden von den Activities verwendet.
+	 * Diese Listen können durch Aufruf des passenden Getters von den Activities
+	 * verwendet werden.
 	 */
-	private static final List<BirthdayItem> birthdaySet = new ArrayList<BirthdayItem>();
-	private static final List<BirthdayItem> birthdayNotSet = new ArrayList<BirthdayItem>();
-	private static final List<BirthdayItem> notifications = new ArrayList<BirthdayItem>();
+	private final ArrayList<BirthdayItem> birthdaySet;
+	private final ArrayList<BirthdayItem> birthdayNotSet;
+	private final ArrayList<BirthdayItem> notifications;
 
-	private static final List<AbstractListActivity> activities = new ArrayList<AbstractListActivity>();
+	/*
+	 * Wird verwendet, um Kontakte nicht mehrfach anzuzeigen.
+	 */
+	private final Hashtable<Long, Boolean> hashtableID;
 
-	private static Thread current = null;
-	private static final List<Runnable> runnables = new ArrayList<Runnable>();
+	private final Context context;
 
-	public static List<BirthdayItem> getListBirthdaySet() {
+	public ContactsList(Context context) {
+		birthdaySet = new ArrayList<BirthdayItem>();
+		birthdayNotSet = new ArrayList<BirthdayItem>();
+		notifications = new ArrayList<BirthdayItem>();
+		hashtableID = new Hashtable<Long, Boolean>();
+		this.context = context;
+		readContacts(context);
+	}
+
+	public ArrayList<BirthdayItem> getListBirthdaySet() {
 		return birthdaySet;
 	}
 
-	public static List<BirthdayItem> getListBirthdayNotSet() {
+	public ArrayList<BirthdayItem> getListBirthdayNotSet() {
 		return birthdayNotSet;
 	}
 
-	public static List<BirthdayItem> getListNotifications() {
+	public ArrayList<BirthdayItem> getListNotifications() {
 		return notifications;
-	}
-
-	public static synchronized void addListener(AbstractListActivity activity) {
-		activities.add(activity);
-	}
-
-	public static synchronized void removeListener(AbstractListActivity activity) {
-		activities.remove(activity);
 	}
 
 	/**
 	 * Liest alle Kontakte aus der Datenbank und befüllt die drei Listen.
 	 */
-	public static void readContacts(final Context context, final Runnable r) {
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				_readContacts(context, r);
-			}
-
-		}).start();
+	private void readContacts(final Context context) {
+		ContentResolver contentResolver = context.getContentResolver();
+		Uri uri = Uri.parse("content://contacts/groups/system_id/"
+				+ Contacts.Groups.GROUP_MY_CONTACTS + "/members");
+		read(contentResolver, uri);
+		// jetzt die eigene Gruppe
+		uri = Uri.parse("content://contacts/groups/" + "name/"
+				+ Uri.encode("TKBirthdayReminder") + "/members");
+		read(contentResolver, uri);
+		Collections.sort(birthdaySet, new BirthdaySetComparator());
+		Collections.sort(birthdayNotSet, new BirthdayNotSetComparator());
+		Collections.sort(notifications, new NotificationsComparator());
 	}
 
-	private static synchronized void _readContacts(final Context context,
-			final Runnable r) {
-		if (r != null) {
-			runnables.add(r);
-		}
-		if (current == null) {
-			current = new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					AbstractBirthdayItemList _birthdaySet = new ListBirthdaySet();
-					AbstractBirthdayItemList _birthdayNotSet = new ListBirthdayNotSet();
-					AbstractBirthdayItemList _notifications = new ListNotifications();
-					Hashtable<Long, Boolean> hashtableID = new Hashtable<Long, Boolean>();
-
-					ContentResolver contentResolver = context
-							.getContentResolver();
-					Uri uri = Uri.parse("content://contacts/groups/system_id/"
-							+ Contacts.Groups.GROUP_MY_CONTACTS + "/members");
-					readContacts(contentResolver, uri, _birthdaySet,
-							_birthdayNotSet, _notifications, hashtableID);
-					// jetzt die eigene Gruppe
-					uri = Uri.parse("content://contacts/groups/" + "name/"
-							+ Uri.encode("TKBirthdayReminder") + "/members");
-					readContacts(contentResolver, uri, _birthdaySet,
-							_birthdayNotSet, _notifications, hashtableID);
-					Collections.sort(_birthdaySet, _birthdaySet);
-					Collections.sort(_birthdayNotSet, _birthdayNotSet);
-					Collections.sort(_notifications, _notifications);
-					birthdaySet.clear();
-					birthdaySet.addAll(_birthdaySet);
-					birthdayNotSet.clear();
-					birthdayNotSet.addAll(_birthdayNotSet);
-					notifications.clear();
-					notifications.addAll(_notifications);
-					// die Activities werden im UI thread aktualisiert
-					for (final AbstractListActivity activity : activities) {
-						activity.runOnUiThread(new Runnable() {
-
-							@Override
-							public void run() {
-								activity.notifyDataSetChanged();
-							}
-
-						});
-					}
-					synchronized (runnables) {
-						Looper.prepare();
-						Handler h = new Handler(Looper.getMainLooper());
-						List<Runnable> delete = new ArrayList<Runnable>();
-						for (Runnable r : runnables) {
-							h.post(r);
-							delete.add(r);
-						}
-						runnables.removeAll(delete);
-					}
-					current = null;
-				}
-			});
-			current.start();
-		}
-	}
-
-	private static void readContacts(ContentResolver contentResolver, Uri uri,
-			AbstractBirthdayItemList birthdaySet,
-			AbstractBirthdayItemList birthdayNotSet,
-			AbstractBirthdayItemList notifications,
-			Hashtable<Long, Boolean> hashtableID) {
+	private void read(ContentResolver contentResolver, Uri uri) {
 		String[] projection = new String[] { People.DISPLAY_NAME, People.NOTES,
 				People._ID, People.NUMBER };
 		Cursor c = contentResolver.query(uri, projection, null, null, null);
@@ -153,13 +100,13 @@ public class ContactsList {
 				if (!hashtableID.containsKey(key)) {
 					BirthdayItem item = new BirthdayItem(name, TKDateUtils
 							.getDateFromString(notes), id, primaryPhoneNumber);
-					if (birthdaySet.addToList(item)) {
+					if (addToListBirthdaySet(item)) {
 						birthdaySet.add(item);
 					}
-					if (birthdayNotSet.addToList(item)) {
+					if (addToListBirthdayNotSet(item)) {
 						birthdayNotSet.add(item);
 					}
-					if (notifications.addToList(item)) {
+					if (addToListNotifications(item)) {
 						notifications.add(item);
 					}
 					hashtableID.put(key, Boolean.TRUE);
@@ -167,6 +114,35 @@ public class ContactsList {
 			}
 			c.close();
 		}
+	}
+
+	private boolean addToListBirthdaySet(BirthdayItem item) {
+		return (item.getBirthday() != null);
+	}
+
+	private boolean addToListBirthdayNotSet(BirthdayItem item) {
+		return (item.getBirthday() == null);
+	}
+
+	private boolean addToListNotifications(BirthdayItem item) {
+		Date birthday = item.getBirthday();
+		if (birthday != null) {
+			int days = TKDateUtils.getBirthdayInDays(birthday);
+			if (days == 0) {
+				return true;
+			}
+			int notificationDays = AbstractListActivity
+					.getNotificationDays(context);
+			for (int bit = 0; bit < 7; bit++) {
+				int mask = 1 << bit;
+				if ((notificationDays & mask) == mask) {
+					if (days == (1 + bit)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	public static long addGroup(Context context, String name) {
@@ -213,5 +189,53 @@ public class ContactsList {
 			long personId = c.getLong(0);
 			Contacts.People.addToGroup(cr, personId, groupId);
 		}
+	}
+
+	private static class BirthdaySetComparator implements
+			Comparator<BirthdayItem> {
+
+		public int compare(BirthdayItem item1, BirthdayItem item2) {
+			if ((item1 == null) && (item2 == null)) {
+				return 0;
+			} else if (item1 == null) {
+				return 1;
+			} else if (item2 == null) {
+				return -1;
+			} else {
+				int days1 = TKDateUtils.getBirthdayInDays(item1.getBirthday());
+				if (days1 < -7) {
+					days1 = 1000 + days1;
+				}
+				int days2 = TKDateUtils.getBirthdayInDays(item2.getBirthday());
+				if (days2 < -7) {
+					days2 = 1000 + days2;
+				}
+				if (days1 == days2) {
+					return 0;
+				} else {
+					return (days1 < days2) ? -1 : 1;
+				}
+			}
+		}
+	}
+
+	private static class BirthdayNotSetComparator implements
+			Comparator<BirthdayItem> {
+
+		public int compare(BirthdayItem item1, BirthdayItem item2) {
+			if ((item1 == null) && (item2 == null)) {
+				return 0;
+			} else if (item1 == null) {
+				return 1;
+			} else if (item2 == null) {
+				return -1;
+			} else {
+				return item1.getNameNotNull().compareTo(item2.getNameNotNull());
+			}
+		}
+	}
+
+	private static class NotificationsComparator extends
+			BirthdayNotSetComparator {
 	}
 }

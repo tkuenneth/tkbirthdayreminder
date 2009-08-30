@@ -1,29 +1,35 @@
 /**
- * MyListAdapter.java
+ * BirthdayItemListAdapter.java
  * 
  * TKBirthdayReminder (c) Thomas Künneth 2009
- * 
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
 import java.util.List;
 
+import android.content.ContentUris;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.Contacts.People;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MyListAdapter extends BaseAdapter {
+public class BirthdayItemListAdapter extends BaseAdapter {
 
 	private final LayoutInflater mInflater;
 	private final List<BirthdayItem> items;
+	private final Context context;
 
-	public MyListAdapter(Context context, List<BirthdayItem> list) {
+	public BirthdayItemListAdapter(Context context, List<BirthdayItem> list) {
 		this.mInflater = LayoutInflater.from(context);
 		this.items = list;
+		this.context = context;
 	}
 
 	public int getCount() {
@@ -50,17 +56,15 @@ public class MyListAdapter extends BaseAdapter {
 		// supplied
 		// by ListView is null.
 		if (convertView == null) {
-			convertView = mInflater.inflate(
-					android.R.layout.simple_list_item_2, null);
+			convertView = mInflater.inflate(R.layout.list_item_icon_text, null);
 
 			// Creates a ViewHolder and store references to the two children
 			// views
 			// we want to bind data to.
 			holder = new ViewHolder();
-			holder.text1 = (TextView) convertView
-					.findViewById(android.R.id.text1);
-			holder.text2 = (TextView) convertView
-					.findViewById(android.R.id.text2);
+			holder.text1 = (TextView) convertView.findViewById(R.id.text1);
+			holder.text2 = (TextView) convertView.findViewById(R.id.text2);
+			holder.icon = (ImageView) convertView.findViewById(R.id.icon);
 
 			convertView.setTag(holder);
 		} else {
@@ -72,12 +76,24 @@ public class MyListAdapter extends BaseAdapter {
 		// Bind the data efficiently with the holder.
 		BirthdayItem item = (BirthdayItem) getItem(position);
 		holder.text1.setText(item.getName());
-		holder.text2.setText(TKDateUtils
-				.getBirthdayAsString(item.getBirthday()));
+		holder.text2.setText(TKDateUtils.getBirthdayAsString(context, item
+				.getBirthday()));
+
+		Bitmap picture = item.getPicture();
+		if (picture == null) {
+			Uri uriPerson = ContentUris.withAppendedId(People.CONTENT_URI, item
+					.getId());
+			picture = People.loadContactPhoto(context, uriPerson,
+					R.drawable.birthdaycake_32, null);
+			item.setPicture(picture);
+		}
+
+		holder.icon.setImageBitmap(picture);
 		return convertView;
 	}
 
 	static class ViewHolder {
 		TextView text1, text2;
+		ImageView icon;
 	}
 }

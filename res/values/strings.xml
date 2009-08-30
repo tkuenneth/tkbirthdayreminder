@@ -28,7 +28,6 @@
     <string name="menu_send_sms">SMS to %1$s</string>
     <string name="menu_set_alarm">Set notification time</string>
     <string name="menu_set_notification_days">Set notification days</string>
-    <string name="menu_preferences">Preferences</string>
     <string name="menu_new_entry">Add contact</string>
     <string name="alarmreceiver_tickertext">birthday reminder</string>
     <string name="alarmreceiver_message">%1$d birthdays. Click here for details.</string>
@@ -40,13 +39,12 @@
     <string name="days_3">3 days</string>
     <string name="days_2">2 days</string>
     <string name="days_1">1 days</string>
-	<string name="next_notification">next notification on %1$s at %2$s</string>
+	<string name="next_notification">next check for due birthdays on %1$s at %2$s</string>
     
     <string name="welcome_text">
 <b>TKBirthdayReminder</b> organizes birthdays. It adds them to your regular contacts databse. 
 Consequently, to rename, add or delete an entry, switch to <i>Contacts</i>.
 Birthday dates, of course, are set or changed using <b>TKBirthdayReminder</b>.
-To do so, open a contextual menu by long clicking the corresponding entry.
 \nAn easy to handle list shows the next birthdays and how old the persons become.
 Additionally, once a day the program reminds you if one or more of your contacts have birthday.
 To change the notification time, press the Menu button.
@@ -61,8 +59,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nThe author may not be held
 for any problems caused by using this program. You use <b>TKBirthdayReminder</b> completely
 at your own risk.
 \n\n<b>Changes since the last version</b>\n
-You can now create new contacts. See the website for details.
-Improved support for landscape mode.
+- Better text for notifications\n
+- Improved stability\n
+- No reload after page orientation changes\n
+- Shows pictures of contacts
 \n\nPlease click <b>Continue</b> if you agree with the terms of use. <b>Abort</b> quits 
 the program.
 	</string>

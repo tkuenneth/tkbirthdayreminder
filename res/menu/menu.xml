@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 	menu.xml
-
 	TKBirthdayReminder (c) Thomas Künneth 2009
-
 	Alle Rechte beim Autoren. All rights reserved.
 -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-<!-- 
-    <item android:id="@+id/preferences"
-        android:title="@string/menu_preferences" />
- -->
+
+    <item android:id="@+id/set_date"
+        android:title="@string/menu_set_date" />
+
     <item android:id="@+id/set_alarm"
         android:title="@string/menu_set_alarm" />
 

@@ -23,7 +23,6 @@
     <string name="menu_send_sms">SMS an %1$s</string>
     <string name="menu_set_alarm">Erinnerungsuhrzeit einstellen</string>
     <string name="menu_set_notification_days">Erinnerungstage einstellen</string>
-    <string name="menu_preferences">Einstellungen</string>
     <string name="menu_new_entry">Neuer Kontakt</string>
     <string name="alarmreceiver_tickertext">Geburtstagserinnerung</string>
     <string name="alarmreceiver_message">%1$d Geburtstage. Hier klicken.</string>
@@ -35,6 +34,6 @@
     <string name="days_3">3 Tage</string>
     <string name="days_2">2 Tage</string>
     <string name="days_1">1 Tage</string>
-	<string name="next_notification">Nächste Erinnerung am %1$s um %2$s</string>
+	<string name="next_notification">Nächste Prüfung auf fällige Geburtstage am %1$s um %2$s</string>
         
 </resources>

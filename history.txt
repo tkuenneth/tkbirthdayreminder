@@ -1,3 +1,9 @@
+1.2.2
+- better text for notifications
+- improved stability
+- no reload after page orientation changes
+- shows pictures of contacts
+
 1.2.1
 - you can now create new contacts
 - improved support for landscape mode
