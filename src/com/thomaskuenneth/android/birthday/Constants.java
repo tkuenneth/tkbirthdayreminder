@@ -19,6 +19,7 @@ public class Constants {
 	public static final String TKBR = TKBirthdayReminder.class.getName();
 
 	public static final String LIST_BIRTHDAY_SET = "listBirthdaySet";
+	public static final String LIST_BIRTHDAY_NOT_SET = "listBirthdayNotSet";
 	public static final String LIST_NOTIFICATIONS = "listNotifications";
 
 	public static final int RQ_WELCOME = 290870;

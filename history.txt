@@ -1,3 +1,7 @@
+1.2.3
+- notifications sorted by birthday, not alphabetically
+- faster algorithm for check if birthday is due
+
 1.2.2
 - better text for notifications
 - improved stability

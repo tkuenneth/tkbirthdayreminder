@@ -6,6 +6,8 @@
  */
 package com.thomaskuenneth.android.birthday;
 
+import java.util.ArrayList;
+
 import android.app.NotificationManager;
 import android.os.Bundle;
 
@@ -28,5 +30,10 @@ public class NotificationView extends AbstractListActivity {
 		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		nm.cancel(NOTIFICATION_ID);
 		setListFromBundle(Constants.LIST_NOTIFICATIONS);
+	}
+
+	@Override
+	protected ArrayList<BirthdayItem> getProperList(ContactsList cl) {
+		return cl.getListNotifications();
 	}
 }

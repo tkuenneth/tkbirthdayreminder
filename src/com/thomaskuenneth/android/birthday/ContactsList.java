@@ -13,11 +13,9 @@ import java.util.Date;
 import java.util.Hashtable;
 
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.Contacts;
@@ -127,19 +125,17 @@ public class ContactsList {
 	private boolean addToListNotifications(BirthdayItem item) {
 		Date birthday = item.getBirthday();
 		if (birthday != null) {
-			int days = TKDateUtils.getBirthdayInDays(birthday);
-			if (days == 0) {
+			int daysUntilBirthday = TKDateUtils.getBirthdayInDays(birthday);
+			if (daysUntilBirthday == 0) {
 				return true;
+			} else if ((daysUntilBirthday < 0) || (daysUntilBirthday > 7)) {
+				return false;
 			}
 			int notificationDays = AbstractListActivity
 					.getNotificationDays(context);
-			for (int bit = 0; bit < 7; bit++) {
-				int mask = 1 << bit;
-				if ((notificationDays & mask) == mask) {
-					if (days == (1 + bit)) {
-						return true;
-					}
-				}
+			int mask = 1 << (daysUntilBirthday - 1);
+			if ((notificationDays & mask) == mask) {
+				return true;
 			}
 		}
 		return false;
@@ -235,7 +231,6 @@ public class ContactsList {
 		}
 	}
 
-	private static class NotificationsComparator extends
-			BirthdayNotSetComparator {
+	private static class NotificationsComparator extends BirthdaySetComparator {
 	}
 }

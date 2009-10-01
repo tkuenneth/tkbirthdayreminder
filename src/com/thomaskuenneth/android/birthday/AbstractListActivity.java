@@ -258,6 +258,9 @@ public abstract class AbstractListActivity extends ListActivity implements
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu, menu);
+		if (this instanceof BirthdayNotSetActivity) {
+			menu.removeItem(R.id.set_date);
+		}
 		return true;
 	}
 
@@ -279,7 +282,8 @@ public abstract class AbstractListActivity extends ListActivity implements
 			showDialog(NEW_ENTRY_ID);
 			break;
 		case R.id.set_date:
-			Intent intent = new Intent(Intent.ACTION_PICK, People.CONTENT_URI);
+//			Intent intent = new Intent(Intent.ACTION_PICK, People.CONTENT_URI);
+			Intent intent = new Intent(this, BirthdayNotSetActivity.class);
 			startActivityForResult(intent, Constants.RQ_PICK_CONTACT);
 			break;
 		}
@@ -390,7 +394,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 				if ((list == null) || forceRead) {
 					ContactsList cl = new ContactsList(
 							AbstractListActivity.this);
-					list = cl.getListBirthdaySet();
+					list = getProperList(cl);
 				}
 				h.post(new Runnable() {
 
@@ -406,6 +410,8 @@ public abstract class AbstractListActivity extends ListActivity implements
 		});
 		thread.start();
 	}
+	
+	protected abstract ArrayList<BirthdayItem> getProperList(ContactsList cl);
 
 	public static int getNotificationDays(Context context) {
 		SharedPreferences prefs = context.getSharedPreferences(

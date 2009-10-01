@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">Birthday Reminder</string>
+	<string name="app_name">Birthdays</string>
+	<string name="app_name_2">Birthdays not already set</string>
+
 	<string name="no_birthday_set">no birthday set</string>
 	<string name="yesterday">yesterday</string>
 	<string name="today">today</string>

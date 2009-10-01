@@ -7,6 +7,7 @@
 package com.thomaskuenneth.android.birthday;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.Intent;
@@ -95,6 +96,11 @@ public class TKBirthdayReminder extends AbstractListActivity {
 	private void run() {
 		BootCompleteReceiver.startAlarm(this, true);
 		readContacts(false);
+	}
+	
+	@Override
+	protected ArrayList<BirthdayItem> getProperList(ContactsList cl) {
+		return cl.getListBirthdaySet();
 	}
 
 	/**

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Geburtstage</string>
+	<string name="app_name_2">Noch nicht eingetragene Geburtstage</string>
+	
 	<string name="no_birthday_set">kein Geburtstag eingetragen</string>
 	<string name="yesterday">gestern</string>
 	<string name="today">heute</string>
