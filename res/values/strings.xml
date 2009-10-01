@@ -61,10 +61,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nThe author may not be held
 for any problems caused by using this program. You use <b>TKBirthdayReminder</b> completely
 at your own risk.
 \n\n<b>Changes since the last version</b>\n
-- Better text for notifications\n
-- Improved stability\n
-- No reload after page orientation changes\n
-- Shows pictures of contacts
+- notifications sorted by birthday, not alphabetically\n
+- faster algorithm for check if birthday is due\n
+- nicer UI to select contact for setting birthday date
 \n\nPlease click <b>Continue</b> if you agree with the terms of use. <b>Abort</b> quits 
 the program.
 	</string>
