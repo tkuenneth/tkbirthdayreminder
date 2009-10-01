@@ -59,6 +59,8 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 public abstract class AbstractListActivity extends ListActivity implements
 		OnDateSetListener, OnTimeSetListener {
 
+	private static final String LONG_CLICK_ITEM = "longClickItem";
+
 	/**
 	 * IDs für Menüeinträge.
 	 */
@@ -97,7 +99,33 @@ public abstract class AbstractListActivity extends ListActivity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
+		// ggf. gespeicherte Liste wiederherstellen
+		list = null;
+		longClickedItem = null;
+		if (savedInstanceState != null) {
+			list = savedInstanceState.getParcelableArrayList(getStateKey());
+			long id = savedInstanceState.getLong(getStateKey() + "_"
+					+ LONG_CLICK_ITEM);
+			for (BirthdayItem item : list) {
+				if (item.getId() == id) {
+					longClickedItem = item;
+					break;
+				}
+			}
+		}
+
 		getListView().setOnCreateContextMenuListener(this);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putParcelableArrayList(getStateKey(), list);
+		if (longClickedItem != null) {
+			outState.putLong(getStateKey() + "_" + LONG_CLICK_ITEM,
+					longClickedItem.getId());
+		}
 	}
 
 	@Override
@@ -282,7 +310,8 @@ public abstract class AbstractListActivity extends ListActivity implements
 			showDialog(NEW_ENTRY_ID);
 			break;
 		case R.id.set_date:
-//			Intent intent = new Intent(Intent.ACTION_PICK, People.CONTENT_URI);
+			// Intent intent = new Intent(Intent.ACTION_PICK,
+			// People.CONTENT_URI);
 			Intent intent = new Intent(this, BirthdayNotSetActivity.class);
 			startActivityForResult(intent, Constants.RQ_PICK_CONTACT);
 			break;
@@ -410,8 +439,10 @@ public abstract class AbstractListActivity extends ListActivity implements
 		});
 		thread.start();
 	}
-	
+
 	protected abstract ArrayList<BirthdayItem> getProperList(ContactsList cl);
+
+	protected abstract String getStateKey();
 
 	public static int getNotificationDays(Context context) {
 		SharedPreferences prefs = context.getSharedPreferences(

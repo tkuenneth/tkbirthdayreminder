@@ -37,17 +37,6 @@ public class TKBirthdayReminder extends AbstractListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// ggf. gespeicherte Liste mit Geburtstagen wiederherstellen
-		list = null;
-		if (savedInstanceState != null) {
-			list = savedInstanceState
-					.getParcelableArrayList(Constants.LIST_BIRTHDAY_SET);
-			if (list != null) {
-				Log
-						.d(Constants.TKBR,
-								"listBirthdaySet aus savedInstanceState wiederhergestellt");
-			}
-		}
 		// auf neue Version prüfen
 		if (isNewVersion()) {
 			Intent i = new Intent(this, WhatsNew.class);
@@ -56,11 +45,10 @@ public class TKBirthdayReminder extends AbstractListActivity {
 			run();
 		}
 	}
-
+	
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putParcelableArrayList(Constants.LIST_BIRTHDAY_SET, list);
+	protected String getStateKey() {
+		return Constants.LIST_BIRTHDAY_SET;
 	}
 
 	@Override

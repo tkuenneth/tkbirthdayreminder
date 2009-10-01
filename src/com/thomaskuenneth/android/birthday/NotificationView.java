@@ -36,4 +36,9 @@ public class NotificationView extends AbstractListActivity {
 	protected ArrayList<BirthdayItem> getProperList(ContactsList cl) {
 		return cl.getListNotifications();
 	}
+	
+	@Override
+	protected String getStateKey() {
+		return Constants.LIST_NOTIFICATIONS;
+	}
 }
