@@ -2,7 +2,6 @@
 - notifications sorted by birthday, not alphabetically
 - faster algorithm for check if birthday is due
 - nicer UI to select contact for setting birthday date
-- mention weekday of birthday
 
 1.2.2
 - better text for notifications
