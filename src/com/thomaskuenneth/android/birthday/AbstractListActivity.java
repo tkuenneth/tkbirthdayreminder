@@ -395,6 +395,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 	private void addContact(Dialog dialog) {
 		EditText v1 = (EditText) dialog.findViewById(R.id.new_contact_name);
 		DatePicker v2 = (DatePicker) dialog.findViewById(R.id.new_contact_date);
+		v2.clearFocus();
 		long id = ContactsList.addGroup(this, "TKBirthdayReminder");
 		String name = v1.getText().toString();
 		Calendar cal = new GregorianCalendar();
