@@ -1,3 +1,6 @@
+1.2.4
+- beim Anlegen lokaler Kontakte sollte Jahr korrekt gesetzt werden
+
 1.2.3
 - notifications sorted by birthday, not alphabetically
 - faster algorithm for check if birthday is due
