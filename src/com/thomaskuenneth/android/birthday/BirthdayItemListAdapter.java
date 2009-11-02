@@ -6,6 +6,7 @@
  */
 package com.thomaskuenneth.android.birthday;
 
+import java.util.Date;
 import java.util.List;
 
 import android.content.ContentUris;
@@ -19,6 +20,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.thomaskuenneth.android.util.Zodiac;
 
 public class BirthdayItemListAdapter extends BaseAdapter {
 
@@ -45,39 +48,30 @@ public class BirthdayItemListAdapter extends BaseAdapter {
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// A ViewHolder keeps references to children views to avoid unneccessary
-		// calls
-		// to findViewById() on each row.
 		ViewHolder holder;
 
-		// When convertView is not null, we can reuse it directly, there is no
-		// need
-		// to reinflate it. We only inflate a new View when the convertView
-		// supplied
-		// by ListView is null.
 		if (convertView == null) {
 			convertView = mInflater.inflate(R.layout.list_item_icon_text, null);
 
-			// Creates a ViewHolder and store references to the two children
-			// views
-			// we want to bind data to.
 			holder = new ViewHolder();
-			holder.text1 = (TextView) convertView.findViewById(R.id.text1);
-			holder.text2 = (TextView) convertView.findViewById(R.id.text2);
+			holder.textName = (TextView) convertView.findViewById(R.id.text1);
+			holder.textInfo = (TextView) convertView.findViewById(R.id.text2);
+			holder.textDate = (TextView) convertView.findViewById(R.id.text3);
+			holder.textZodiac = (TextView) convertView.findViewById(R.id.text4);
 			holder.icon = (ImageView) convertView.findViewById(R.id.icon);
 
 			convertView.setTag(holder);
 		} else {
-			// Get the ViewHolder back to get fast access to the TextView
-			// and the ImageView.
 			holder = (ViewHolder) convertView.getTag();
 		}
 
-		// Bind the data efficiently with the holder.
 		BirthdayItem item = (BirthdayItem) getItem(position);
-		holder.text1.setText(item.getName());
-		holder.text2.setText(TKDateUtils.getBirthdayAsString(context, item
-				.getBirthday()));
+		holder.textName.setText(item.getName());
+		Date birthday = item.getBirthday();
+		holder.textInfo.setText(TKDateUtils.getBirthdayAsString(context,
+				birthday));
+		holder.textDate.setText(TKDateUtils.getBirthdayDateAsString(birthday));
+		holder.textZodiac.setText(Zodiac.getSign(context, birthday));
 
 		Bitmap picture = item.getPicture();
 		if (picture == null) {
@@ -93,7 +87,7 @@ public class BirthdayItemListAdapter extends BaseAdapter {
 	}
 
 	static class ViewHolder {
-		TextView text1, text2;
+		TextView textName, textInfo, textDate, textZodiac;
 		ImageView icon;
 	}
 }

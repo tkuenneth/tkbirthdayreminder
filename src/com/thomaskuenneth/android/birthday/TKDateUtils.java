@@ -19,8 +19,14 @@ import android.content.Context;
 
 public class TKDateUtils {
 
+	private enum ABC {aries, taurus, gemini, cancer, leo, virgo, libra, scorpius, sagittarius, 
+		capricornus, aquarius, pisces};
+	
 	public static final SimpleDateFormat FORMAT_YYYYMMDD = new SimpleDateFormat(
-			"yyyyMMdd");
+	"yyyyMMdd");
+	
+	public static final SimpleDateFormat FORMAT_WEEKDAY = new SimpleDateFormat(
+	"EEE");
 
 	private static final DateFormat FORMAT_SHORT_DATE = SimpleDateFormat
 			.getDateInstance(DateFormat.SHORT);
@@ -39,7 +45,8 @@ public class TKDateUtils {
 			return TKBirthdayReminder.getStringFromResources(context,
 					R.string.no_birthday_set);
 		}
-		int days = getBirthdayInDays(birthday);
+		Date buffer = new Date();
+		int days = getBirthdayInDays(birthday, buffer);
 		String when;
 		if (days == 0) {
 			when = TKBirthdayReminder.getStringFromResources(context,
@@ -59,10 +66,21 @@ public class TKDateUtils {
 		}
 		int resId = (days < 0) ? R.string.past : R.string.present_and_future;
 		return TKBirthdayReminder.getStringFromResources(context, resId,
-				getAge(birthday), when, FORMAT_SHORT_DATE.format(birthday));
+				getAge(birthday), when, FORMAT_WEEKDAY.format(buffer));
 	}
 
+	public static String getBirthdayDateAsString(Date birthday) {
+		if (birthday == null) {
+			return "";
+		}
+		return FORMAT_SHORT_DATE.format(birthday);
+	}
+	
 	public static int getBirthdayInDays(Date birthday) {
+		return getBirthdayInDays(birthday, null);
+	}
+
+	public static int getBirthdayInDays(Date birthday, Date buffer) {
 		String stringBirthday = FORMAT_YYYYMMDD.format(birthday);
 		int monthBirthday = Integer.parseInt(stringBirthday.substring(4, 6)) - 1;
 		int dayBirthday = Integer.parseInt(stringBirthday.substring(6, 8));
@@ -70,6 +88,9 @@ public class TKDateUtils {
 		int daysToday = cal.get(Calendar.DAY_OF_YEAR);
 		cal.set(Calendar.DAY_OF_MONTH, dayBirthday);
 		cal.set(Calendar.MONTH, monthBirthday);
+		if (buffer != null) {
+			buffer.setTime(cal.getTimeInMillis());
+		}
 		int daysBirthday = cal.get(Calendar.DAY_OF_YEAR);
 		return daysBirthday - daysToday;
 	}

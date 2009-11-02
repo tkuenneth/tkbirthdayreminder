@@ -1,1 +1,2 @@
+- Sternzeichen anzeigen
 - Wochentag des Geburtstags angeben

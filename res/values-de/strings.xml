@@ -2,6 +2,19 @@
 <resources>
 	<string name="app_name">Geburtstage</string>
 	<string name="app_name_2">Noch nicht eingetragene Geburtstage</string>
+
+	<string name="aries">Widder</string>
+	<string name="taurus">Stier</string>
+	<string name="gemini">Zwillinge</string>
+	<string name="cancer">Krebs</string>
+	<string name="leo">Löwe</string>
+	<string name="virgo">Jungfrau</string>
+	<string name="libra">Waage</string>
+	<string name="scorpius">Skorpion</string>
+	<string name="sagittarius">Schütze</string>
+	<string name="capricornus">Steinbock</string>
+	<string name="aquarius">Wassermann</string>
+	<string name="pisces">Fische</string>
 	
 	<string name="no_birthday_set">kein Geburtstag eingetragen</string>
 	<string name="yesterday">gestern</string>
@@ -9,8 +22,8 @@
 	<string name="tomorrow">morgen</string>
 	<string name="in_n_days">in %d Tagen</string>
 	<string name="n_days_ago">vor %d Tagen</string>
-	<string name="present_and_future">wird %2$s %1$d (%3$s)</string>
-	<string name="past">wurde %2$s %1$d (%3$s)</string>
+	<string name="present_and_future">wird %2$s (%3$s) %1$d</string>
+	<string name="past">wurde %2$s (%3$s) %1$d</string>
 	<string name="tab1">Geburtstage</string>
 	<string name="tab2">nicht eingetragen</string>
     <string name="welcome">Willkommen</string>	
