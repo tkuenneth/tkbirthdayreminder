@@ -23,6 +23,8 @@ import com.thomaskuenneth.android.birthday.R;
  */
 public class Zodiac extends Hashtable<Integer, Sign> {
 
+	private static final long serialVersionUID = -1206152506632529038L;
+
 	private static final Zodiac INSTANCE = new Zodiac();
 
 	private static final Calendar CAL = Calendar.getInstance();
@@ -55,10 +57,15 @@ public class Zodiac extends Hashtable<Integer, Sign> {
 	}
 
 	public static String getSign(Context context, Date date) {
-		CAL.setTime(date);
-		Sign sign = getSign(CAL.get(Calendar.MONTH));
-		return context.getString(CAL.get(Calendar.DAY_OF_MONTH) >= sign
-				.getFirstDayOfSecondSign() ? sign.getSecondSign() : sign
-				.getFirstSign());
+		if ((context != null) && (date != null)) {
+			CAL.setTime(date);
+			Sign sign = getSign(CAL.get(Calendar.MONTH));
+			if (sign != null) {
+				return context.getString(CAL.get(Calendar.DAY_OF_MONTH) >= sign
+						.getFirstDayOfSecondSign() ? sign.getSecondSign()
+						: sign.getFirstSign());
+			}
+		}
+		return "";
 	}
 }
