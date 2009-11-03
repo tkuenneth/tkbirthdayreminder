@@ -6,6 +6,7 @@
  */
 package com.thomaskuenneth.android.birthday;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.app.Notification;
@@ -14,6 +15,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 /**
@@ -51,6 +53,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 							num == 1 ? R.string.alarmreceiver_message_1
 									: R.string.alarmreceiver_message, num),
 							contentIntent);
+//					notif.sound = Uri.fromFile(new 
+//							File("/system/media/audio/ringtones/ringer.mp3"));
 					NotificationManager nm = (NotificationManager) context
 							.getSystemService(Context.NOTIFICATION_SERVICE);
 					nm.notify(NotificationView.NOTIFICATION_ID, notif);
