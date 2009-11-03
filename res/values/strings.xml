@@ -74,7 +74,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nThe author may not be held
 for any problems caused by using this program. You use <b>TKBirthdayReminder</b> completely
 at your own risk.
 \n\n<b>Changes since the last version</b>\n
-- upon creation of new contacts year should be set correctly
+- nicer grouping of list items\n
+- shows the sign of the zodiac
 \n\nPlease click <b>Continue</b> if you agree with the terms of use. <b>Abort</b> quits 
 the program.
 	</string>
