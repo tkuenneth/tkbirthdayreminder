@@ -1,3 +1,6 @@
+1.2.6
+- improved list layout
+
 1.2.5
 - neu: Anzeige Wochentag d. Geburtstags in diesem Jahr
 - neu: Anzeige des Tierkreiszeichens
