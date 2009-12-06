@@ -1,3 +1,6 @@
+1.2.7
+- notification more reliable
+
 1.2.6
 - improved list layout
 

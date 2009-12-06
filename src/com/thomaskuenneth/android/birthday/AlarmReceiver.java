@@ -26,6 +26,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(final Context context, Intent intent) {
+		BootCompleteReceiver.startAlarm(context, true);
 		Runnable r = new Runnable() {
 			public void run() {
 				ContactsList cl = new ContactsList(context);
