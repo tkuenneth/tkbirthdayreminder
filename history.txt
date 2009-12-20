@@ -1,3 +1,9 @@
+1.2.8
+- NPE-check in BirthdayItem.writeToParcel()
+- new dialogs for add contact/change birthday date
+- can play sounds upon notification
+- works on devices with small screens
+
 1.2.7
 - notification more reliable
 

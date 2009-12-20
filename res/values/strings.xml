@@ -44,6 +44,7 @@
     <string name="menu_set_alarm">Set notification time</string>
     <string name="menu_set_notification_days">Set notification days</string>
     <string name="menu_new_entry">Add contact</string>
+    <string name="menu_set_notification_sound">Set notification sound</string>
     <string name="alarmreceiver_tickertext">birthday reminder</string>
     <string name="alarmreceiver_message">%1$d birthdays. Click here for details.</string>
     <string name="alarmreceiver_message_1">%1$d birthday. Click here for details.</string>
@@ -74,7 +75,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nThe author may not be held
 for any problems caused by using this program. You use <b>TKBirthdayReminder</b> completely
 at your own risk.
 \n\n<b>Changes since the last version</b>\n
-- improved reliability of notifications
+- new dialogs for add contact/change birthday date\n
+- can play sounds upon notification\n
+- works on devices with small screens
 \n\nPlease click <b>Continue</b> if you agree with the terms of use. <b>Abort</b> quits 
 the program.
 	</string>

@@ -15,6 +15,9 @@
 
     <item android:id="@+id/set_notification_days"
         android:title="@string/menu_set_notification_days" />
+
+    <item android:id="@+id/set_notification_sound"
+        android:title="@string/menu_set_notification_sound" />
  
     <item android:id="@+id/new_entry"
         android:title="@string/menu_new_entry" />

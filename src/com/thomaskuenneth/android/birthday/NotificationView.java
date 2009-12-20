@@ -34,11 +34,11 @@ public class NotificationView extends AbstractListActivity {
 
 	@Override
 	protected ArrayList<BirthdayItem> getProperList(ContactsList cl) {
-		return cl.getListNotifications();
+		return list; //  scl.getListNotifications();
 	}
-	
+
 	@Override
 	protected String getStateKey() {
-		return Constants.LIST_NOTIFICATIONS;
+		return null;
 	}
 }

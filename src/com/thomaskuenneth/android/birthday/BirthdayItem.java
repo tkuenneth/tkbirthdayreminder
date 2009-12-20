@@ -116,7 +116,12 @@ public class BirthdayItem implements Parcelable {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeString(name);
-		dest.writeString(TKDateUtils.FORMAT_YYYYMMDD.format(birthday));
+		String date = null;
+		try {
+			date = TKDateUtils.FORMAT_YYYYMMDD.format(birthday);
+		} catch (Throwable thr) {
+		}
+		dest.writeString(date == null ? "" : date);
 		dest.writeLong(id);
 		dest.writeString(primaryPhoneNumber);
 	}

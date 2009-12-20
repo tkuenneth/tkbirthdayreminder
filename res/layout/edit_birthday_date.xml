@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-	new_contact.xml
+	edit_birthday_date.xml
 	TKBirthdayReminder (c) Thomas Künneth 2009
 	Alle Rechte beim Autoren. All rights reserved.
 -->
@@ -9,26 +9,6 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
-
-    <TextView 
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_marginLeft="6dip"
-        android:layout_marginRight="6dip"
-        android:text="@string/new_entry_dialog_name"
-        android:gravity="left"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-            
-    <EditText
-        android:id="@+id/new_event_descr"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:layout_marginLeft="6dip"
-        android:layout_marginRight="6dip"
-        android:scrollHorizontally="true"
-        android:singleLine="true"
-        android:gravity="fill_horizontal"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:layout_height="wrap_content"

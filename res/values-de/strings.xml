@@ -16,6 +16,10 @@
 	<string name="aquarius">Wassermann</string>
 	<string name="pisces">Fische</string>
 	
+    <string name="new_entry_dialog_title">Neuer Kontakt</string>
+    <string name="new_entry_dialog_name">Name</string>
+    <string name="new_entry_dialog_date">Geburtsdatum</string>
+	
 	<string name="no_birthday_set">kein Geburtstag eingetragen</string>
 	<string name="yesterday">gestern</string>
 	<string name="today">heute</string>
@@ -39,6 +43,7 @@
     <string name="menu_set_alarm">Erinnerungsuhrzeit einstellen</string>
     <string name="menu_set_notification_days">Erinnerungstage einstellen</string>
     <string name="menu_new_entry">Neuer Kontakt</string>
+    <string name="menu_set_notification_sound">Erinnerungston einstellen</string>
     <string name="alarmreceiver_tickertext">Geburtstagserinnerung</string>
     <string name="alarmreceiver_message">%1$d Geburtstage. Hier klicken.</string>
     <string name="alarmreceiver_message_1">%1$d Geburtstag. Hier klicken.</string>

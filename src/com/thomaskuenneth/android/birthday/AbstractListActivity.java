@@ -6,18 +6,18 @@
  */
 package com.thomaskuenneth.android.birthday;
 
+import java.text.DateFormat;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.TimePickerDialog;
-import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -27,13 +27,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Contacts;
 import android.provider.Contacts.People;
+import android.util.Log;
 import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,11 +44,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnKeyListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
-import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 /**
  * Diese abstrakte Basisklasse stellt die Kernunktionalität der Listenansichten
@@ -53,29 +60,21 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
  * 
  * @author Thomas Künneth
  * @see ListActivity
- * @see OnDateSetListener
  * @see OnTimeSetListener
  */
 public abstract class AbstractListActivity extends ListActivity implements
-		OnDateSetListener, OnTimeSetListener {
+		OnTimeSetListener {
 
+	private static final String NEW_EVENT_EVENT = "newEventEvent";
 	private static final String LONG_CLICK_ITEM = "longClickItem";
 
-	/**
-	 * IDs für Menüeinträge.
-	 */
-	private static final int MENU_CHANGE_DATE = R.string.menu_change_date;
-	private static final int MENU_REMOVE_DATE = R.string.menu_remove_date;
-	private static final int MENU_DIAL = R.string.menu_dial;
-	private static final int MENU_SEND_SMS = R.string.menu_send_sms;
-
-	/**
-	 * IDs für Dialoge.
-	 */
-	private static final int TIME_DIALOG_ID = 11;
-	private static final int NOTIFICATION_DAYS_DIALOG_ID = 1;
-	private static final int NEW_ENTRY_ID = 2;
-	private static final int DATE_DIALOG_ID = 10;
+	// Neuer Kontakt
+	private static final DateFormat FORMAT_MONTH_SHORT = new SimpleDateFormat(
+			"MMM");
+	private TextView newEventDescr, newEventYear;
+	private Spinner newEventSpinnerDay, newEventSpinnerMonth;
+	private Calendar newEventCal;
+	private AnnualEvent newEventEvent;
 
 	/**
 	 * Listenelement, das lange angeklickt wurde.
@@ -93,6 +92,11 @@ public abstract class AbstractListActivity extends ListActivity implements
 	 */
 	private static final String NOTIFICATION_DAYS = "notificationDays";
 
+	/**
+	 * Schlüssel, unter dem der Erinnerungston eingetragen wird.
+	 */
+	private static final String NOTIFICATION_SOUND = "notificationSound";
+
 	protected ArrayList<BirthdayItem> list;
 
 	@Override
@@ -103,14 +107,19 @@ public abstract class AbstractListActivity extends ListActivity implements
 		// ggf. gespeicherte Liste wiederherstellen
 		list = null;
 		longClickedItem = null;
+		newEventEvent = null;
 		if (savedInstanceState != null) {
-			list = savedInstanceState.getParcelableArrayList(getStateKey());
-			long id = savedInstanceState.getLong(getStateKey() + "_"
-					+ LONG_CLICK_ITEM);
-			for (BirthdayItem item : list) {
-				if (item.getId() == id) {
-					longClickedItem = item;
-					break;
+			newEventEvent = savedInstanceState.getParcelable(NEW_EVENT_EVENT);
+			String stateKey = getStateKey();
+			if (stateKey != null) {
+				list = savedInstanceState.getParcelableArrayList(stateKey);
+				long id = savedInstanceState.getLong(stateKey + "_"
+						+ LONG_CLICK_ITEM);
+				for (BirthdayItem item : list) {
+					if (item.getId() == id) {
+						longClickedItem = item;
+						break;
+					}
 				}
 			}
 		}
@@ -121,16 +130,25 @@ public abstract class AbstractListActivity extends ListActivity implements
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putParcelableArrayList(getStateKey(), list);
-		if (longClickedItem != null) {
-			outState.putLong(getStateKey() + "_" + LONG_CLICK_ITEM,
-					longClickedItem.getId());
+		String stateKey = getStateKey();
+		if (stateKey != null) {
+			outState.putParcelableArrayList(stateKey, list);
+			if (longClickedItem != null) {
+				outState.putLong(stateKey + "_" + LONG_CLICK_ITEM,
+						longClickedItem.getId());
+			}
+		}
+		if (newEventEvent != null) {
+			outState.putParcelable(NEW_EVENT_EVENT, newEventEvent);
 		}
 	}
 
 	@Override
 	public void onActivityResult(int reqCode, int resultCode, Intent data) {
 		super.onActivityResult(reqCode, resultCode, data);
+		Log.d(getClass().getName(), MessageFormat.format(
+				"onActivityResult: requestCode={0}, resultCode={1}", reqCode,
+				resultCode));
 
 		switch (reqCode) {
 		case (Constants.RQ_PICK_CONTACT):
@@ -146,11 +164,46 @@ public abstract class AbstractListActivity extends ListActivity implements
 							.getColumnIndex(People.NUMBER));
 					longClickedItem = new BirthdayItem(name, TKDateUtils
 							.getDateFromString(notes), id, primaryPhoneNumber);
-					showDialog(DATE_DIALOG_ID);
+					showEditBirthdayDialog(longClickedItem);
+				}
+			}
+			break;
+		case (Constants.RQ_PICK_SOUND):
+			if (resultCode == Activity.RESULT_OK) {
+				Bundle b = data.getExtras();
+				if (b != null) {
+					Uri uri = (Uri) b
+							.get(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+					setNotificationSoundAsString(uri);
 				}
 			}
 			break;
 		}
+	}
+
+	private void setNotificationSoundAsString(Uri uri) {
+		String sound = null;
+		if (uri != null) {
+			sound = uri.toString();
+		}
+		SharedPreferences prefs = getSharedPreferences(
+				Constants.SHARED_PREFS_KEY, Context.MODE_PRIVATE);
+		Editor e = prefs.edit();
+		e.putString(NOTIFICATION_SOUND, sound);
+		e.commit();
+	}
+
+	public static String getNotificationSoundAsString(Context context) {
+		SharedPreferences prefs = context.getSharedPreferences(
+				Constants.SHARED_PREFS_KEY, Context.MODE_PRIVATE);
+		return prefs.getString(NOTIFICATION_SOUND, null);
+	}
+
+	private void showEditBirthdayDialog(BirthdayItem item) {
+		Date birthday = item.getBirthday();
+		newEventEvent = (birthday == null) ? new AnnualEvent()
+				: new AnnualEvent(birthday);
+		showDialog(Constants.DATE_DIALOG_ID);
 	}
 
 	@Override
@@ -161,14 +214,17 @@ public abstract class AbstractListActivity extends ListActivity implements
 				.getItem(mi.position);
 		menu.setHeaderTitle(item.getName());
 		if (item.getBirthday() != null) {
-			menu.add(Menu.NONE, MENU_CHANGE_DATE, Menu.NONE, MENU_CHANGE_DATE);
-			menu.add(Menu.NONE, MENU_REMOVE_DATE, Menu.NONE, MENU_REMOVE_DATE);
+			menu.add(Menu.NONE, Constants.MENU_CHANGE_DATE, Menu.NONE,
+					Constants.MENU_CHANGE_DATE);
+			menu.add(Menu.NONE, Constants.MENU_REMOVE_DATE, Menu.NONE,
+					Constants.MENU_REMOVE_DATE);
 		}
 		if (item.getPrimaryPhoneNumber() != null) {
-			menu.add(Menu.NONE, MENU_DIAL, Menu.NONE, MENU_DIAL);
-			String string = getString(MENU_SEND_SMS, item
+			menu.add(Menu.NONE, Constants.MENU_DIAL, Menu.NONE,
+					Constants.MENU_DIAL);
+			String string = getString(Constants.MENU_SEND_SMS, item
 					.getPrimaryPhoneNumber());
-			menu.add(Menu.NONE, MENU_SEND_SMS, Menu.NONE, string);
+			menu.add(Menu.NONE, Constants.MENU_SEND_SMS, Menu.NONE, string);
 		}
 	}
 
@@ -177,19 +233,19 @@ public abstract class AbstractListActivity extends ListActivity implements
 		AdapterContextMenuInfo mi = (AdapterContextMenuInfo) item.getMenuInfo();
 		longClickedItem = (BirthdayItem) getListAdapter().getItem(mi.position);
 		switch (item.getItemId()) {
-		case MENU_CHANGE_DATE:
-			showDialog(DATE_DIALOG_ID);
+		case Constants.MENU_CHANGE_DATE:
+			showEditBirthdayDialog(longClickedItem);
 			break;
-		case MENU_REMOVE_DATE:
+		case Constants.MENU_REMOVE_DATE:
 			longClickedItem.setBirthday(null);
 			updateContact(longClickedItem);
 			break;
-		case MENU_DIAL:
+		case Constants.MENU_DIAL:
 			Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"
 					+ longClickedItem.getPrimaryPhoneNumber()));
 			startActivity(intent);
 			break;
-		case MENU_SEND_SMS:
+		case Constants.MENU_SEND_SMS:
 			Uri smsUri = Uri.parse("smsto://"
 					+ longClickedItem.getPrimaryPhoneNumber());
 			Intent sendIntent = new Intent(Intent.ACTION_SENDTO, smsUri);
@@ -206,78 +262,121 @@ public abstract class AbstractListActivity extends ListActivity implements
 
 	@Override
 	protected void onPrepareDialog(int id, Dialog dialog) {
-		if (id == DATE_DIALOG_ID) {
-			Calendar cal = new GregorianCalendar();
-			Date birthday = longClickedItem.getBirthday();
-			if (birthday != null) {
-				cal.setTime(birthday);
-			}
-			DatePickerDialog picker = (DatePickerDialog) dialog;
-			picker.updateDate(cal.get(GregorianCalendar.YEAR), cal
-					.get(GregorianCalendar.MONTH), cal
-					.get(GregorianCalendar.DAY_OF_MONTH));
-		} else if (id == TIME_DIALOG_ID) {
+		super.onPrepareDialog(id, dialog);
+		switch (id) {
+		case Constants.DATE_DIALOG_ID:
+			updateViewsFromEvent();
+			break;
+		case Constants.TIME_DIALOG_ID:
 			TimePickerDialogHelper.readFromPreferences(this);
 			TimePickerDialog picker = (TimePickerDialog) dialog;
 			picker.updateTime(TimePickerDialogHelper.hour,
 					TimePickerDialogHelper.minute);
-		} else if (id == NOTIFICATION_DAYS_DIALOG_ID) {
+			break;
+		case Constants.NOTIFICATION_DAYS_DIALOG_ID:
 			updateCheckboxes(dialog);
+			break;
+		case Constants.NEW_CONTACT_ID:
+			updateViewsFromEvent();
+			break;
 		}
-		super.onPrepareDialog(id, dialog);
 	}
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
-		if (id == DATE_DIALOG_ID) {
-			Calendar cal = new GregorianCalendar();
-			return new DatePickerDialog(this, this, cal
-					.get(GregorianCalendar.YEAR), cal
-					.get(GregorianCalendar.MONTH), cal
-					.get(GregorianCalendar.DAY_OF_MONTH));
-		} else if (id == TIME_DIALOG_ID) {
+		LayoutInflater factory = null;
+		View view = null;
+		Dialog dialog = null;
+		switch (id) {
+		case Constants.DATE_DIALOG_ID:
+			newEventCal = Calendar.getInstance();
+			factory = LayoutInflater.from(this);
+			view = factory.inflate(R.layout.edit_birthday_date, null);
+			newEventSpinnerDay = (Spinner) view
+					.findViewById(R.id.new_event_day);
+			newEventSpinnerMonth = (Spinner) view
+					.findViewById(R.id.new_event_month);
+			newEventYear = (TextView) view.findViewById(R.id.new_event_year);
+			newEventDescr = null;
+			dialog = new AlertDialog.Builder(this).setTitle(
+					R.string.menu_change_date).setPositiveButton(
+					android.R.string.ok, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							Calendar cal = Calendar.getInstance();
+							cal.set(Calendar.YEAR, newEventEvent.getYear());
+							cal.set(Calendar.MONTH, newEventEvent.getMonth());
+							cal.set(Calendar.DAY_OF_MONTH, newEventEvent
+									.getDay());
+							longClickedItem.setBirthday(cal.getTime());
+							updateContact(longClickedItem);
+							newEventEvent = null;
+						}
+					}).setNegativeButton(android.R.string.cancel,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							newEventEvent = null;
+						}
+					}).setView(view).create();
+			installListeners();
+			updateViewsFromEvent();
+			break;
+		case Constants.TIME_DIALOG_ID:
 			TimePickerDialogHelper.readFromPreferences(this);
-			return new TimePickerDialog(this, this,
+			dialog = new TimePickerDialog(this, this,
 					TimePickerDialogHelper.hour, TimePickerDialogHelper.minute,
 					true);
-		} else if (id == NOTIFICATION_DAYS_DIALOG_ID) {
-			View view = LayoutInflater.from(this).inflate(
+			break;
+		case Constants.NOTIFICATION_DAYS_DIALOG_ID:
+			view = LayoutInflater.from(this).inflate(
 					R.layout.notification_days, null);
-			return new AlertDialog.Builder(this)
-					// .setIcon(R.drawable.alert_dialog_icon)
-					.setTitle(R.string.menu_set_notification_days)
-					.setPositiveButton(R.string.alert_dialog_ok,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									updateNotificationDays((AlertDialog) dialog);
-								}
-							}).setNegativeButton(R.string.alert_dialog_cancel,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-								}
-							}).setView(view).create();
-		} else if (id == NEW_ENTRY_ID) {
-			LayoutInflater factory = LayoutInflater.from(this);
-			View view = factory.inflate(R.layout.new_contact, null);
-			return new AlertDialog.Builder(this)
-					// .setIcon(R.drawable.alert_dialog_icon)
-					.setTitle(R.string.new_entry_dialog_title)
-					.setPositiveButton(R.string.alert_dialog_ok,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									addContact((AlertDialog) dialog);
-								}
-							}).setNegativeButton(R.string.alert_dialog_cancel,
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-								}
-							}).setView(view).create();
+			dialog = new AlertDialog.Builder(this).setTitle(
+					R.string.menu_set_notification_days).setPositiveButton(
+					R.string.alert_dialog_ok,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							updateNotificationDays((AlertDialog) dialog);
+						}
+					}).setNegativeButton(R.string.alert_dialog_cancel,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+						}
+					}).setView(view).create();
+			break;
+		case Constants.NEW_CONTACT_ID:
+			newEventCal = Calendar.getInstance();
+			factory = LayoutInflater.from(this);
+			view = factory.inflate(R.layout.new_contact, null);
+			newEventDescr = (TextView) view.findViewById(R.id.new_event_descr);
+			newEventSpinnerDay = (Spinner) view
+					.findViewById(R.id.new_event_day);
+			newEventSpinnerMonth = (Spinner) view
+					.findViewById(R.id.new_event_month);
+			newEventYear = (TextView) view.findViewById(R.id.new_event_year);
+			dialog = new AlertDialog.Builder(this).setTitle(
+					R.string.new_entry_dialog_title).setPositiveButton(
+					android.R.string.ok, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							newEventEvent.setDescr(newEventDescr.getText()
+									.toString());
+							addContact(newEventEvent);
+							newEventEvent = null;
+						}
+					}).setNegativeButton(android.R.string.cancel,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							newEventEvent = null;
+						}
+					}).setView(view).create();
+			installListeners();
+			updateViewsFromEvent();
 		}
-		return null;
+		return dialog;
 	}
 
 	// Optionsmenü
@@ -296,10 +395,28 @@ public abstract class AbstractListActivity extends ListActivity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.set_alarm:
-			showDialog(TIME_DIALOG_ID);
+			showDialog(Constants.TIME_DIALOG_ID);
 			break;
 		case R.id.set_notification_days:
-			showDialog(NOTIFICATION_DAYS_DIALOG_ID);
+			showDialog(Constants.NOTIFICATION_DAYS_DIALOG_ID);
+			break;
+		case R.id.set_notification_sound:
+			Intent i = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+			i.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT,
+					Boolean.TRUE);
+			i
+					.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT,
+							Boolean.TRUE);
+			i.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE,
+					RingtoneManager.TYPE_ALL);
+			i.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE,
+					getString(R.string.menu_set_notification_sound));
+			String current = getNotificationSoundAsString(this);
+			if (current != null) {
+				i.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri
+						.parse(current));
+			}
+			startActivityForResult(i, Constants.RQ_PICK_SOUND);
 			break;
 		// case R.id.preferences:
 		// Intent i = new Intent(this, Preferences.class);
@@ -307,7 +424,8 @@ public abstract class AbstractListActivity extends ListActivity implements
 		// startActivity(i);
 		// break;
 		case R.id.new_entry:
-			showDialog(NEW_ENTRY_ID);
+			newEventEvent = new AnnualEvent();
+			showDialog(Constants.NEW_CONTACT_ID);
 			break;
 		case R.id.set_date:
 			// Intent intent = new Intent(Intent.ACTION_PICK,
@@ -317,6 +435,109 @@ public abstract class AbstractListActivity extends ListActivity implements
 			break;
 		}
 		return true;
+	}
+
+	private void updateViewsFromEvent() {
+		if (newEventEvent == null) {
+			return;
+		}
+		// Spinner vorbereiten
+		createAndSetMonthAdapter();
+		createAndSetDayAdapter();
+		// Jahres-Textfeld befüllen
+		int intYear = newEventEvent.getYear();
+		newEventYear.setText(Integer.toString(intYear));
+		if (newEventDescr != null) {
+			newEventDescr.setText(newEventEvent.getDescr());
+		}
+	}
+
+	private void installListeners() {
+		// Listener registrieren
+		newEventSpinnerMonth
+				.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+					@Override
+					public void onItemSelected(AdapterView<?> parent,
+							View view, int position, long id) {
+						newEventEvent.setMonth(position);
+						createAndSetDayAdapter();
+					}
+
+					@Override
+					public void onNothingSelected(AdapterView<?> parent) {
+					}
+				});
+		newEventSpinnerDay
+				.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+					@Override
+					public void onItemSelected(AdapterView<?> parent,
+							View view, int position, long id) {
+						newEventEvent.setDay(position + 1);
+					}
+
+					@Override
+					public void onNothingSelected(AdapterView<?> parent) {
+					}
+				});
+		newEventYear.setOnKeyListener(new OnKeyListener() {
+
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				if (event.getAction() == KeyEvent.ACTION_UP) {
+					int intYear = 1980;
+					try {
+						intYear = Integer.parseInt(newEventYear.getText()
+								.toString());
+						createAndSetDayAdapter();
+					} catch (Throwable thr) {
+					} finally {
+						newEventEvent.setYear(intYear);
+					}
+				}
+				return false;
+			}
+		});
+	}
+
+	private void createAndSetMonthAdapter() {
+		ArrayAdapter<String> adapterMonth = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item);
+		adapterMonth
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		for (int i = newEventCal.getMinimum(Calendar.MONTH); i <= newEventCal
+				.getMaximum(Calendar.MONTH); i++) {
+			newEventCal.set(Calendar.MONTH, i);
+			adapterMonth.add(FORMAT_MONTH_SHORT.format(newEventCal.getTime()));
+		}
+		newEventSpinnerMonth.setAdapter(adapterMonth);
+		newEventSpinnerMonth.setSelection(newEventEvent.getMonth());
+	}
+
+	private void createAndSetDayAdapter() {
+		ArrayAdapter<String> adapterDay = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item);
+		adapterDay
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		// Kalender setzen
+		int intYear = 1980;
+		try {
+			intYear = Integer.parseInt(newEventYear.getText().toString());
+		} catch (Throwable thr) {
+		}
+		newEventCal.set(Calendar.YEAR, intYear);
+		newEventCal.set(Calendar.DAY_OF_MONTH, 1);
+		newEventCal.set(Calendar.MONTH, newEventEvent.getMonth());
+		int max = newEventCal.getActualMaximum(Calendar.DAY_OF_MONTH);
+		for (int i = newEventCal.getMinimum(Calendar.DAY_OF_MONTH); i <= max; i++) {
+			adapterDay.add(Integer.toString(i));
+		}
+		if (newEventEvent.getDay() > max) {
+			newEventEvent.setDay(max);
+		}
+		newEventSpinnerDay.setAdapter(adapterDay);
+		newEventSpinnerDay.setSelection(newEventEvent.getDay() - 1);
 	}
 
 	/**
@@ -355,7 +576,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 	protected void setListFromBundle(String listKey) {
 		Bundle bundleExtras = getIntent().getExtras();
 		if (bundleExtras != null) {
-			Bundle bundleList = bundleExtras.getBundle(Constants.TKBR);
+			Bundle bundleList = bundleExtras.getBundle(Constants.TKBR2);
 			if (bundleList != null) {
 				ArrayList<BirthdayItem> list = bundleList
 						.getParcelableArrayList(listKey);
@@ -392,16 +613,13 @@ public abstract class AbstractListActivity extends ListActivity implements
 		editor.commit();
 	}
 
-	private void addContact(Dialog dialog) {
-		EditText v1 = (EditText) dialog.findViewById(R.id.new_contact_name);
-		DatePicker v2 = (DatePicker) dialog.findViewById(R.id.new_contact_date);
-		v2.clearFocus();
+	private void addContact(AnnualEvent event) {
 		long id = ContactsList.addGroup(this, "TKBirthdayReminder");
-		String name = v1.getText().toString();
-		Calendar cal = new GregorianCalendar();
-		cal.set(GregorianCalendar.YEAR, v2.getYear());
-		cal.set(GregorianCalendar.MONTH, v2.getMonth());
-		cal.set(GregorianCalendar.DAY_OF_MONTH, v2.getDayOfMonth());
+		String name = event.getDescr();
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.YEAR, event.getYear());
+		cal.set(Calendar.MONTH, event.getMonth());
+		cal.set(Calendar.DAY_OF_MONTH, event.getDay());
 		String notes = TKDateUtils.getStringFromDate(cal.getTime(), null);
 		ContactsList.createPerson(this, id, name, notes);
 		readContacts(true);
@@ -449,21 +667,6 @@ public abstract class AbstractListActivity extends ListActivity implements
 		SharedPreferences prefs = context.getSharedPreferences(
 				Constants.SHARED_PREFS_KEY, Context.MODE_PRIVATE);
 		return prefs.getInt(NOTIFICATION_DAYS, 0);
-	}
-
-	// /////////////////////
-	// OnDateSetListener //
-	// /////////////////////
-
-	@Override
-	public void onDateSet(DatePicker view, int year, int monthOfYear,
-			int dayOfMonth) {
-		Calendar cal = new GregorianCalendar();
-		cal.set(GregorianCalendar.YEAR, year);
-		cal.set(GregorianCalendar.MONTH, monthOfYear);
-		cal.set(GregorianCalendar.DAY_OF_MONTH, dayOfMonth);
-		longClickedItem.setBirthday(cal.getTime());
-		updateContact(longClickedItem);
 	}
 
 	// /////////////////////

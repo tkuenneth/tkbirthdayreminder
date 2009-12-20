@@ -6,7 +6,6 @@
  */
 package com.thomaskuenneth.android.birthday;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import android.content.Context;
@@ -45,7 +44,7 @@ public class TKBirthdayReminder extends AbstractListActivity {
 			run();
 		}
 	}
-	
+
 	@Override
 	protected String getStateKey() {
 		return Constants.LIST_BIRTHDAY_SET;
@@ -54,9 +53,6 @@ public class TKBirthdayReminder extends AbstractListActivity {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		Log.d(Constants.TKBR, MessageFormat.format(
-				"onActivityResult: requestCode={0}, resultCode={1}",
-				requestCode, resultCode));
 		if (requestCode == Constants.RQ_WELCOME) {
 			if (resultCode == RESULT_OK) {
 				writeToPreferences();
@@ -85,7 +81,7 @@ public class TKBirthdayReminder extends AbstractListActivity {
 		BootCompleteReceiver.startAlarm(this, true);
 		readContacts(false);
 	}
-	
+
 	@Override
 	protected ArrayList<BirthdayItem> getProperList(ContactsList cl) {
 		return cl.getListBirthdaySet();
@@ -100,7 +96,7 @@ public class TKBirthdayReminder extends AbstractListActivity {
 	private boolean isNewVersion() {
 		readFromPreferences();
 		boolean newVersion = storedVersionCode < currentVersionCode;
-		Log.d(Constants.TKBR, "newVersion: " + newVersion);
+		Log.d(getClass().getName(), "newVersion: " + newVersion);
 		return newVersion;
 	}
 
