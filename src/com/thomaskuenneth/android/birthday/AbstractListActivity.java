@@ -113,12 +113,14 @@ public abstract class AbstractListActivity extends ListActivity implements
 			String stateKey = getStateKey();
 			if (stateKey != null) {
 				list = savedInstanceState.getParcelableArrayList(stateKey);
-				long id = savedInstanceState.getLong(stateKey + "_"
-						+ LONG_CLICK_ITEM);
-				for (BirthdayItem item : list) {
-					if (item.getId() == id) {
-						longClickedItem = item;
-						break;
+				if (list != null) {
+					long id = savedInstanceState.getLong(stateKey + "_"
+							+ LONG_CLICK_ITEM);
+					for (BirthdayItem item : list) {
+						if (item.getId() == id) {
+							longClickedItem = item;
+							break;
+						}
 					}
 				}
 			}
@@ -403,7 +405,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 		case R.id.set_notification_sound:
 			Intent i = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
 			i.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT,
-					Boolean.TRUE);
+					Boolean.FALSE);
 			i
 					.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT,
 							Boolean.TRUE);

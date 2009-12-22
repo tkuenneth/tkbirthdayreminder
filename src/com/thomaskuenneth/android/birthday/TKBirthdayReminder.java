@@ -39,6 +39,7 @@ public class TKBirthdayReminder extends AbstractListActivity {
 		// auf neue Version prüfen
 		if (isNewVersion()) {
 			Intent i = new Intent(this, WhatsNew.class);
+			i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			startActivityForResult(i, Constants.RQ_WELCOME);
 		} else {
 			run();

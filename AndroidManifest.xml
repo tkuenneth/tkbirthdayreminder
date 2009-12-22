@@ -2,7 +2,7 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="com.thomaskuenneth.android.birthday" 
-	android:versionCode="24" android:versionName="1.2.8">
+	android:versionCode="30" android:versionName="1.2.8">
 		
     <supports-screens
           android:smallScreens="true"
