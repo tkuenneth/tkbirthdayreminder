@@ -2,7 +2,7 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="com.thomaskuenneth.android.birthday" 
-	android:versionCode="30" android:versionName="1.2.8">
+	android:versionCode="31" android:versionName="1.2.8">
 		
     <supports-screens
           android:smallScreens="true"
@@ -18,8 +18,6 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		
-		<activity android:name="WhatsNew" />
 		
 		<activity android:name="NotificationView" />
 		

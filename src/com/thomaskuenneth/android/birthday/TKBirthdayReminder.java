@@ -8,13 +8,16 @@ package com.thomaskuenneth.android.birthday;
 
 import java.util.ArrayList;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 /**
  * Dies ist die Hauptklasse von TKBirthdayReminder. Sie prüft, ob eine neue
@@ -38,30 +41,52 @@ public class TKBirthdayReminder extends AbstractListActivity {
 		super.onCreate(savedInstanceState);
 		// auf neue Version prüfen
 		if (isNewVersion()) {
-			Intent i = new Intent(this, WhatsNew.class);
-			i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-			startActivityForResult(i, Constants.RQ_WELCOME);
+			if (savedInstanceState == null) {
+				showDialog(Constants.WELCOME_ID);
+			}
 		} else {
 			run();
 		}
 	}
 
 	@Override
-	protected String getStateKey() {
-		return Constants.LIST_BIRTHDAY_SET;
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+		case Constants.WELCOME_ID:
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(R.string.welcome);
+			builder.setIcon(R.drawable.birthdaycake_32);
+			View textView = getLayoutInflater().inflate(R.layout.welcome, null);
+			builder.setView(textView);
+			builder.setPositiveButton(R.string.alert_dialog_continue,
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							writeToPreferences();
+							run();
+						}
+
+					});
+			builder.setNegativeButton(R.string.alert_dialog_abort,
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							finish();
+						}
+
+					});
+			builder.setCancelable(false);
+			return builder.create();
+		default:
+			return super.onCreateDialog(id);
+		}
 	}
 
 	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == Constants.RQ_WELCOME) {
-			if (resultCode == RESULT_OK) {
-				writeToPreferences();
-				run();
-			} else if (resultCode == RESULT_CANCELED) {
-				finish();
-			}
-		}
+	protected String getStateKey() {
+		return Constants.LIST_BIRTHDAY_SET;
 	}
 
 	public static String getStringFromResources(Context context, int resId) {

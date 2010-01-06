@@ -38,11 +38,11 @@ public class Constants {
 	public static final int NOTIFICATION_DAYS_DIALOG_ID = 2;
 	public static final int DATE_DIALOG_ID = 3;
 	public static final int NEW_CONTACT_ID = 4;
+	public static final int WELCOME_ID = 5;
 
 	/**
 	 * IDs für result codes
 	 */
-	public static final int RQ_WELCOME = 0x290870;
 	public static final int RQ_PICK_CONTACT = 0x231167;
 	public static final int RQ_PICK_SOUND = 0x03091938;
 

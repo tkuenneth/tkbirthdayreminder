@@ -1,3 +1,7 @@
+1.2.9
+- kein Geflacker mehr bei Welcome-Dialog und Orientierungswechsel
+- Daten ändern klappt besser unter Android 2.0
+
 1.2.8
 - NPE-check in BirthdayItem.writeToParcel()
 - new dialogs for add contact/change birthday date

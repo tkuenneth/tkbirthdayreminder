@@ -34,6 +34,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Contacts;
 import android.provider.Contacts.People;
+import android.provider.ContactsContract.RawContacts;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -377,6 +378,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 					}).setView(view).create();
 			installListeners();
 			updateViewsFromEvent();
+			break;
 		}
 		return dialog;
 	}
@@ -553,14 +555,22 @@ public abstract class AbstractListActivity extends ListActivity implements
 		Uri uri = Uri.withAppendedPath(Contacts.People.CONTENT_URI, Long
 				.toString(item.getId()));
 		// lesen des Notizfeldes
-		Cursor c = contentResolver.query(uri, null, null, null, null);
+		Cursor c = contentResolver
+		.query(uri, null,
+				null, null, null);
+//		.query(uri, new String[] { Contacts.PeopleColumns.NOTES },
+//				null, null, null);
 		if (c != null) {
 			if (c.moveToFirst()) {
-				String notes = c.getString(c.getColumnIndex(People.NOTES));
+				String notes = c.getString(c.getColumnIndex(Contacts.PeopleColumns.NOTES));
+//				String notes = c.getString(0);
 				// Aktualisieren des Eintrags
 				ContentValues values = new ContentValues();
-				values.put(People.NOTES, TKDateUtils.getStringFromDate(item
-						.getBirthday(), notes));
+				for (String cn: c.getColumnNames()) {
+					values.put(cn, c.getString(c.getColumnIndex(cn)));
+				}
+				values.put(Contacts.PeopleColumns.NOTES, TKDateUtils
+						.getStringFromDate(item.getBirthday(), notes));
 				contentResolver.update(uri, values, null, null);
 			}
 			c.close();
