@@ -34,7 +34,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Contacts;
 import android.provider.Contacts.People;
-import android.provider.ContactsContract.RawContacts;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -54,6 +53,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemSelectedListener;
+
+import com.thomaskuenneth.android.util.ContactsContractWrapper;
 
 /**
  * Diese abstrakte Basisklasse stellt die Kernunktionalität der Listenansichten
@@ -306,6 +307,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 					android.R.string.ok, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,
 								int whichButton) {
+							checkAndSetYear();
 							Calendar cal = Calendar.getInstance();
 							cal.set(Calendar.YEAR, newEventEvent.getYear());
 							cal.set(Calendar.MONTH, newEventEvent.getMonth());
@@ -314,12 +316,14 @@ public abstract class AbstractListActivity extends ListActivity implements
 							longClickedItem.setBirthday(cal.getTime());
 							updateContact(longClickedItem);
 							newEventEvent = null;
+							removeDialog(Constants.DATE_DIALOG_ID);
 						}
 					}).setNegativeButton(android.R.string.cancel,
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,
 								int whichButton) {
 							newEventEvent = null;
+							removeDialog(Constants.DATE_DIALOG_ID);
 						}
 					}).setView(view).create();
 			installListeners();
@@ -364,16 +368,19 @@ public abstract class AbstractListActivity extends ListActivity implements
 					android.R.string.ok, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,
 								int whichButton) {
+							checkAndSetYear();
 							newEventEvent.setDescr(newEventDescr.getText()
 									.toString());
 							addContact(newEventEvent);
 							newEventEvent = null;
+							removeDialog(Constants.NEW_CONTACT_ID);
 						}
 					}).setNegativeButton(android.R.string.cancel,
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,
 								int whichButton) {
 							newEventEvent = null;
+							removeDialog(Constants.NEW_CONTACT_ID);
 						}
 					}).setView(view).create();
 			installListeners();
@@ -465,7 +472,14 @@ public abstract class AbstractListActivity extends ListActivity implements
 					public void onItemSelected(AdapterView<?> parent,
 							View view, int position, long id) {
 						newEventEvent.setMonth(position);
-						createAndSetDayAdapter();
+						newEventSpinnerDay.post(new Runnable() {
+
+							@Override
+							public void run() {
+								createAndSetDayAdapter();
+							}
+
+						});
 					}
 
 					@Override
@@ -489,17 +503,8 @@ public abstract class AbstractListActivity extends ListActivity implements
 
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				if (event.getAction() == KeyEvent.ACTION_UP) {
-					int intYear = 1980;
-					try {
-						intYear = Integer.parseInt(newEventYear.getText()
-								.toString());
-						createAndSetDayAdapter();
-					} catch (Throwable thr) {
-					} finally {
-						newEventEvent.setYear(intYear);
-					}
-				}
+				checkAndSetYear();
+				createAndSetDayAdapter();
 				return false;
 			}
 		});
@@ -551,27 +556,80 @@ public abstract class AbstractListActivity extends ListActivity implements
 	 *            der zu aktualisierende Kontakt
 	 */
 	public void updateContact(BirthdayItem item) {
+		if (TKBirthdayReminder.isContactsContractPresent) {
+			_updateContact_new(item);
+		} else {
+			_updateContact_old(item);
+		}
+	}
+
+	private void _updateContact_old(BirthdayItem item) {
 		ContentResolver contentResolver = getContentResolver();
 		Uri uri = Uri.withAppendedPath(Contacts.People.CONTENT_URI, Long
 				.toString(item.getId()));
 		// lesen des Notizfeldes
 		Cursor c = contentResolver
-		.query(uri, null,
-				null, null, null);
-//		.query(uri, new String[] { Contacts.PeopleColumns.NOTES },
-//				null, null, null);
+				.query(uri, new String[] { Contacts.PeopleColumns.NOTES },
+						null, null, null);
 		if (c != null) {
 			if (c.moveToFirst()) {
-				String notes = c.getString(c.getColumnIndex(Contacts.PeopleColumns.NOTES));
-//				String notes = c.getString(0);
+				String notes = TKDateUtils.getStringFromDate(
+						item.getBirthday(), c.getString(0));
 				// Aktualisieren des Eintrags
 				ContentValues values = new ContentValues();
-				for (String cn: c.getColumnNames()) {
-					values.put(cn, c.getString(c.getColumnIndex(cn)));
-				}
-				values.put(Contacts.PeopleColumns.NOTES, TKDateUtils
-						.getStringFromDate(item.getBirthday(), notes));
+				values.put(Contacts.PeopleColumns.NOTES, notes);
 				contentResolver.update(uri, values, null, null);
+			}
+			c.close();
+			readContacts(true);
+		}
+	}
+
+	private void _updateContact_new(BirthdayItem item) {
+		ContentResolver contentResolver = getContentResolver();
+		String id = Long.toString(item.getId());
+		Uri uri = Uri.withAppendedPath(Contacts.People.CONTENT_URI, id);
+		// lesen des Notizfeldes
+		Cursor c = contentResolver
+				.query(uri, new String[] { Contacts.PeopleColumns.NOTES },
+						null, null, null);
+		if (c != null) {
+			if (c.moveToFirst()) {
+				String notes = TKDateUtils.getStringFromDate(
+						item.getBirthday(), c.getString(0));
+				// die zu setzenden Werte
+				ContentValues values = new ContentValues();
+				values.put(ContactsContractWrapper.CommonDataKinds.Note.NOTE,
+						notes);
+				// Aktualisieren des Eintrags
+				uri = ContactsContractWrapper.Data.CONTENT_URI;
+				Cursor cc = contentResolver.query(uri, null,
+						ContactsContractWrapper.Data.CONTACT_ID + " = ?",
+						new String[] { id }, null);
+				if (cc != null) {
+					if (cc.moveToNext()) {
+						String noteWhere = ContactsContractWrapper.Data.CONTACT_ID
+								+ " = ? AND "
+								+ ContactsContractWrapper.Data.MIMETYPE
+								+ " = ?";
+						String[] noteWhereParams = new String[] {
+								id,
+								ContactsContractWrapper.CommonDataKinds.Note.CONTENT_ITEM_TYPE };
+						if (contentResolver.update(uri, values, noteWhere,
+								noteWhereParams) == 0) {
+							values
+									.put(
+											ContactsContractWrapper.Data.MIMETYPE,
+											ContactsContractWrapper.CommonDataKinds.Note.CONTENT_ITEM_TYPE);
+							values
+									.put(
+											ContactsContractWrapper.Data.RAW_CONTACT_ID,
+											id);
+							contentResolver.insert(uri, values);
+						}
+					}
+					cc.close();
+				}
 			}
 			c.close();
 			readContacts(true);
@@ -689,5 +747,15 @@ public abstract class AbstractListActivity extends ListActivity implements
 	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 		TimePickerDialogHelper.writeToPreferences(this, hourOfDay, minute);
 		BootCompleteReceiver.startAlarm(this, true);
+	}
+
+	private int checkAndSetYear() {
+		int intYear = 1980;
+		try {
+			intYear = Integer.parseInt(newEventYear.getText().toString());
+		} catch (Throwable thr) {
+		}
+		newEventEvent.setYear(intYear);
+		return intYear;
 	}
 }

@@ -78,6 +78,7 @@ public class ContactsList {
 		// jetzt die eigene Gruppe
 		uri = Uri.parse("content://contacts/groups/" + "name/"
 				+ Uri.encode("TKBirthdayReminder") + "/members");
+		uri = Contacts.People.CONTENT_URI;
 		read(contentResolver, uri);
 		Collections.sort(birthdaySet, new BirthdaySetComparator());
 		Collections.sort(birthdayNotSet, new BirthdayNotSetComparator());

@@ -28,6 +28,8 @@ import android.view.View;
  */
 public class TKBirthdayReminder extends AbstractListActivity {
 
+	public static final boolean isContactsContractPresent = _isContactsContractPresent();
+
 	/**
 	 * Der aktuelle sowie der zuletzt gespeicherte versionCode. Wird verwendet,
 	 * um ggf. beim Start ein README oä. anzuzeigen.
@@ -111,6 +113,17 @@ public class TKBirthdayReminder extends AbstractListActivity {
 	@Override
 	protected ArrayList<BirthdayItem> getProperList(ContactsList cl) {
 		return cl.getListBirthdaySet();
+	}
+
+	private static boolean _isContactsContractPresent() {
+		boolean result = false;
+		try {
+			Class.forName("android.provider.ContactsContract");
+			result = true;
+		} catch (Throwable thr) {
+		}
+		Log.d(TKBirthdayReminder.class.getName(), Boolean.toString(result));
+		return result;
 	}
 
 	/**
