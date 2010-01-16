@@ -1,3 +1,6 @@
+1.3.0
+- kleinere Bugfixes
+
 1.2.9
 - kein Geflacker mehr bei Welcome-Dialog und Orientierungswechsel
 - Daten ändern klappt besser unter Android 2.0

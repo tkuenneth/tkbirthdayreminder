@@ -307,7 +307,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 					android.R.string.ok, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,
 								int whichButton) {
-							checkAndSetYear();
+							newEventEvent.setYear(checkYear());
 							Calendar cal = Calendar.getInstance();
 							cal.set(Calendar.YEAR, newEventEvent.getYear());
 							cal.set(Calendar.MONTH, newEventEvent.getMonth());
@@ -368,7 +368,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 					android.R.string.ok, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,
 								int whichButton) {
-							checkAndSetYear();
+							newEventEvent.setYear(checkYear());
 							newEventEvent.setDescr(newEventDescr.getText()
 									.toString());
 							addContact(newEventEvent);
@@ -503,7 +503,6 @@ public abstract class AbstractListActivity extends ListActivity implements
 
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				checkAndSetYear();
 				createAndSetDayAdapter();
 				return false;
 			}
@@ -530,11 +529,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 		adapterDay
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		// Kalender setzen
-		int intYear = 1980;
-		try {
-			intYear = Integer.parseInt(newEventYear.getText().toString());
-		} catch (Throwable thr) {
-		}
+		int intYear = checkYear();
 		newEventCal.set(Calendar.YEAR, intYear);
 		newEventCal.set(Calendar.DAY_OF_MONTH, 1);
 		newEventCal.set(Calendar.MONTH, newEventEvent.getMonth());
@@ -749,13 +744,12 @@ public abstract class AbstractListActivity extends ListActivity implements
 		BootCompleteReceiver.startAlarm(this, true);
 	}
 
-	private int checkAndSetYear() {
+	private int checkYear() {
 		int intYear = 1980;
 		try {
 			intYear = Integer.parseInt(newEventYear.getText().toString());
 		} catch (Throwable thr) {
 		}
-		newEventEvent.setYear(intYear);
 		return intYear;
 	}
 }
