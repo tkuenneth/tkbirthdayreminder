@@ -16,17 +16,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.content.Context;
+import android.util.Log;
 
 public class TKDateUtils {
 
-	private enum ABC {aries, taurus, gemini, cancer, leo, virgo, libra, scorpius, sagittarius, 
-		capricornus, aquarius, pisces};
-	
+	private enum ABC {
+		aries, taurus, gemini, cancer, leo, virgo, libra, scorpius, sagittarius, capricornus, aquarius, pisces
+	};
+
 	public static final SimpleDateFormat FORMAT_YYYYMMDD = new SimpleDateFormat(
-	"yyyyMMdd");
-	
+			"yyyyMMdd");
+
 	public static final SimpleDateFormat FORMAT_WEEKDAY = new SimpleDateFormat(
-	"EEE");
+			"EEE");
 
 	private static final DateFormat FORMAT_SHORT_DATE = SimpleDateFormat
 			.getDateInstance(DateFormat.SHORT);
@@ -75,24 +77,28 @@ public class TKDateUtils {
 		}
 		return FORMAT_SHORT_DATE.format(birthday);
 	}
-	
+
 	public static int getBirthdayInDays(Date birthday) {
 		return getBirthdayInDays(birthday, null);
 	}
 
-	public static int getBirthdayInDays(Date birthday, Date buffer) {
-		String stringBirthday = FORMAT_YYYYMMDD.format(birthday);
-		int monthBirthday = Integer.parseInt(stringBirthday.substring(4, 6)) - 1;
-		int dayBirthday = Integer.parseInt(stringBirthday.substring(6, 8));
-		Calendar cal = new GregorianCalendar();
-		int daysToday = cal.get(Calendar.DAY_OF_YEAR);
-		cal.set(Calendar.DAY_OF_MONTH, dayBirthday);
-		cal.set(Calendar.MONTH, monthBirthday);
-		if (buffer != null) {
-			buffer.setTime(cal.getTimeInMillis());
+	public static synchronized int getBirthdayInDays(Date birthday, Date buffer) {
+		if (birthday != null) {
+			String stringBirthday = FORMAT_YYYYMMDD.format(birthday);
+			int monthBirthday = Integer
+					.parseInt(stringBirthday.substring(4, 6)) - 1;
+			int dayBirthday = Integer.parseInt(stringBirthday.substring(6, stringBirthday.length()));
+			Calendar cal = new GregorianCalendar();
+			int daysToday = cal.get(Calendar.DAY_OF_YEAR);
+			cal.set(Calendar.DAY_OF_MONTH, dayBirthday);
+			cal.set(Calendar.MONTH, monthBirthday);
+			if (buffer != null) {
+				buffer.setTime(cal.getTimeInMillis());
+			}
+			int daysBirthday = cal.get(Calendar.DAY_OF_YEAR);
+			return daysBirthday - daysToday;
 		}
-		int daysBirthday = cal.get(Calendar.DAY_OF_YEAR);
-		return daysBirthday - daysToday;
+		return 0;
 	}
 
 	public static int getAge(Date birthday) {
