@@ -603,6 +603,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 						new String[] { id }, null);
 				if (cc != null) {
 					if (cc.moveToNext()) {
+						long l = cc.getLong(cc.getColumnIndex(ContactsContractWrapper.Data.RAW_CONTACT_ID));
 						String noteWhere = ContactsContractWrapper.Data.CONTACT_ID
 								+ " = ? AND "
 								+ ContactsContractWrapper.Data.MIMETYPE
@@ -619,7 +620,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 							values
 									.put(
 											ContactsContractWrapper.Data.RAW_CONTACT_ID,
-											id);
+											l);
 							contentResolver.insert(uri, values);
 						}
 					}

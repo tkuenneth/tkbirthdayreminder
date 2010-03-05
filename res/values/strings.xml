@@ -75,7 +75,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nThe author may not be held
 for any problems caused by using this program. You use <b>TKBirthdayReminder</b> completely
 at your own risk.
 \n\n<b>Changes since the last version</b>\n
-- the app is temporarily restricted to Android 1.x devices; to be fixed soon
+- should work again on Android 2.x devices
 \n\nPlease click <b>Continue</b> if you agree with the terms of use. <b>Abort</b> quits 
 the program.
 	</string>
