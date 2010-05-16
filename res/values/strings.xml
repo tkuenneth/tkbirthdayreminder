@@ -58,7 +58,8 @@
 	<string name="next_notification">next check for due birthdays on %1$s at %2$s</string>
     
     <string name="welcome_text">
-<b>TKBirthdayReminder</b> organizes birthdays. It adds them to your regular contacts databse. 
+<b>TKBirthdayReminder</b> organizes birthdays. It adds them to 
+the notes field of your regular contacts. 
 Consequently, to rename, add or delete an entry, switch to <i>Contacts</i>.
 Birthday dates, of course, are set or changed using <b>TKBirthdayReminder</b>.
 \nAn easy to handle list shows the next birthdays and how old the persons become.
@@ -75,7 +76,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nThe author may not be held
 for any problems caused by using this program. You use <b>TKBirthdayReminder</b> completely
 at your own risk.
 \n\n<b>Changes since the last version</b>\n
-- should work again on Android 2.x devices
+- offers a widget for the home screen
 \n\nPlease click <b>Continue</b> if you agree with the terms of use. <b>Abort</b> quits 
 the program.
 	</string>

@@ -19,6 +19,8 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -599,12 +601,14 @@ public abstract class AbstractListActivity extends ListActivity implements
 				// Aktualisieren des Eintrags
 				uri = ContactsContractWrapper.Data.CONTENT_URI;
 				Cursor cc = contentResolver.query(uri, null,
-						ContactsContractWrapper.Data.CONTACT_ID + " = ?",
+						ContactsContractWrapper.Data.RAW_CONTACT_ID + " = ?",
 						new String[] { id }, null);
 				if (cc != null) {
 					if (cc.moveToNext()) {
-						long l = cc.getLong(cc.getColumnIndex(ContactsContractWrapper.Data.RAW_CONTACT_ID));
-						String noteWhere = ContactsContractWrapper.Data.CONTACT_ID
+						long l = cc
+								.getLong(cc
+										.getColumnIndex(ContactsContractWrapper.Data.RAW_CONTACT_ID));
+						String noteWhere = ContactsContractWrapper.Data.RAW_CONTACT_ID
 								+ " = ? AND "
 								+ ContactsContractWrapper.Data.MIMETYPE
 								+ " = ?";
@@ -716,6 +720,21 @@ public abstract class AbstractListActivity extends ListActivity implements
 					public void run() {
 						setList(list);
 						setProgressBarIndeterminateVisibility(false);
+
+						AppWidgetManager m = AppWidgetManager
+								.getInstance(AbstractListActivity.this);
+						if (m != null) {
+							int[] appWidgetIds = m
+									.getAppWidgetIds(new ComponentName(
+											AbstractListActivity.this,
+											BirthdayWidget.class));
+							if ((appWidgetIds != null)
+									&& (appWidgetIds.length > 0)) {
+								BirthdayWidget.updateWidgets(
+										AbstractListActivity.this, m,
+										appWidgetIds);
+							}
+						}
 					}
 
 				});
