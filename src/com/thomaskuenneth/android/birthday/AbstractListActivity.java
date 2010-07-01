@@ -105,7 +105,6 @@ public abstract class AbstractListActivity extends ListActivity implements
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
 		// ggf. gespeicherte Liste wiederherstellen
@@ -129,6 +128,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 				}
 			}
 		}
+		super.onCreate(savedInstanceState);
 
 		getListView().setOnCreateContextMenuListener(this);
 	}

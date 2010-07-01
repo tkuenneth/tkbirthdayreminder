@@ -161,7 +161,7 @@ public class ContactsList {
 			// Gruppe anlegen
 			ContentValues values = new ContentValues();
 			values.put(Contacts.GroupsColumns.NAME, name);
-			values.put(Contacts.GroupsColumns.SHOULD_SYNC, 0);
+			values.put(Contacts.GroupsColumns.SHOULD_SYNC, 1);
 			uri = cr.insert(uri, values);
 			// _ID ermitteln
 			c = cr.query(uri, new String[] { BaseColumns._ID }, null, null,

@@ -46,18 +46,28 @@ public class BirthdayWidget extends AppWidgetProvider {
 	private static void updateViews(final RemoteViews updateViews,
 			Context context) {
 		ContactsList cl = new ContactsList(context);
+		String name = "";
+		String zodiac = "";
+		String birthday_date = "";
+		String birthday2 = "";
 		if (cl != null) {
 			ArrayList<BirthdayItem> birthdays = cl.getListBirthdaySet();
 			if (birthdays.size() > 0) {
-				BirthdayItem item = birthdays.get(0);
-				updateViews.setTextViewText(R.id.text1, item.getName());
+				int i = 0;
+				for (int pos = 0; pos < birthdays.size(); pos++) {
+					BirthdayItem item = birthdays.get(pos);
+					if (TKDateUtils.getBirthdayInDays(item.getBirthday()) < 0) {
+						continue;
+					}
+					i = pos;
+					break;
+				}
+				BirthdayItem item = birthdays.get(i);
+				name = item.getName();
 				Date birthday = item.getBirthday();
-				updateViews.setTextViewText(R.id.text2, TKDateUtils
-						.getBirthdayAsString(context, birthday));
-				updateViews.setTextViewText(R.id.text3, TKDateUtils
-						.getBirthdayDateAsString(birthday));
-				updateViews.setTextViewText(R.id.text4, Zodiac.getSign(context,
-						birthday));
+				birthday2 = TKDateUtils.getBirthdayAsString(context, birthday);
+				birthday_date = TKDateUtils.getBirthdayDateAsString(birthday);
+				zodiac = Zodiac.getSign(context, birthday);
 
 				Bitmap picture = item.getPicture();
 				if (picture == null) {
@@ -70,5 +80,9 @@ public class BirthdayWidget extends AppWidgetProvider {
 				updateViews.setImageViewBitmap(R.id.icon, picture);
 			}
 		}
+		updateViews.setTextViewText(R.id.text1, name);
+		updateViews.setTextViewText(R.id.text2, birthday2);
+		updateViews.setTextViewText(R.id.text3, birthday_date);
+		updateViews.setTextViewText(R.id.text4, zodiac);
 	}
 }

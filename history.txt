@@ -1,3 +1,7 @@
+1.3.5
+- should_sync auf true
+- widget improvements
+
 1.3.4
 - widget
 
