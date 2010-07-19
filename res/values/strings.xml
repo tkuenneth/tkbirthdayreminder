@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <resources>
+
 	<string name="app_name">Birthdays</string>
 	<string name="app_name_2">Birthdays not already set</string>
+
+	<string name="settings">Settings</string>
+	<string name="display_options">Display Options</string>
+	<string name="title_show_astrological_signs">Show astrological signs</string>
 		
 	<string name="aries">Aries</string>
 	<string name="taurus">Taurus</string>
@@ -76,7 +82,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nThe author may not be held
 for any problems caused by using this program. You use <b>TKBirthdayReminder</b> completely
 at your own risk.
 \n\n<b>Changes since the last version</b>\n
-- offers a widget for the home screen
+- can hide astrological signs
 \n\nPlease click <b>Continue</b> if you agree with the terms of use. <b>Abort</b> quits 
 the program.
 	</string>

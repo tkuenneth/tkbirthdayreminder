@@ -2,16 +2,15 @@
 
 <PreferenceScreen
         xmlns:android="http://schemas.android.com/apk/res/android">
-<!-- 
+ 
     <PreferenceCategory
-            android:title="@string/startup">
+            android:title="@string/display_options">
             
         <CheckBoxPreference
-                android:key="checkbox_show_list"
+                android:key="checkbox_show_astrological_signs"
                 android:defaultValue="true"
-                android:title="@string/title_checkbox_show_list" />
+                android:title="@string/title_show_astrological_signs" />
             
     </PreferenceCategory>
- -->
      
 </PreferenceScreen>

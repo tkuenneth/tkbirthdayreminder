@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 	menu.xml
-	TKBirthdayReminder (c) Thomas Künneth 2009
+	TKBirthdayReminder (c) Thomas Künneth 2009-2010
 	Alle Rechte beim Autoren. All rights reserved.
 -->
 
@@ -21,5 +21,9 @@
  
     <item android:id="@+id/new_entry"
         android:title="@string/menu_new_entry" />
+        
+    <item android:id="@+id/preferences"
+        android:title="@string/settings"
+        android:icon="@android:drawable/ic_menu_preferences" />
  
 </menu>

@@ -11,8 +11,10 @@ import java.util.List;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.provider.Contacts.People;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,11 +30,17 @@ public class BirthdayItemListAdapter extends BaseAdapter {
 	private final LayoutInflater mInflater;
 	private final List<BirthdayItem> items;
 	private final Context context;
+	private final boolean showAstrologicalSigns;
 
 	public BirthdayItemListAdapter(Context context, List<BirthdayItem> list) {
 		this.mInflater = LayoutInflater.from(context);
 		this.items = list;
 		this.context = context;
+
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		showAstrologicalSigns = prefs.getBoolean(
+				"checkbox_show_astrological_signs", true);
 	}
 
 	public int getCount() {
@@ -71,7 +79,8 @@ public class BirthdayItemListAdapter extends BaseAdapter {
 		holder.textInfo.setText(TKDateUtils.getBirthdayAsString(context,
 				birthday));
 		holder.textDate.setText(TKDateUtils.getBirthdayDateAsString(birthday));
-		holder.textZodiac.setText(Zodiac.getSign(context, birthday));
+		holder.textZodiac.setText(showAstrologicalSigns ? Zodiac.getSign(
+				context, birthday) : "");
 
 		Bitmap picture = item.getPicture();
 		if (picture == null) {

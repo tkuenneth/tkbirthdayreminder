@@ -45,5 +45,6 @@ public class Constants {
 	 */
 	public static final int RQ_PICK_CONTACT = 0x231167;
 	public static final int RQ_PICK_SOUND = 0x03091938;
+	public static final int RQ_PREFERENCES = 0x060667;
 
 }

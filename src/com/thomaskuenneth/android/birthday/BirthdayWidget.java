@@ -15,8 +15,10 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.provider.Contacts.People;
 import android.widget.RemoteViews;
 
@@ -67,7 +69,12 @@ public class BirthdayWidget extends AppWidgetProvider {
 				Date birthday = item.getBirthday();
 				birthday2 = TKDateUtils.getBirthdayAsString(context, birthday);
 				birthday_date = TKDateUtils.getBirthdayDateAsString(birthday);
-				zodiac = Zodiac.getSign(context, birthday);
+
+				SharedPreferences prefs = PreferenceManager
+						.getDefaultSharedPreferences(context);
+				if (prefs.getBoolean("checkbox_show_astrological_signs", true)) {
+					zodiac = Zodiac.getSign(context, birthday);
+				}
 
 				Bitmap picture = item.getPicture();
 				if (picture == null) {

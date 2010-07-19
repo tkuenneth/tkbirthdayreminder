@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <resources>
+
 	<string name="app_name">Geburtstage</string>
 	<string name="app_name_2">Noch nicht eingetragene Geburtstage</string>
 
+	<string name="settings">Einstellungen</string>
+	<string name="display_options">Anzeigeoptionen</string>
+	<string name="title_show_astrological_signs">Sternzeichen anzeigen</string>
+	
 	<string name="aries">Widder</string>
 	<string name="taurus">Stier</string>
 	<string name="gemini">Zwillinge</string>

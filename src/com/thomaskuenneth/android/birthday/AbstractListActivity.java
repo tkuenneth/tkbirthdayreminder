@@ -184,6 +184,9 @@ public abstract class AbstractListActivity extends ListActivity implements
 				}
 			}
 			break;
+		case Constants.RQ_PREFERENCES:
+			readContacts(false);
+			break;
 		}
 	}
 
@@ -431,11 +434,10 @@ public abstract class AbstractListActivity extends ListActivity implements
 			}
 			startActivityForResult(i, Constants.RQ_PICK_SOUND);
 			break;
-		// case R.id.preferences:
-		// Intent i = new Intent(this, Preferences.class);
-		// i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		// startActivity(i);
-		// break;
+		case R.id.preferences:
+			Intent iPrefs = new Intent(this, PreferencesActivity.class);
+			startActivityForResult(iPrefs, Constants.RQ_PREFERENCES);
+			break;
 		case R.id.new_entry:
 			newEventEvent = new AnnualEvent();
 			showDialog(Constants.NEW_CONTACT_ID);
