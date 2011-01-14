@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -77,7 +79,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 	// Neuer Kontakt
 	private static final DateFormat FORMAT_MONTH_SHORT = new SimpleDateFormat(
 			"MMM");
-	private TextView newEventDescr, newEventYear;
+	private TextView newEventYear;
 	private Spinner newEventSpinnerDay, newEventSpinnerMonth;
 	private Calendar newEventCal;
 	private AnnualEvent newEventEvent;
@@ -143,7 +145,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 				Intent i = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
 						ContactsContract.Contacts.CONTENT_URI, Long
 								.toString(item.getId())));
-				startActivity(i);
+				startActivityForResult(i, Constants.RQ_SHOW_CONTACT);
 			}
 		});
 	}
@@ -196,6 +198,9 @@ public abstract class AbstractListActivity extends ListActivity implements
 			break;
 		case Constants.RQ_PREFERENCES:
 			readContacts(false);
+			break;
+		case Constants.RQ_SHOW_CONTACT:
+			readContacts(true);
 			break;
 		}
 	}
@@ -313,7 +318,6 @@ public abstract class AbstractListActivity extends ListActivity implements
 			newEventSpinnerMonth = (Spinner) view
 					.findViewById(R.id.new_event_month);
 			newEventYear = (TextView) view.findViewById(R.id.new_event_year);
-			newEventDescr = null;
 			dialog = new AlertDialog.Builder(this).setTitle(
 					R.string.menu_change_date).setPositiveButton(
 					android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -436,9 +440,6 @@ public abstract class AbstractListActivity extends ListActivity implements
 		// Jahres-Textfeld befüllen
 		int intYear = newEventEvent.getYear();
 		newEventYear.setText(Integer.toString(intYear));
-		if (newEventDescr != null) {
-			newEventDescr.setText(newEventEvent.getDescr());
-		}
 	}
 
 	private void installListeners() {
@@ -522,6 +523,30 @@ public abstract class AbstractListActivity extends ListActivity implements
 		newEventSpinnerDay.setSelection(newEventEvent.getDay() - 1);
 	}
 
+	private void requestSync() {
+		AccountManager am = AccountManager.get(this);
+		Account[] accounts = am.getAccounts();
+
+		int i = 0;
+		for (Account account : accounts) {
+			int isSyncable = ContentResolver.getIsSyncable(account,
+					ContactsContract.AUTHORITY);
+
+			if (isSyncable > 0) {
+				Bundle extras = new Bundle();
+				extras
+						.putBoolean(
+								ContentResolver.SYNC_EXTRAS_OVERRIDE_TOO_MANY_DELETIONS,
+								true);
+				extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+				extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+				extras.putBoolean(ContentResolver.SYNC_EXTRAS_UPLOAD, true);
+				ContentResolver.requestSync(accounts[i++],
+						ContactsContract.AUTHORITY, extras);
+			}
+		}
+	}
+
 	/**
 	 * Aktualisiert einen Kontakt in der Datenbank und anschließend die Listen.
 	 * 
@@ -530,6 +555,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 	 */
 	public void updateContact(BirthdayItem item) {
 		ContentResolver contentResolver = getContentResolver();
+
 		String id = Long.toString(item.getId());
 		Log.d(TAG, "updateContact: " + item.getName() + " (" + id + ")");
 		// lesen vorhandener Daten
@@ -641,6 +667,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 			}
 			c.close();
 		}
+		requestSync();
 		readContacts(true);
 	}
 
