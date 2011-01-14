@@ -1,7 +1,7 @@
 /**
  * ContactsList.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2009
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2011
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -10,16 +10,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Hashtable;
 
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
-import android.provider.BaseColumns;
-import android.provider.Contacts;
-import android.provider.Contacts.People;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 /**
@@ -31,6 +26,8 @@ import android.util.Log;
  */
 public class ContactsList {
 
+	private static final String TAG = ContactsList.class.getSimpleName();
+
 	/*
 	 * Diese Listen können durch Aufruf des passenden Getters von den Activities
 	 * verwendet werden.
@@ -39,18 +36,12 @@ public class ContactsList {
 	private final ArrayList<BirthdayItem> birthdayNotSet;
 	private final ArrayList<BirthdayItem> notifications;
 
-	/*
-	 * Wird verwendet, um Kontakte nicht mehrfach anzuzeigen.
-	 */
-	private final Hashtable<Long, Boolean> hashtableID;
-
 	private final Context context;
 
 	public ContactsList(Context context) {
 		birthdaySet = new ArrayList<BirthdayItem>();
 		birthdayNotSet = new ArrayList<BirthdayItem>();
 		notifications = new ArrayList<BirthdayItem>();
-		hashtableID = new Hashtable<Long, Boolean>();
 		this.context = context;
 		readContacts(context);
 	}
@@ -72,47 +63,99 @@ public class ContactsList {
 	 */
 	private void readContacts(final Context context) {
 		ContentResolver contentResolver = context.getContentResolver();
-		Uri uri = Uri.parse("content://contacts/groups/system_id/"
-				+ Contacts.Groups.GROUP_MY_CONTACTS + "/members");
-		read(contentResolver, uri);
-		// jetzt die eigene Gruppe
-		uri = Uri.parse("content://contacts/groups/" + "name/"
-				+ Uri.encode("TKBirthdayReminder") + "/members");
-		uri = Contacts.People.CONTENT_URI;
-		read(contentResolver, uri);
+		queryContacts(contentResolver);
 		Collections.sort(birthdaySet, new BirthdaySetComparator());
 		Collections.sort(birthdayNotSet, new BirthdayNotSetComparator());
 		Collections.sort(notifications, new NotificationsComparator());
 	}
 
-	private void read(ContentResolver contentResolver, Uri uri) {
-		String[] projection = new String[] { People.DISPLAY_NAME, People.NOTES,
-				People._ID, People.NUMBER };
-		Cursor c = contentResolver.query(uri, projection, null, null, null);
-		if (c != null) {
-			while (c.moveToNext()) {
-				String name = c.getString(0);
-				String notes = c.getString(1);
-				long id = c.getLong(2);
-				String primaryPhoneNumber = c.getString(3);
-				Long key = new Long(id);
-				if (!hashtableID.containsKey(key)) {
-					BirthdayItem item = new BirthdayItem(name, TKDateUtils
-							.getDateFromString(notes), id, primaryPhoneNumber);
-					if (addToListBirthdaySet(item)) {
-						birthdaySet.add(item);
+	private void queryContacts(ContentResolver contentResolver) {
+		// IDs und Namen aller sichtbaren Kontakte ermitteln
+		String[] mainQueryProjection = { ContactsContract.Contacts._ID,
+				ContactsContract.Contacts.DISPLAY_NAME };
+		String mainQuerySelection = ContactsContract.Contacts.IN_VISIBLE_GROUP
+				+ " = ?";
+		String[] mainQuerySelectionArgs = new String[] { "1" };
+		Cursor mainQueryCursor = contentResolver.query(
+				ContactsContract.Contacts.CONTENT_URI, mainQueryProjection,
+				mainQuerySelection, mainQuerySelectionArgs, null);
+		// Trefferliste abarbeiten...
+		while (mainQueryCursor.moveToNext()) {
+			BirthdayItem item = createItemFromCursor(contentResolver,
+					mainQueryCursor);
+
+			if (addToListBirthdaySet(item)) {
+				birthdaySet.add(item);
+			}
+			if (addToListBirthdayNotSet(item)) {
+				birthdayNotSet.add(item);
+			}
+			if (addToListNotifications(item)) {
+				notifications.add(item);
+			}
+		}
+		mainQueryCursor.close();
+	}
+
+	public static BirthdayItem createItemFromCursor(
+			ContentResolver contentResolver, Cursor mainQueryCursor) {
+		String contactId = mainQueryCursor.getString(mainQueryCursor
+				.getColumnIndex(ContactsContract.Contacts._ID));
+		String displayName = mainQueryCursor.getString(mainQueryCursor
+				.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+		Log.d(TAG, "===> " + displayName + " (" + contactId + ")");
+
+		// Telefonnummer, Geburtsdatum und ggf. Notizen lesen
+		String phoneNumber = null;
+		Date gebdt = null;
+		String[] dataQueryProjection = new String[] {
+				ContactsContract.Data.MIMETYPE,
+				ContactsContract.CommonDataKinds.Event.TYPE,
+				ContactsContract.CommonDataKinds.Event.START_DATE,
+				ContactsContract.CommonDataKinds.Note.NOTE,
+				ContactsContract.CommonDataKinds.Phone.NUMBER,
+				ContactsContract.CommonDataKinds.Phone.TYPE };
+		String dataQuerySelection = ContactsContract.Data.CONTACT_ID + " = ?";
+		String[] dataQuerySelectionArgs = new String[] { contactId };
+		Cursor dataQueryCursor = contentResolver.query(
+				ContactsContract.Data.CONTENT_URI, dataQueryProjection,
+				dataQuerySelection, dataQuerySelectionArgs, null);
+		while (dataQueryCursor.moveToNext()) {
+			String mimeType = dataQueryCursor.getString(0);
+			if (ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE
+					.equals(mimeType)) {
+				int type = dataQueryCursor.getInt(1);
+				if (ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY == type) {
+					String stringBirthday = dataQueryCursor.getString(2);
+					Log.d(TAG, "     birthday date: " + stringBirthday);
+					Date d = TKDateUtils.getDateFromString1(stringBirthday);
+					if (d != null) {
+						gebdt = d;
 					}
-					if (addToListBirthdayNotSet(item)) {
-						birthdayNotSet.add(item);
-					}
-					if (addToListNotifications(item)) {
-						notifications.add(item);
-					}
-					hashtableID.put(key, Boolean.TRUE);
+				}
+			} else if (ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
+					.equals(mimeType)) {
+				String note = dataQueryCursor.getString(3);
+				Log.d(TAG, "     note: " + note);
+				Date d = gebdt = TKDateUtils.getDateFromString(note);
+				if (d != null) {
+					gebdt = d;
+				}
+			} else if (ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE
+					.equals(mimeType)) {
+				if (ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE == dataQueryCursor
+						.getInt(5)) {
+					phoneNumber = dataQueryCursor.getString(4);
+					Log.d(TAG, "     phone: " + phoneNumber);
 				}
 			}
-			c.close();
 		}
+		dataQueryCursor.close();
+
+		// jetzt Objekt erzeugen und in Listen einfügen
+		BirthdayItem item = new BirthdayItem(displayName, gebdt, new Long(
+				contactId), phoneNumber);
+		return item;
 	}
 
 	private boolean addToListBirthdaySet(BirthdayItem item) {
@@ -140,52 +183,6 @@ public class ContactsList {
 			}
 		}
 		return false;
-	}
-
-	public static long addGroup(Context context, String name) {
-		long id = 0;
-		ContentResolver cr = context.getContentResolver();
-		// Gruppe schon vorhanden?
-		Uri uri = Contacts.Groups.CONTENT_URI;
-		Cursor c = cr.query(uri, new String[] { Contacts.GroupsColumns.NAME,
-				BaseColumns._ID }, Contacts.GroupsColumns.NAME + " = ?",
-				new String[] { name }, null);
-		if ((c != null) && (c.moveToFirst())) {
-			while (!c.isAfterLast()) {
-				String groupName = c.getString(0);
-				Log.d(ContactsList.class.getName(), groupName);
-				id = c.getLong(1);
-				c.moveToNext();
-			}
-		} else {
-			// Gruppe anlegen
-			ContentValues values = new ContentValues();
-			values.put(Contacts.GroupsColumns.NAME, name);
-			values.put(Contacts.GroupsColumns.SHOULD_SYNC, 1);
-			uri = cr.insert(uri, values);
-			// _ID ermitteln
-			c = cr.query(uri, new String[] { BaseColumns._ID }, null, null,
-					null);
-			if ((c != null) && (c.moveToFirst())) {
-				id = c.getLong(0);
-			}
-		}
-		return id;
-	}
-
-	public static void createPerson(Context context, long groupId, String name,
-			String notes) {
-		ContentValues personInfo = new ContentValues();
-		personInfo.put(Contacts.PeopleColumns.NAME, name);
-		personInfo.put(Contacts.PeopleColumns.NOTES, notes);
-		ContentResolver cr = context.getContentResolver();
-		Uri newEntry = cr.insert(People.CONTENT_URI, personInfo);
-		Cursor c = cr.query(newEntry, new String[] { BaseColumns._ID }, null,
-				null, null);
-		if ((c != null) && (c.moveToFirst())) {
-			long personId = c.getLong(0);
-			Contacts.People.addToGroup(cr, personId, groupId);
-		}
 	}
 
 	private static class BirthdaySetComparator implements

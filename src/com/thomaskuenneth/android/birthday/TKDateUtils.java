@@ -1,7 +1,7 @@
 /**
  * DateUtils.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2009
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2011
  * 
  * Alle Rechte beim Autoren. All rights reserved.
  */
@@ -18,14 +18,21 @@ import java.util.regex.Pattern;
 import android.content.Context;
 import android.util.Log;
 
+/**
+ * Diese Klasse enthält datums- und kalenderbezogene Hilfsmethoden.
+ * 
+ * @author Thomas Künneth
+ * 
+ */
 public class TKDateUtils {
 
-	private enum ABC {
-		aries, taurus, gemini, cancer, leo, virgo, libra, scorpius, sagittarius, capricornus, aquarius, pisces
-	};
+	private static final String TAG = TKDateUtils.class.getSimpleName();
 
 	public static final SimpleDateFormat FORMAT_YYYYMMDD = new SimpleDateFormat(
 			"yyyyMMdd");
+
+	public static final SimpleDateFormat FORMAT_YYYY_MM_DD = new SimpleDateFormat(
+			"yyyy-MM-dd");
 
 	public static final SimpleDateFormat FORMAT_WEEKDAY = new SimpleDateFormat(
 			"EEE");
@@ -35,6 +42,14 @@ public class TKDateUtils {
 
 	private static final DateFormat FORMAT_SHORT_TIME = SimpleDateFormat
 			.getTimeInstance(DateFormat.SHORT);
+
+	public static String getDateAsStringYYYY_MM_DD(Date date) {
+		try {
+			return FORMAT_YYYY_MM_DD.format(date);
+		} catch (Throwable tr) {
+		}
+		return "";
+	}
 
 	public static String getNotificationDateAsString(Context context, Date date) {
 		return TKBirthdayReminder.getStringFromResources(context,
@@ -87,7 +102,8 @@ public class TKDateUtils {
 			String stringBirthday = FORMAT_YYYYMMDD.format(birthday);
 			int monthBirthday = Integer
 					.parseInt(stringBirthday.substring(4, 6)) - 1;
-			int dayBirthday = Integer.parseInt(stringBirthday.substring(6, stringBirthday.length()));
+			int dayBirthday = Integer.parseInt(stringBirthday.substring(6,
+					stringBirthday.length()));
 			Calendar cal = new GregorianCalendar();
 			int daysToday = cal.get(Calendar.DAY_OF_YEAR);
 			cal.set(Calendar.DAY_OF_MONTH, dayBirthday);
@@ -101,6 +117,13 @@ public class TKDateUtils {
 		return 0;
 	}
 
+	/**
+	 * Ermittelt das Alter.
+	 * 
+	 * @param birthday
+	 *            Geburtsdatum
+	 * @return Alter
+	 */
 	public static int getAge(Date birthday) {
 		String stringBirthday = FORMAT_YYYYMMDD.format(birthday);
 		int yearBirthday = Integer.parseInt(stringBirthday.substring(0, 4));
@@ -118,10 +141,15 @@ public class TKDateUtils {
 					Pattern.DOTALL);
 			Matcher m = p.matcher(string.subSequence(0, string.length()));
 			if (m.matches()) {
-				sb.append(m.group(1).trim());
-				sb.append(m.group(2).trim());
+				String group1 = m.group(1).trim();
+				sb.append(group1);
+				String group2 = m.group(2).trim();
+				if ((group1.length() > 0) && (group2.length() > 0)) {
+					sb.append('\n');
+				}
+				sb.append(group2);
 			} else {
-				sb.append(string.trim());
+				sb.append(string);
 			}
 		}
 		if (birthday != null) {
@@ -135,6 +163,7 @@ public class TKDateUtils {
 	}
 
 	public static Date getDateFromString(String string) {
+		Date result = null;
 		if (string != null) {
 			Pattern p = Pattern.compile(
 					".*Birthday=(\\d\\d\\d\\d\\d\\d\\d\\d).*$", Pattern.DOTALL);
@@ -142,12 +171,30 @@ public class TKDateUtils {
 			if (m.matches()) {
 				String date = m.group(1);
 				try {
-					return FORMAT_YYYYMMDD.parse(date);
-				} catch (Throwable thr) {
-					// no further action taken
+					result = FORMAT_YYYYMMDD.parse(date);
+				} catch (Throwable tr) {
+					Log.e(TAG, "getDateFromString()", tr);
 				}
 			}
 		}
-		return null;
+		return result;
+	}
+
+	public static Date getDateFromString1(String string) {
+		Date result = null;
+		if (string != null) {
+			Pattern p = Pattern.compile("(\\d\\d\\d\\d).*(\\d\\d).*(\\d\\d)",
+					Pattern.DOTALL);
+			Matcher m = p.matcher(string.subSequence(0, string.length()));
+			if (m.matches()) {
+				String date = m.group(1) + m.group(2) + m.group(3);
+				try {
+					result = FORMAT_YYYYMMDD.parse(date);
+				} catch (Throwable tr) {
+					Log.e(TAG, "getDateFromString1()", tr);
+				}
+			}
+		}
+		return result;
 	}
 }

@@ -38,7 +38,6 @@
     <string name="alert_dialog_ok">OK</string>
     <string name="alert_dialog_cancel">Cancel</string>
     
-    <string name="new_entry_dialog_title">Add contact</string>
     <string name="new_entry_dialog_name">Name</string>
     <string name="new_entry_dialog_date">Birthday date</string>
     

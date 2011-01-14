@@ -1,7 +1,7 @@
 /**
  * TKBirthdayReminder.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2009
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2011
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -27,8 +27,6 @@ import android.view.View;
  * @see AbstractListActivity
  */
 public class TKBirthdayReminder extends AbstractListActivity {
-
-	public static final boolean isContactsContractPresent = _isContactsContractPresent();
 
 	/**
 	 * Der aktuelle sowie der zuletzt gespeicherte versionCode. Wird verwendet,
@@ -113,17 +111,6 @@ public class TKBirthdayReminder extends AbstractListActivity {
 	@Override
 	protected ArrayList<BirthdayItem> getProperList(ContactsList cl) {
 		return cl.getListBirthdaySet();
-	}
-
-	private static boolean _isContactsContractPresent() {
-		boolean result = false;
-		try {
-			Class.forName("android.provider.ContactsContract");
-			result = true;
-		} catch (Throwable thr) {
-		}
-		Log.d(TKBirthdayReminder.class.getName(), Boolean.toString(result));
-		return result;
 	}
 
 	/**

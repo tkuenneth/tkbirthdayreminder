@@ -22,7 +22,6 @@
 	<string name="aquarius">Wassermann</string>
 	<string name="pisces">Fische</string>
 	
-    <string name="new_entry_dialog_title">Neuer Kontakt</string>
     <string name="new_entry_dialog_name">Name</string>
     <string name="new_entry_dialog_date">Geburtsdatum</string>
 	

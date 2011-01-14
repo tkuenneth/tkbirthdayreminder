@@ -37,7 +37,6 @@ public class Constants {
 	public static final int TIME_DIALOG_ID = 1;
 	public static final int NOTIFICATION_DAYS_DIALOG_ID = 2;
 	public static final int DATE_DIALOG_ID = 3;
-	public static final int NEW_CONTACT_ID = 4;
 	public static final int WELCOME_ID = 5;
 
 	/**

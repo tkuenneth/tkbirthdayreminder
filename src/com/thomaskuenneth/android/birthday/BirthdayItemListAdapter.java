@@ -1,11 +1,13 @@
 /**
  * BirthdayItemListAdapter.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2009
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2011
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -13,9 +15,11 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.provider.Contacts.People;
+import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +31,8 @@ import com.thomaskuenneth.android.util.Zodiac;
 
 public class BirthdayItemListAdapter extends BaseAdapter {
 
+	private static final String TAG = BirthdayItemListAdapter.class
+			.getSimpleName();
 	private final LayoutInflater mInflater;
 	private final List<BirthdayItem> items;
 	private final Context context;
@@ -82,17 +88,40 @@ public class BirthdayItemListAdapter extends BaseAdapter {
 		holder.textZodiac.setText(showAstrologicalSigns ? Zodiac.getSign(
 				context, birthday) : "");
 
+		Bitmap picture = loadBitmap(item, context);
+		holder.icon.setImageBitmap(picture);
+
+		return convertView;
+	}
+
+	public static Bitmap loadBitmap(BirthdayItem item, Context context) {
 		Bitmap picture = item.getPicture();
 		if (picture == null) {
-			Uri uriPerson = ContentUris.withAppendedId(People.CONTENT_URI, item
-					.getId());
-			picture = People.loadContactPhoto(context, uriPerson,
-					R.drawable.birthdaycake_32, null);
-			item.setPicture(picture);
+			InputStream input = null;
+			try {
+				Uri uri = ContentUris.withAppendedId(
+						ContactsContract.Contacts.CONTENT_URI, item.getId());
+				input = ContactsContract.Contacts.openContactPhotoInputStream(
+						context.getContentResolver(), uri);
+				if (input != null) {
+					picture = BitmapFactory.decodeStream(input);
+				} else {
+					picture = BitmapFactory.decodeResource(context
+							.getResources(), R.drawable.birthdaycake_32);
+				}
+				item.setPicture(picture);
+			} catch (Throwable tr) {
+				Log.e(TAG, "getView(): loading contact photo", tr);
+			} finally {
+				if (input != null) {
+					try {
+						input.close();
+					} catch (IOException e) {
+					}
+				}
+			}
 		}
-
-		holder.icon.setImageBitmap(picture);
-		return convertView;
+		return picture;
 	}
 
 	static class ViewHolder {

@@ -1,7 +1,7 @@
 /**
  * AbstractListActivity.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2009
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2011
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -34,8 +34,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.Contacts;
-import android.provider.Contacts.People;
+import android.provider.ContactsContract;
+import android.provider.ContactsContract.RawContacts;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -54,9 +54,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
-
-import com.thomaskuenneth.android.util.ContactsContractWrapper;
 
 /**
  * Diese abstrakte Basisklasse stellt die Kernunktionalität der Listenansichten
@@ -68,6 +67,9 @@ import com.thomaskuenneth.android.util.ContactsContractWrapper;
  */
 public abstract class AbstractListActivity extends ListActivity implements
 		OnTimeSetListener {
+
+	private static final String TAG = AbstractListActivity.class
+			.getSimpleName();
 
 	private static final String NEW_EVENT_EVENT = "newEventEvent";
 	private static final String LONG_CLICK_ITEM = "longClickItem";
@@ -131,6 +133,19 @@ public abstract class AbstractListActivity extends ListActivity implements
 		super.onCreate(savedInstanceState);
 
 		getListView().setOnCreateContextMenuListener(this);
+		getListView().setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				BirthdayItem item = (BirthdayItem) getListAdapter().getItem(
+						position);
+				Intent i = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
+						ContactsContract.Contacts.CONTENT_URI, Long
+								.toString(item.getId())));
+				startActivity(i);
+			}
+		});
 	}
 
 	@Override
@@ -152,7 +167,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 	@Override
 	public void onActivityResult(int reqCode, int resultCode, Intent data) {
 		super.onActivityResult(reqCode, resultCode, data);
-		Log.d(getClass().getName(), MessageFormat.format(
+		Log.d(TAG, MessageFormat.format(
 				"onActivityResult: requestCode={0}, resultCode={1}", reqCode,
 				resultCode));
 
@@ -162,16 +177,11 @@ public abstract class AbstractListActivity extends ListActivity implements
 				Uri contactData = data.getData();
 				Cursor c = managedQuery(contactData, null, null, null, null);
 				if (c.moveToFirst()) {
-					String name = c.getString(c
-							.getColumnIndex(People.DISPLAY_NAME));
-					String notes = c.getString(c.getColumnIndex(People.NOTES));
-					long id = c.getLong(c.getColumnIndex(People._ID));
-					String primaryPhoneNumber = c.getString(c
-							.getColumnIndex(People.NUMBER));
-					longClickedItem = new BirthdayItem(name, TKDateUtils
-							.getDateFromString(notes), id, primaryPhoneNumber);
+					longClickedItem = ContactsList.createItemFromCursor(
+							getContentResolver(), c);
 					showEditBirthdayDialog(longClickedItem);
 				}
+				c.close();
 			}
 			break;
 		case (Constants.RQ_PICK_SOUND):
@@ -285,9 +295,6 @@ public abstract class AbstractListActivity extends ListActivity implements
 		case Constants.NOTIFICATION_DAYS_DIALOG_ID:
 			updateCheckboxes(dialog);
 			break;
-		case Constants.NEW_CONTACT_ID:
-			updateViewsFromEvent();
-			break;
 		}
 	}
 
@@ -358,39 +365,6 @@ public abstract class AbstractListActivity extends ListActivity implements
 						}
 					}).setView(view).create();
 			break;
-		case Constants.NEW_CONTACT_ID:
-			newEventCal = Calendar.getInstance();
-			factory = LayoutInflater.from(this);
-			view = factory.inflate(R.layout.new_contact, null);
-			newEventDescr = (TextView) view.findViewById(R.id.new_event_descr);
-			newEventSpinnerDay = (Spinner) view
-					.findViewById(R.id.new_event_day);
-			newEventSpinnerMonth = (Spinner) view
-					.findViewById(R.id.new_event_month);
-			newEventYear = (TextView) view.findViewById(R.id.new_event_year);
-			dialog = new AlertDialog.Builder(this).setTitle(
-					R.string.new_entry_dialog_title).setPositiveButton(
-					android.R.string.ok, new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							newEventEvent.setYear(checkYear());
-							newEventEvent.setDescr(newEventDescr.getText()
-									.toString());
-							addContact(newEventEvent);
-							newEventEvent = null;
-							removeDialog(Constants.NEW_CONTACT_ID);
-						}
-					}).setNegativeButton(android.R.string.cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							newEventEvent = null;
-							removeDialog(Constants.NEW_CONTACT_ID);
-						}
-					}).setView(view).create();
-			installListeners();
-			updateViewsFromEvent();
-			break;
 		}
 		return dialog;
 	}
@@ -439,12 +413,12 @@ public abstract class AbstractListActivity extends ListActivity implements
 			startActivityForResult(iPrefs, Constants.RQ_PREFERENCES);
 			break;
 		case R.id.new_entry:
-			newEventEvent = new AnnualEvent();
-			showDialog(Constants.NEW_CONTACT_ID);
+			Intent intentContact = new Intent(
+					ContactsContract.Intents.Insert.ACTION,
+					ContactsContract.Contacts.CONTENT_URI);
+			startActivityForResult(intentContact, Constants.RQ_PICK_CONTACT);
 			break;
 		case R.id.set_date:
-			// Intent intent = new Intent(Intent.ACTION_PICK,
-			// People.CONTENT_URI);
 			Intent intent = new Intent(this, BirthdayNotSetActivity.class);
 			startActivityForResult(intent, Constants.RQ_PICK_CONTACT);
 			break;
@@ -555,87 +529,119 @@ public abstract class AbstractListActivity extends ListActivity implements
 	 *            der zu aktualisierende Kontakt
 	 */
 	public void updateContact(BirthdayItem item) {
-		if (TKBirthdayReminder.isContactsContractPresent) {
-			_updateContact_new(item);
-		} else {
-			_updateContact_old(item);
-		}
-	}
-
-	private void _updateContact_old(BirthdayItem item) {
-		ContentResolver contentResolver = getContentResolver();
-		Uri uri = Uri.withAppendedPath(Contacts.People.CONTENT_URI, Long
-				.toString(item.getId()));
-		// lesen des Notizfeldes
-		Cursor c = contentResolver
-				.query(uri, new String[] { Contacts.PeopleColumns.NOTES },
-						null, null, null);
-		if (c != null) {
-			if (c.moveToFirst()) {
-				String notes = TKDateUtils.getStringFromDate(
-						item.getBirthday(), c.getString(0));
-				// Aktualisieren des Eintrags
-				ContentValues values = new ContentValues();
-				values.put(Contacts.PeopleColumns.NOTES, notes);
-				contentResolver.update(uri, values, null, null);
-			}
-			c.close();
-			readContacts(true);
-		}
-	}
-
-	private void _updateContact_new(BirthdayItem item) {
 		ContentResolver contentResolver = getContentResolver();
 		String id = Long.toString(item.getId());
-		Uri uri = Uri.withAppendedPath(Contacts.People.CONTENT_URI, id);
-		// lesen des Notizfeldes
-		Cursor c = contentResolver
-				.query(uri, new String[] { Contacts.PeopleColumns.NOTES },
-						null, null, null);
-		if (c != null) {
-			if (c.moveToFirst()) {
-				String notes = TKDateUtils.getStringFromDate(
-						item.getBirthday(), c.getString(0));
-				// die zu setzenden Werte
-				ContentValues values = new ContentValues();
-				values.put(ContactsContractWrapper.CommonDataKinds.Note.NOTE,
-						notes);
-				// Aktualisieren des Eintrags
-				uri = ContactsContractWrapper.Data.CONTENT_URI;
-				Cursor cc = contentResolver.query(uri, null,
-						ContactsContractWrapper.Data.RAW_CONTACT_ID + " = ?",
-						new String[] { id }, null);
-				if (cc != null) {
-					if (cc.moveToNext()) {
-						long l = cc
-								.getLong(cc
-										.getColumnIndex(ContactsContractWrapper.Data.RAW_CONTACT_ID));
-						String noteWhere = ContactsContractWrapper.Data.RAW_CONTACT_ID
-								+ " = ? AND "
-								+ ContactsContractWrapper.Data.MIMETYPE
-								+ " = ?";
-						String[] noteWhereParams = new String[] {
-								id,
-								ContactsContractWrapper.CommonDataKinds.Note.CONTENT_ITEM_TYPE };
-						if (contentResolver.update(uri, values, noteWhere,
-								noteWhereParams) == 0) {
-							values
-									.put(
-											ContactsContractWrapper.Data.MIMETYPE,
-											ContactsContractWrapper.CommonDataKinds.Note.CONTENT_ITEM_TYPE);
-							values
-									.put(
-											ContactsContractWrapper.Data.RAW_CONTACT_ID,
-											l);
-							contentResolver.insert(uri, values);
-						}
-					}
-					cc.close();
+		Log.d(TAG, "updateContact: " + item.getName() + " (" + id + ")");
+		// lesen vorhandener Daten
+		String[] dataQueryProjection = new String[] {
+				ContactsContract.Data.MIMETYPE,
+				ContactsContract.CommonDataKinds.Event.TYPE,
+				ContactsContract.CommonDataKinds.Event.START_DATE,
+				ContactsContract.CommonDataKinds.Note.NOTE,
+				ContactsContract.Data._ID };
+		String dataQuerySelection = ContactsContract.Data.CONTACT_ID + " = ?";
+		String[] rawSelectionArgs = new String[] { id };
+		String[] dataQuerySelectionArgs = rawSelectionArgs;
+		Cursor dataQueryCursor = contentResolver.query(
+				ContactsContract.Data.CONTENT_URI, dataQueryProjection,
+				dataQuerySelection, dataQuerySelectionArgs, null);
+		while (dataQueryCursor.moveToNext()) {
+			String mimeType = dataQueryCursor.getString(0);
+			String dataId = dataQueryCursor.getString(4);
+			// Event - evtl. der Geburtstag?
+			if (ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE
+					.equals(mimeType)) {
+				int type = dataQueryCursor.getInt(1);
+				if (ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY == type) {
+					String gebdt = dataQueryCursor.getString(2);
+					Log.d(TAG, "   ---> found birthday: " + gebdt);
+
+					String where = ContactsContract.Data.CONTACT_ID
+							+ " = ? AND " + ContactsContract.Data._ID
+							+ " = ? AND " + ContactsContract.Data.MIMETYPE
+							+ " = ?";
+					String[] selectionArgs = new String[] {
+							id,
+							dataId,
+							ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE };
+					int rowsDeleted = contentResolver.delete(
+							ContactsContract.Data.CONTENT_URI, where,
+							selectionArgs);
+					Log.d(TAG, "   ---> deleting birthday " + dataId + ": "
+							+ rowsDeleted + " row(s) affected");
 				}
 			}
-			c.close();
-			readContacts(true);
+			// oder ein Notizfeld?
+			else if (ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
+					.equals(mimeType)) {
+				String note = dataQueryCursor.getString(3);
+				Log.d(TAG, "   ---> found note: " + note + " (_ID = " + dataId
+						+ ")");
+				// Notiz aktualisieren
+				if ((note != null) && (note.length() >= 17)) {
+					// Birthday=yyyymmdd enthält 17 Zeichen
+					Date d = TKDateUtils.getDateFromString(note);
+					if (d != null) {
+						Log.d(TAG, "   ---> extracted date: " + d.toString());
+						// Datum aus dem Notizfeld entfernen
+						note = TKDateUtils.getStringFromDate(null, note);
+						ContentValues values = new ContentValues();
+						values.put(ContactsContract.CommonDataKinds.Note.NOTE,
+								note);
+						values
+								.put(
+										ContactsContract.Data.MIMETYPE,
+										ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE);
+						String where = ContactsContract.Data.CONTACT_ID
+								+ " = ? AND " + ContactsContract.Data._ID
+								+ " = ? AND " + ContactsContract.Data.MIMETYPE
+								+ " = ?";
+						String[] selectionArgs = new String[] {
+								id,
+								dataId,
+								ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE };
+						int rowsUpdated = contentResolver.update(
+								ContactsContract.Data.CONTENT_URI, values,
+								where, selectionArgs);
+						Log.d(TAG, "   ---> updating note " + dataId + ": "
+								+ rowsUpdated + " row(s) affected");
+					}
+				}
+			}
 		}
+		dataQueryCursor.close();
+
+		// Geburtstag einfügen
+		Date birthday = item.getBirthday();
+		if (birthday != null) {
+			// Strings für die Suche nach RawContacts
+			String[] rawProjection = new String[] { RawContacts._ID };
+			String rawSelection = RawContacts.CONTACT_ID + " = ?";
+			// Werte für Tabellenzeile vorbereiten
+			ContentValues values = new ContentValues();
+			values.put(ContactsContract.CommonDataKinds.Event.START_DATE,
+					TKDateUtils.getDateAsStringYYYY_MM_DD(birthday));
+			values.put(ContactsContract.Data.MIMETYPE,
+					ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE);
+			values.put(ContactsContract.CommonDataKinds.Event.TYPE,
+					ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY);
+			// alle RawContacts befüllen
+			Cursor c = contentResolver.query(RawContacts.CONTENT_URI,
+					rawProjection, rawSelection, rawSelectionArgs, null);
+			while (c.moveToNext()) {
+				String rawContactId = c.getString(0);
+				values.put(
+						ContactsContract.CommonDataKinds.Event.RAW_CONTACT_ID,
+						rawContactId);
+				Uri uri = contentResolver.insert(
+						ContactsContract.Data.CONTENT_URI, values);
+				Log.d(TAG, "   ---> inserting birthday for raw contact "
+						+ rawContactId
+						+ ((uri == null) ? " failed" : " succeeded"));
+			}
+			c.close();
+		}
+		readContacts(true);
 	}
 
 	public void setList(ArrayList<BirthdayItem> list) {
@@ -683,18 +689,6 @@ public abstract class AbstractListActivity extends ListActivity implements
 		Editor editor = prefs.edit();
 		editor.putInt(NOTIFICATION_DAYS, bits);
 		editor.commit();
-	}
-
-	private void addContact(AnnualEvent event) {
-		long id = ContactsList.addGroup(this, "TKBirthdayReminder");
-		String name = event.getDescr();
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.YEAR, event.getYear());
-		cal.set(Calendar.MONTH, event.getMonth());
-		cal.set(Calendar.DAY_OF_MONTH, event.getDay());
-		String notes = TKDateUtils.getStringFromDate(cal.getTime(), null);
-		ContactsList.createPerson(this, id, name, notes);
-		readContacts(true);
 	}
 
 	/**

@@ -1,7 +1,7 @@
 /**
  * BirthdayWidget.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2010
+ * TKBirthdayReminder (c) Thomas Künneth 2010 - 2011
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -12,14 +12,11 @@ import java.util.Date;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.provider.Contacts.People;
 import android.widget.RemoteViews;
 
 import com.thomaskuenneth.android.util.Zodiac;
@@ -76,14 +73,8 @@ public class BirthdayWidget extends AppWidgetProvider {
 					zodiac = Zodiac.getSign(context, birthday);
 				}
 
-				Bitmap picture = item.getPicture();
-				if (picture == null) {
-					Uri uriPerson = ContentUris.withAppendedId(
-							People.CONTENT_URI, item.getId());
-					picture = People.loadContactPhoto(context, uriPerson,
-							R.drawable.birthdaycake_32, null);
-					item.setPicture(picture);
-				}
+				Bitmap picture = BirthdayItemListAdapter.loadBitmap(item,
+						context);
 				updateViews.setImageViewBitmap(R.id.icon, picture);
 			}
 		}

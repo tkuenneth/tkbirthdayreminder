@@ -1,7 +1,7 @@
 /**
  * BirthdayItem.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2009
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2011
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -27,7 +27,7 @@ public class BirthdayItem implements Parcelable {
 	private long id;
 	private String primaryPhoneNumber;
 	private Bitmap picture;
-	
+
 	public BirthdayItem(String name, Date birthday, long id,
 			String primaryPhoneNumber) {
 		this(name, birthday, id, primaryPhoneNumber, null);
@@ -81,11 +81,11 @@ public class BirthdayItem implements Parcelable {
 	public Bitmap getPicture() {
 		return picture;
 	}
-	
+
 	public void setPicture(Bitmap picture) {
 		this.picture = picture;
 	}
-	
+
 	public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
 		public BirthdayItem createFromParcel(Parcel in) {
 			String name = in.readString();
