@@ -379,9 +379,6 @@ public abstract class AbstractListActivity extends ListActivity implements
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu, menu);
-		if (this instanceof BirthdayNotSetActivity) {
-			menu.removeItem(R.id.set_date);
-		}
 		return true;
 	}
 
@@ -423,7 +420,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 			startActivityForResult(intentContact, Constants.RQ_PICK_CONTACT);
 			break;
 		case R.id.set_date:
-			Intent intent = new Intent(this, BirthdayNotSetActivity.class);
+			Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
 			startActivityForResult(intent, Constants.RQ_PICK_CONTACT);
 			break;
 		}

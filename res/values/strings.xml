@@ -3,7 +3,6 @@
 <resources>
 
 	<string name="app_name">Birthdays</string>
-	<string name="app_name_2">Birthdays not already set</string>
 
 	<string name="settings">Settings</string>
 	<string name="display_options">Display Options</string>
@@ -30,15 +29,12 @@
 	<string name="n_days_ago">%d days ago</string>
 	<string name="present_and_future">turns %1$d %2$s (%3$s)</string>
 	<string name="past">turned %1$d %2$s (%3$s)</string>
-	<string name="tab1">birthdays</string>
-	<string name="tab2">not set</string>
     <string name="welcome">Welcome</string>
     <string name="alert_dialog_continue">Continue</string>
     <string name="alert_dialog_abort">Abort</string>
     <string name="alert_dialog_ok">OK</string>
     <string name="alert_dialog_cancel">Cancel</string>
     
-    <string name="new_entry_dialog_name">Name</string>
     <string name="new_entry_dialog_date">Birthday date</string>
     
     <string name="menu_set_date">Set birthday date</string>
@@ -48,7 +44,7 @@
     <string name="menu_send_sms">SMS to %1$s</string>
     <string name="menu_set_alarm">Set notification time</string>
     <string name="menu_set_notification_days">Set notification days</string>
-    <string name="menu_new_entry">Add contact</string>
+    <string name="menu_new_entry">New contact</string>
     <string name="menu_set_notification_sound">Set notification sound</string>
     <string name="alarmreceiver_tickertext">birthday reminder</string>
     <string name="alarmreceiver_message">%1$d birthdays. Click here for details.</string>
@@ -62,28 +58,16 @@
     <string name="days_1">1 days</string>
 	<string name="next_notification">next check for due birthdays on %1$s at %2$s</string>
     
-    <string name="welcome_text">
-<b>TKBirthdayReminder</b> organizes birthdays. It adds them to 
-the notes field of your regular contacts. 
-Consequently, to rename, add or delete an entry, switch to <i>Contacts</i>.
-Birthday dates, of course, are set or changed using <b>TKBirthdayReminder</b>.
-\nAn easy to handle list shows the next birthdays and how old the persons become.
-Additionally, once a day the program reminds you if one or more of your contacts have birthday.
-To change the notification time, press the Menu button.
-\nIf you have questions about the program or if you think you have found a bug,
+    <string name="welcome_text"><b>TKBirthdayReminder</b> organizes birthdays.
+If you have questions about the app or if you think you have found a bug,
 please contact me by sending an email to kuennetht@googlemail.com. If there is a problem,
 I will gladly be trying to solve it. However, I may need further information to track it down.
 Thank you very much for helping me improve <b>TKBirthdayReminder</b>.
-\n\n<b>Terms of use</b>\n
-This program is distributed in the hope that it will be useful,
+\n\n<b>Terms of use</b>\nThis program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nThe author may not be held responsible
 for any problems caused by using this program. You use <b>TKBirthdayReminder</b> completely
 at your own risk.
-\n\n<b>Changes since the last version</b>\n
-- requires Android 2.1 (Eclair)\n
-- uses the regular birthday field\n
-- click on list item to show contact
 \n\nPlease click <b>Continue</b> if you agree with the terms of use. <b>Abort</b> quits 
 the program.
 	</string>

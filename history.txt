@@ -1,7 +1,10 @@
 2.0.0
 - requires Android 2.1 (Eclair)
 - uses the regular birthday field
-- click on list item to show contact
+- click on list item shows contact
+- uses builtin contacts picker
+- changed menu item to "New Contact" (english only)
+- added icon to menu item "New Contact"
 
 1.3.6
 - can hide astrological signs

@@ -33,14 +33,12 @@ public class ContactsList {
 	 * verwendet werden.
 	 */
 	private final ArrayList<BirthdayItem> birthdaySet;
-	private final ArrayList<BirthdayItem> birthdayNotSet;
 	private final ArrayList<BirthdayItem> notifications;
 
 	private final Context context;
 
 	public ContactsList(Context context) {
 		birthdaySet = new ArrayList<BirthdayItem>();
-		birthdayNotSet = new ArrayList<BirthdayItem>();
 		notifications = new ArrayList<BirthdayItem>();
 		this.context = context;
 		readContacts(context);
@@ -50,22 +48,17 @@ public class ContactsList {
 		return birthdaySet;
 	}
 
-	public ArrayList<BirthdayItem> getListBirthdayNotSet() {
-		return birthdayNotSet;
-	}
-
 	public ArrayList<BirthdayItem> getListNotifications() {
 		return notifications;
 	}
 
 	/**
-	 * Liest alle Kontakte aus der Datenbank und befüllt die drei Listen.
+	 * Liest alle Kontakte aus der Datenbank und befüllt die zwei Listen.
 	 */
 	private void readContacts(final Context context) {
 		ContentResolver contentResolver = context.getContentResolver();
 		queryContacts(contentResolver);
 		Collections.sort(birthdaySet, new BirthdaySetComparator());
-		Collections.sort(birthdayNotSet, new BirthdayNotSetComparator());
 		Collections.sort(notifications, new NotificationsComparator());
 	}
 
@@ -73,12 +66,12 @@ public class ContactsList {
 		// IDs und Namen aller sichtbaren Kontakte ermitteln
 		String[] mainQueryProjection = { ContactsContract.Contacts._ID,
 				ContactsContract.Contacts.DISPLAY_NAME };
-		String mainQuerySelection = ContactsContract.Contacts.IN_VISIBLE_GROUP
-				+ " = ?";
-		String[] mainQuerySelectionArgs = new String[] { "1" };
+//		String mainQuerySelection = ContactsContract.Contacts.IN_VISIBLE_GROUP
+//				+ " = ?";
+//		String[] mainQuerySelectionArgs = new String[] { "1" };
 		Cursor mainQueryCursor = contentResolver.query(
 				ContactsContract.Contacts.CONTENT_URI, mainQueryProjection,
-				mainQuerySelection, mainQuerySelectionArgs, null);
+				null, null, null);
 		// Trefferliste abarbeiten...
 		while (mainQueryCursor.moveToNext()) {
 			BirthdayItem item = createItemFromCursor(contentResolver,
@@ -86,9 +79,6 @@ public class ContactsList {
 
 			if (addToListBirthdaySet(item)) {
 				birthdaySet.add(item);
-			}
-			if (addToListBirthdayNotSet(item)) {
-				birthdayNotSet.add(item);
 			}
 			if (addToListNotifications(item)) {
 				notifications.add(item);
@@ -162,10 +152,6 @@ public class ContactsList {
 		return (item.getBirthday() != null);
 	}
 
-	private boolean addToListBirthdayNotSet(BirthdayItem item) {
-		return (item.getBirthday() == null);
-	}
-
 	private boolean addToListNotifications(BirthdayItem item) {
 		Date birthday = item.getBirthday();
 		if (birthday != null) {
@@ -209,22 +195,6 @@ public class ContactsList {
 				} else {
 					return (days1 < days2) ? -1 : 1;
 				}
-			}
-		}
-	}
-
-	private static class BirthdayNotSetComparator implements
-			Comparator<BirthdayItem> {
-
-		public int compare(BirthdayItem item1, BirthdayItem item2) {
-			if ((item1 == null) && (item2 == null)) {
-				return 0;
-			} else if (item1 == null) {
-				return 1;
-			} else if (item2 == null) {
-				return -1;
-			} else {
-				return item1.getNameNotNull().compareTo(item2.getNameNotNull());
 			}
 		}
 	}

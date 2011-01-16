@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 	welcome.xml
-
-	TKBirthdayReminder (c) Thomas Künneth 2009
-
+	TKBirthdayReminder (c) Thomas Künneth 2009 - 2011
 	Alle Rechte beim Autoren. All rights reserved.
 -->
 
@@ -11,17 +9,12 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:orientation="vertical" 
+	<TextView xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="fill_parent"
-		android:layout_height="fill_parent">
-
-		<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content" 
-			android:autoLink="web|email"
-			android:text="@string/welcome_text" />
-
-	</LinearLayout>
+		android:layout_height="fill_parent" 
+		android:paddingLeft="4dp"
+		android:paddingRight="4dp"
+		android:autoLink="web|email"
+		android:text="@string/welcome_text" />
 
 </ScrollView>

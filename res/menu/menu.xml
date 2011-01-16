@@ -20,7 +20,8 @@
         android:title="@string/menu_set_notification_sound" />
  
     <item android:id="@+id/new_entry"
-        android:title="@string/menu_new_entry" />
+        android:title="@string/menu_new_entry"
+        android:icon="@android:drawable/ic_menu_add" />
         
     <item android:id="@+id/preferences"
         android:title="@string/settings"
