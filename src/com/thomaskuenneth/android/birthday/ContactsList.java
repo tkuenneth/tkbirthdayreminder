@@ -1,4 +1,4 @@
-/**
+/*
  * ContactsList.java
  * 
  * TKBirthdayReminder (c) Thomas Künneth 2009 - 2011
@@ -63,28 +63,26 @@ public class ContactsList {
 	}
 
 	private void queryContacts(ContentResolver contentResolver) {
-		// IDs und Namen aller sichtbaren Kontakte ermitteln
+		// IDs und Namen aller Kontakte ermitteln
 		String[] mainQueryProjection = { ContactsContract.Contacts._ID,
 				ContactsContract.Contacts.DISPLAY_NAME };
-//		String mainQuerySelection = ContactsContract.Contacts.IN_VISIBLE_GROUP
-//				+ " = ?";
-//		String[] mainQuerySelectionArgs = new String[] { "1" };
 		Cursor mainQueryCursor = contentResolver.query(
 				ContactsContract.Contacts.CONTENT_URI, mainQueryProjection,
 				null, null, null);
 		// Trefferliste abarbeiten...
-		while (mainQueryCursor.moveToNext()) {
-			BirthdayItem item = createItemFromCursor(contentResolver,
-					mainQueryCursor);
-
-			if (addToListBirthdaySet(item)) {
-				birthdaySet.add(item);
+		if (mainQueryCursor != null) {
+			while (mainQueryCursor.moveToNext()) {
+				BirthdayItem item = createItemFromCursor(contentResolver,
+						mainQueryCursor);
+				if (addToListBirthdaySet(item)) {
+					birthdaySet.add(item);
+				}
+				if (addToListNotifications(item)) {
+					notifications.add(item);
+				}
 			}
-			if (addToListNotifications(item)) {
-				notifications.add(item);
-			}
+			mainQueryCursor.close();
 		}
-		mainQueryCursor.close();
 	}
 
 	public static BirthdayItem createItemFromCursor(
@@ -94,7 +92,10 @@ public class ContactsList {
 		String displayName = mainQueryCursor.getString(mainQueryCursor
 				.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 		Log.d(TAG, "===> " + displayName + " (" + contactId + ")");
-
+		if ("Thomas Künneth".equals(displayName)) {
+			Log.d(TAG, "===> " + displayName + " (" + contactId + ")");
+			
+		}
 		// Telefonnummer, Geburtsdatum und ggf. Notizen lesen
 		String phoneNumber = null;
 		Date gebdt = null;
@@ -110,38 +111,40 @@ public class ContactsList {
 		Cursor dataQueryCursor = contentResolver.query(
 				ContactsContract.Data.CONTENT_URI, dataQueryProjection,
 				dataQuerySelection, dataQuerySelectionArgs, null);
-		while (dataQueryCursor.moveToNext()) {
-			String mimeType = dataQueryCursor.getString(0);
-			if (ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE
-					.equals(mimeType)) {
-				int type = dataQueryCursor.getInt(1);
-				if (ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY == type) {
-					String stringBirthday = dataQueryCursor.getString(2);
-					Log.d(TAG, "     birthday date: " + stringBirthday);
-					Date d = TKDateUtils.getDateFromString1(stringBirthday);
+		if (dataQueryCursor != null) {
+			while (dataQueryCursor.moveToNext()) {
+				String mimeType = dataQueryCursor.getString(0);
+				if (ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE
+						.equals(mimeType)) {
+					int type = dataQueryCursor.getInt(1);
+					if (ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY == type) {
+						String stringBirthday = dataQueryCursor.getString(2);
+						Log.d(TAG, "     birthday date: " + stringBirthday);
+						Date d = TKDateUtils.getDateFromString1(stringBirthday);
+						if (d != null) {
+							gebdt = d;
+						}
+					}
+				} else if (ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
+						.equals(mimeType)) {
+					String note = dataQueryCursor.getString(3);
+					Log.d(TAG, "     note: " + note);
+					Date d = TKDateUtils.getDateFromString(note);
 					if (d != null) {
 						gebdt = d;
 					}
-				}
-			} else if (ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
-					.equals(mimeType)) {
-				String note = dataQueryCursor.getString(3);
-				Log.d(TAG, "     note: " + note);
-				Date d = gebdt = TKDateUtils.getDateFromString(note);
-				if (d != null) {
-					gebdt = d;
-				}
-			} else if (ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE
-					.equals(mimeType)) {
-				if (ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE == dataQueryCursor
-						.getInt(5)) {
-					phoneNumber = dataQueryCursor.getString(4);
-					Log.d(TAG, "     phone: " + phoneNumber);
+				} else if (ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE
+						.equals(mimeType)) {
+					if (ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE == dataQueryCursor
+							.getInt(5)) {
+						phoneNumber = dataQueryCursor.getString(4);
+						Log.d(TAG, "     phone: " + phoneNumber);
+					}
 				}
 			}
+			// FIXME: führt offenbar zu ANRs
+			dataQueryCursor.close();
 		}
-		dataQueryCursor.close();
-
 		// jetzt Objekt erzeugen und in Listen einfügen
 		BirthdayItem item = new BirthdayItem(displayName, gebdt, new Long(
 				contactId), phoneNumber);

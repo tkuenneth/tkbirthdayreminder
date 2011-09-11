@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
+import android.view.WindowManager;
 import android.widget.RemoteViews;
 
 import com.thomaskuenneth.android.util.Zodiac;
@@ -73,8 +74,10 @@ public class BirthdayWidget extends AppWidgetProvider {
 					zodiac = Zodiac.getSign(context, birthday);
 				}
 
+				WindowManager wm = (WindowManager) context
+						.getSystemService(Context.WINDOW_SERVICE);
 				Bitmap picture = BirthdayItemListAdapter.loadBitmap(item,
-						context);
+						context, AbstractListActivity.getImageHeight(wm));
 				updateViews.setImageViewBitmap(R.id.icon, picture);
 			}
 		}

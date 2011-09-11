@@ -1,4 +1,4 @@
-/**
+/*
  * AbstractListActivity.java
  * 
  * TKBirthdayReminder (c) Thomas Künneth 2009 - 2011
@@ -38,26 +38,28 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.RawContacts;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnKeyListener;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 /**
  * Diese abstrakte Basisklasse stellt die Kernunktionalität der Listenansichten
@@ -107,9 +109,13 @@ public abstract class AbstractListActivity extends ListActivity implements
 
 	protected ArrayList<BirthdayItem> list;
 
+	private int imageHeight;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
+		imageHeight = getImageHeight(getWindowManager());
 
 		// ggf. gespeicherte Liste wiederherstellen
 		list = null;
@@ -143,8 +149,8 @@ public abstract class AbstractListActivity extends ListActivity implements
 				BirthdayItem item = (BirthdayItem) getListAdapter().getItem(
 						position);
 				Intent i = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
-						ContactsContract.Contacts.CONTENT_URI, Long
-								.toString(item.getId())));
+						ContactsContract.Contacts.CONTENT_URI,
+						Long.toString(item.getId())));
 				startActivityForResult(i, Constants.RQ_SHOW_CONTACT);
 			}
 		});
@@ -182,6 +188,8 @@ public abstract class AbstractListActivity extends ListActivity implements
 					longClickedItem = ContactsList.createItemFromCursor(
 							getContentResolver(), c);
 					showEditBirthdayDialog(longClickedItem);
+					longClickedItem.setBirthday(new Date());
+					updateContact(longClickedItem);
 				}
 				c.close();
 			}
@@ -246,8 +254,8 @@ public abstract class AbstractListActivity extends ListActivity implements
 		if (item.getPrimaryPhoneNumber() != null) {
 			menu.add(Menu.NONE, Constants.MENU_DIAL, Menu.NONE,
 					Constants.MENU_DIAL);
-			String string = getString(Constants.MENU_SEND_SMS, item
-					.getPrimaryPhoneNumber());
+			String string = getString(Constants.MENU_SEND_SMS,
+					item.getPrimaryPhoneNumber());
 			menu.add(Menu.NONE, Constants.MENU_SEND_SMS, Menu.NONE, string);
 		}
 	}
@@ -318,30 +326,37 @@ public abstract class AbstractListActivity extends ListActivity implements
 			newEventSpinnerMonth = (Spinner) view
 					.findViewById(R.id.new_event_month);
 			newEventYear = (TextView) view.findViewById(R.id.new_event_year);
-			dialog = new AlertDialog.Builder(this).setTitle(
-					R.string.menu_change_date).setPositiveButton(
-					android.R.string.ok, new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							newEventEvent.setYear(checkYear());
-							Calendar cal = Calendar.getInstance();
-							cal.set(Calendar.YEAR, newEventEvent.getYear());
-							cal.set(Calendar.MONTH, newEventEvent.getMonth());
-							cal.set(Calendar.DAY_OF_MONTH, newEventEvent
-									.getDay());
-							longClickedItem.setBirthday(cal.getTime());
-							updateContact(longClickedItem);
-							newEventEvent = null;
-							removeDialog(Constants.DATE_DIALOG_ID);
-						}
-					}).setNegativeButton(android.R.string.cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							newEventEvent = null;
-							removeDialog(Constants.DATE_DIALOG_ID);
-						}
-					}).setView(view).create();
+			dialog = new AlertDialog.Builder(this)
+					.setTitle(R.string.menu_change_date)
+					.setPositiveButton(android.R.string.ok,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									newEventEvent.setYear(checkYear());
+									Calendar cal = Calendar.getInstance();
+									cal.set(Calendar.YEAR,
+											newEventEvent.getYear());
+									cal.set(Calendar.MONTH,
+											newEventEvent.getMonth());
+									cal.set(Calendar.DAY_OF_MONTH,
+											newEventEvent.getDay());
+									if (longClickedItem != null) {
+										longClickedItem.setBirthday(cal
+												.getTime());
+										updateContact(longClickedItem);
+									}
+									newEventEvent = null;
+									removeDialog(Constants.DATE_DIALOG_ID);
+								}
+							})
+					.setNegativeButton(android.R.string.cancel,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									newEventEvent = null;
+									removeDialog(Constants.DATE_DIALOG_ID);
+								}
+							}).setView(view).create();
 			installListeners();
 			updateViewsFromEvent();
 			break;
@@ -354,20 +369,21 @@ public abstract class AbstractListActivity extends ListActivity implements
 		case Constants.NOTIFICATION_DAYS_DIALOG_ID:
 			view = LayoutInflater.from(this).inflate(
 					R.layout.notification_days, null);
-			dialog = new AlertDialog.Builder(this).setTitle(
-					R.string.menu_set_notification_days).setPositiveButton(
-					R.string.alert_dialog_ok,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							updateNotificationDays((AlertDialog) dialog);
-						}
-					}).setNegativeButton(R.string.alert_dialog_cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-						}
-					}).setView(view).create();
+			dialog = new AlertDialog.Builder(this)
+					.setTitle(R.string.menu_set_notification_days)
+					.setPositiveButton(R.string.alert_dialog_ok,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									updateNotificationDays((AlertDialog) dialog);
+								}
+							})
+					.setNegativeButton(R.string.alert_dialog_cancel,
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+								}
+							}).setView(view).create();
 			break;
 		}
 		return dialog;
@@ -395,17 +411,15 @@ public abstract class AbstractListActivity extends ListActivity implements
 			Intent i = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
 			i.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT,
 					Boolean.FALSE);
-			i
-					.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT,
-							Boolean.TRUE);
+			i.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, Boolean.TRUE);
 			i.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE,
 					RingtoneManager.TYPE_ALL);
 			i.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE,
 					getString(R.string.menu_set_notification_sound));
 			String current = getNotificationSoundAsString(this);
 			if (current != null) {
-				i.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri
-						.parse(current));
+				i.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
+						Uri.parse(current));
 			}
 			startActivityForResult(i, Constants.RQ_PICK_SOUND);
 			break;
@@ -420,7 +434,8 @@ public abstract class AbstractListActivity extends ListActivity implements
 			startActivityForResult(intentContact, Constants.RQ_PICK_CONTACT);
 			break;
 		case R.id.set_date:
-			Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+			Intent intent = new Intent(Intent.ACTION_PICK,
+					ContactsContract.Contacts.CONTENT_URI);
 			startActivityForResult(intent, Constants.RQ_PICK_CONTACT);
 			break;
 		}
@@ -524,22 +539,24 @@ public abstract class AbstractListActivity extends ListActivity implements
 		AccountManager am = AccountManager.get(this);
 		Account[] accounts = am.getAccounts();
 
-		int i = 0;
-		for (Account account : accounts) {
-			int isSyncable = ContentResolver.getIsSyncable(account,
-					ContactsContract.AUTHORITY);
+		if (accounts != null) {
+			int i = 0;
+			for (Account account : accounts) {
+				int isSyncable = ContentResolver.getIsSyncable(account,
+						ContactsContract.AUTHORITY);
 
-			if (isSyncable > 0) {
-				Bundle extras = new Bundle();
-				extras
-						.putBoolean(
-								ContentResolver.SYNC_EXTRAS_OVERRIDE_TOO_MANY_DELETIONS,
-								true);
-				extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-				extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-				extras.putBoolean(ContentResolver.SYNC_EXTRAS_UPLOAD, true);
-				ContentResolver.requestSync(accounts[i++],
-						ContactsContract.AUTHORITY, extras);
+				if (isSyncable > 0) {
+					Bundle extras = new Bundle();
+					extras.putBoolean(
+							ContentResolver.SYNC_EXTRAS_OVERRIDE_TOO_MANY_DELETIONS,
+							true);
+					extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+					extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED,
+							true);
+					extras.putBoolean(ContentResolver.SYNC_EXTRAS_UPLOAD, true);
+					ContentResolver.requestSync(accounts[i++],
+							ContactsContract.AUTHORITY, extras);
+				}
 			}
 		}
 	}
@@ -611,10 +628,9 @@ public abstract class AbstractListActivity extends ListActivity implements
 						ContentValues values = new ContentValues();
 						values.put(ContactsContract.CommonDataKinds.Note.NOTE,
 								note);
-						values
-								.put(
-										ContactsContract.Data.MIMETYPE,
-										ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE);
+						values.put(
+								ContactsContract.Data.MIMETYPE,
+								ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE);
 						String where = ContactsContract.Data.CONTACT_ID
 								+ " = ? AND " + ContactsContract.Data._ID
 								+ " = ? AND " + ContactsContract.Data.MIMETYPE
@@ -671,7 +687,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 	public void setList(ArrayList<BirthdayItem> list) {
 		this.list = list;
 		BirthdayItemListAdapter myListAdapter = new BirthdayItemListAdapter(
-				this, list);
+				this, list, imageHeight);
 		setListAdapter(myListAdapter);
 	}
 
@@ -791,5 +807,19 @@ public abstract class AbstractListActivity extends ListActivity implements
 		} catch (Throwable thr) {
 		}
 		return intYear;
+	}
+
+	public static int getImageHeight(WindowManager wm) {
+		DisplayMetrics outMetrics = new DisplayMetrics();
+		wm.getDefaultDisplay().getMetrics(outMetrics);
+		if (DisplayMetrics.DENSITY_LOW == outMetrics.densityDpi) {
+			return 32;
+		} else if (DisplayMetrics.DENSITY_HIGH == outMetrics.densityDpi) {
+			return 96;
+		} else if (DisplayMetrics.DENSITY_XHIGH == outMetrics.densityDpi) {
+			return 96;
+		} else {
+			return 48;
+		}
 	}
 }

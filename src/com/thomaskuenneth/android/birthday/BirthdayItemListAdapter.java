@@ -1,4 +1,4 @@
-/**
+/*
  * BirthdayItemListAdapter.java
  * 
  * TKBirthdayReminder (c) Thomas Künneth 2009 - 2011
@@ -37,12 +37,14 @@ public class BirthdayItemListAdapter extends BaseAdapter {
 	private final List<BirthdayItem> items;
 	private final Context context;
 	private final boolean showAstrologicalSigns;
+	private final int height;
 
-	public BirthdayItemListAdapter(Context context, List<BirthdayItem> list) {
+	public BirthdayItemListAdapter(Context context, List<BirthdayItem> list,
+			int height) {
 		this.mInflater = LayoutInflater.from(context);
 		this.items = list;
 		this.context = context;
-
+		this.height = height;
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(context);
 		showAstrologicalSigns = prefs.getBoolean(
@@ -88,13 +90,13 @@ public class BirthdayItemListAdapter extends BaseAdapter {
 		holder.textZodiac.setText(showAstrologicalSigns ? Zodiac.getSign(
 				context, birthday) : "");
 
-		Bitmap picture = loadBitmap(item, context);
+		Bitmap picture = loadBitmap(item, context, height);
 		holder.icon.setImageBitmap(picture);
-
 		return convertView;
 	}
 
-	public static Bitmap loadBitmap(BirthdayItem item, Context context) {
+	public static Bitmap loadBitmap(BirthdayItem item, Context context,
+			int height) {
 		Bitmap picture = item.getPicture();
 		if (picture == null) {
 			InputStream input = null;
@@ -106,8 +108,26 @@ public class BirthdayItemListAdapter extends BaseAdapter {
 				if (input != null) {
 					picture = BitmapFactory.decodeStream(input);
 				} else {
-					picture = BitmapFactory.decodeResource(context
-							.getResources(), R.drawable.birthdaycake_32);
+					int id;
+					if (height == 32) {
+						id = R.drawable.birthdaycake_32;
+					} else if (height == 48) {
+						id = R.drawable.birthdaycake_48;
+					} else {
+						id = R.drawable.birthdaycake_96;
+					}
+					picture = BitmapFactory.decodeResource(
+							context.getResources(), id);
+				}
+				if (picture.getHeight() != height) {
+					Bitmap temp = picture;
+					float w = (float) picture.getWidth();
+					float h = (float) picture.getHeight();
+					// höhe : breite = height : width
+					int h2 = (int) (((h / w)) * height);
+					picture = Bitmap.createScaledBitmap(temp, height, h2,
+							false);
+					temp.recycle();
 				}
 				item.setPicture(picture);
 			} catch (Throwable tr) {
