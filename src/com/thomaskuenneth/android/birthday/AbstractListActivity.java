@@ -1,13 +1,12 @@
 /*
  * AbstractListActivity.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2011
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2012
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
 import java.text.DateFormat;
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,7 +38,6 @@ import android.os.Looper;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.RawContacts;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
@@ -72,8 +70,8 @@ import android.widget.TimePicker;
 public abstract class AbstractListActivity extends ListActivity implements
 		OnTimeSetListener {
 
-	private static final String TAG = AbstractListActivity.class
-			.getSimpleName();
+//	private static final String TAG = AbstractListActivity.class
+//			.getSimpleName();
 
 	private static final String NEW_EVENT_EVENT = "newEventEvent";
 	private static final String LONG_CLICK_ITEM = "longClickItem";
@@ -175,9 +173,9 @@ public abstract class AbstractListActivity extends ListActivity implements
 	@Override
 	public void onActivityResult(int reqCode, int resultCode, Intent data) {
 		super.onActivityResult(reqCode, resultCode, data);
-		Log.d(TAG, MessageFormat.format(
-				"onActivityResult: requestCode={0}, resultCode={1}", reqCode,
-				resultCode));
+//		Log.d(TAG, MessageFormat.format(
+//				"onActivityResult: requestCode={0}, resultCode={1}", reqCode,
+//				resultCode));
 
 		switch (reqCode) {
 		case (Constants.RQ_PICK_CONTACT):
@@ -571,7 +569,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 		ContentResolver contentResolver = getContentResolver();
 
 		String id = Long.toString(item.getId());
-		Log.d(TAG, "updateContact: " + item.getName() + " (" + id + ")");
+//		Log.d(TAG, "updateContact: " + item.getName() + " (" + id + ")");
 		// lesen vorhandener Daten
 		String[] dataQueryProjection = new String[] {
 				ContactsContract.Data.MIMETYPE,
@@ -594,7 +592,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 				int type = dataQueryCursor.getInt(1);
 				if (ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY == type) {
 					String gebdt = dataQueryCursor.getString(2);
-					Log.d(TAG, "   ---> found birthday: " + gebdt);
+//					Log.d(TAG, "   ---> found birthday: " + gebdt);
 
 					String where = ContactsContract.Data.CONTACT_ID
 							+ " = ? AND " + ContactsContract.Data._ID
@@ -607,22 +605,22 @@ public abstract class AbstractListActivity extends ListActivity implements
 					int rowsDeleted = contentResolver.delete(
 							ContactsContract.Data.CONTENT_URI, where,
 							selectionArgs);
-					Log.d(TAG, "   ---> deleting birthday " + dataId + ": "
-							+ rowsDeleted + " row(s) affected");
+//					Log.d(TAG, "   ---> deleting birthday " + dataId + ": "
+//							+ rowsDeleted + " row(s) affected");
 				}
 			}
 			// oder ein Notizfeld?
 			else if (ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
 					.equals(mimeType)) {
 				String note = dataQueryCursor.getString(3);
-				Log.d(TAG, "   ---> found note: " + note + " (_ID = " + dataId
-						+ ")");
+//				Log.d(TAG, "   ---> found note: " + note + " (_ID = " + dataId
+//						+ ")");
 				// Notiz aktualisieren
 				if ((note != null) && (note.length() >= 17)) {
 					// Birthday=yyyymmdd enthält 17 Zeichen
 					Date d = TKDateUtils.getDateFromString(note);
 					if (d != null) {
-						Log.d(TAG, "   ---> extracted date: " + d.toString());
+//						Log.d(TAG, "   ---> extracted date: " + d.toString());
 						// Datum aus dem Notizfeld entfernen
 						note = TKDateUtils.getStringFromDate(null, note);
 						ContentValues values = new ContentValues();
@@ -642,8 +640,8 @@ public abstract class AbstractListActivity extends ListActivity implements
 						int rowsUpdated = contentResolver.update(
 								ContactsContract.Data.CONTENT_URI, values,
 								where, selectionArgs);
-						Log.d(TAG, "   ---> updating note " + dataId + ": "
-								+ rowsUpdated + " row(s) affected");
+//						Log.d(TAG, "   ---> updating note " + dataId + ": "
+//								+ rowsUpdated + " row(s) affected");
 					}
 				}
 			}
@@ -674,9 +672,9 @@ public abstract class AbstractListActivity extends ListActivity implements
 						rawContactId);
 				Uri uri = contentResolver.insert(
 						ContactsContract.Data.CONTENT_URI, values);
-				Log.d(TAG, "   ---> inserting birthday for raw contact "
-						+ rawContactId
-						+ ((uri == null) ? " failed" : " succeeded"));
+//				Log.d(TAG, "   ---> inserting birthday for raw contact "
+//						+ rawContactId
+//						+ ((uri == null) ? " failed" : " succeeded"));
 			}
 			c.close();
 		}

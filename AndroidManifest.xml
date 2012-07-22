@@ -2,16 +2,16 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="com.thomaskuenneth.android.birthday" 
-	android:versionCode="45" 
-	android:versionName="2.0.1">
+	android:versionCode="46" 
+	android:versionName="2.0.2">
 		
     <supports-screens
           android:smallScreens="true"
 	/>
   
 	<application android:icon="@drawable/birthdaycake_48"
-		android:label="@string/app_name" 
-		android:debuggable="false">
+		android:label="@string/app_name"
+	> 
 		
 		<activity android:name="TKBirthdayReminder">
 			<intent-filter>

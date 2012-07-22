@@ -1,7 +1,7 @@
 /*
  * BirthdayItemListAdapter.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2011
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2012
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -19,7 +19,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,8 +30,9 @@ import com.thomaskuenneth.android.util.Zodiac;
 
 public class BirthdayItemListAdapter extends BaseAdapter {
 
-	private static final String TAG = BirthdayItemListAdapter.class
-			.getSimpleName();
+//	private static final String TAG = BirthdayItemListAdapter.class
+//			.getSimpleName();
+	
 	private final LayoutInflater mInflater;
 	private final List<BirthdayItem> items;
 	private final Context context;
@@ -98,6 +98,9 @@ public class BirthdayItemListAdapter extends BaseAdapter {
 	public static Bitmap loadBitmap(BirthdayItem item, Context context,
 			int height) {
 		Bitmap picture = item.getPicture();
+		if (picture.isRecycled()) {
+			picture = null;
+		}
 		if (picture == null) {
 			InputStream input = null;
 			try {
@@ -131,7 +134,7 @@ public class BirthdayItemListAdapter extends BaseAdapter {
 				}
 				item.setPicture(picture);
 			} catch (Throwable tr) {
-				Log.e(TAG, "getView(): loading contact photo", tr);
+//				Log.e(TAG, "getView(): loading contact photo", tr);
 			} finally {
 				if (input != null) {
 					try {

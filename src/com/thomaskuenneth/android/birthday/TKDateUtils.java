@@ -1,7 +1,7 @@
-/**
+/*
  * DateUtils.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2011
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2012
  * 
  * Alle Rechte beim Autoren. All rights reserved.
  */
@@ -16,7 +16,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.content.Context;
-import android.util.Log;
 
 /**
  * Diese Klasse enthält datums- und kalenderbezogene Hilfsmethoden.
@@ -26,7 +25,7 @@ import android.util.Log;
  */
 public class TKDateUtils {
 
-	private static final String TAG = TKDateUtils.class.getSimpleName();
+//	private static final String TAG = TKDateUtils.class.getSimpleName();
 
 	public static final SimpleDateFormat FORMAT_YYYYMMDD = new SimpleDateFormat(
 			"yyyyMMdd");
@@ -173,7 +172,7 @@ public class TKDateUtils {
 				try {
 					result = FORMAT_YYYYMMDD.parse(date);
 				} catch (Throwable tr) {
-					Log.e(TAG, "getDateFromString()", tr);
+//					Log.e(TAG, "getDateFromString()", tr);
 				}
 			}
 		}
@@ -191,7 +190,7 @@ public class TKDateUtils {
 				try {
 					result = FORMAT_YYYYMMDD.parse(date);
 				} catch (Throwable tr) {
-					Log.e(TAG, "getDateFromString1()", tr);
+//					Log.e(TAG, "getDateFromString1()", tr);
 				}
 			}
 		}

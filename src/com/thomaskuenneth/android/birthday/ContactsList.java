@@ -1,7 +1,7 @@
 /*
  * ContactsList.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2011
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2012
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -15,7 +15,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
-import android.util.Log;
 
 /**
  * Diese Klasse liest Kontakte ein. Außerdem stellt sie die Listen zur
@@ -26,7 +25,7 @@ import android.util.Log;
  */
 public class ContactsList {
 
-	private static final String TAG = ContactsList.class.getSimpleName();
+//	private static final String TAG = ContactsList.class.getSimpleName();
 
 	/*
 	 * Diese Listen können durch Aufruf des passenden Getters von den Activities
@@ -91,10 +90,9 @@ public class ContactsList {
 				.getColumnIndex(ContactsContract.Contacts._ID));
 		String displayName = mainQueryCursor.getString(mainQueryCursor
 				.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-		Log.d(TAG, "===> " + displayName + " (" + contactId + ")");
+//		Log.d(TAG, "===> " + displayName + " (" + contactId + ")");
 		if ("Thomas Künneth".equals(displayName)) {
-			Log.d(TAG, "===> " + displayName + " (" + contactId + ")");
-			
+//			Log.d(TAG, "===> " + displayName + " (" + contactId + ")");
 		}
 		// Telefonnummer, Geburtsdatum und ggf. Notizen lesen
 		String phoneNumber = null;
@@ -119,7 +117,7 @@ public class ContactsList {
 					int type = dataQueryCursor.getInt(1);
 					if (ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY == type) {
 						String stringBirthday = dataQueryCursor.getString(2);
-						Log.d(TAG, "     birthday date: " + stringBirthday);
+//						Log.d(TAG, "     birthday date: " + stringBirthday);
 						Date d = TKDateUtils.getDateFromString1(stringBirthday);
 						if (d != null) {
 							gebdt = d;
@@ -128,7 +126,7 @@ public class ContactsList {
 				} else if (ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
 						.equals(mimeType)) {
 					String note = dataQueryCursor.getString(3);
-					Log.d(TAG, "     note: " + note);
+//					Log.d(TAG, "     note: " + note);
 					Date d = TKDateUtils.getDateFromString(note);
 					if (d != null) {
 						gebdt = d;
@@ -138,7 +136,7 @@ public class ContactsList {
 					if (ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE == dataQueryCursor
 							.getInt(5)) {
 						phoneNumber = dataQueryCursor.getString(4);
-						Log.d(TAG, "     phone: " + phoneNumber);
+//						Log.d(TAG, "     phone: " + phoneNumber);
 					}
 				}
 			}
@@ -146,8 +144,8 @@ public class ContactsList {
 			dataQueryCursor.close();
 		}
 		// jetzt Objekt erzeugen und in Listen einfügen
-		BirthdayItem item = new BirthdayItem(displayName, gebdt, new Long(
-				contactId), phoneNumber);
+		BirthdayItem item = new BirthdayItem(displayName, gebdt, 
+				Long.valueOf(contactId), phoneNumber);
 		return item;
 	}
 
