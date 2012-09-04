@@ -98,7 +98,7 @@ public class BirthdayItemListAdapter extends BaseAdapter {
 	public static Bitmap loadBitmap(BirthdayItem item, Context context,
 			int height) {
 		Bitmap picture = item.getPicture();
-		if (picture.isRecycled()) {
+		if ((picture != null) && (picture.isRecycled())) {
 			picture = null;
 		}
 		if (picture == null) {

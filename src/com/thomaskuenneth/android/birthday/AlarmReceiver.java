@@ -1,7 +1,7 @@
-/**
+/*
  * AlarmReceiver.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2009
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2012
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PowerManager;
 
 /**
  * Diese Klasse tritt in Aktion, wenn ein Alarm ausgelöst wurde.
@@ -24,6 +25,8 @@ import android.os.Bundle;
  * @see BroadcastReceiver
  */
 public class AlarmReceiver extends BroadcastReceiver {
+
+	private static final String TAG = AlarmReceiver.class.getSimpleName();
 
 	@Override
 	public void onReceive(final Context context, Intent intent) {
@@ -45,8 +48,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 							context, 0, notificationIntent, 0);
 					Notification notif = new Notification(
 							R.drawable.birthdaycake_32,
-							context
-									.getString(R.string.alarmreceiver_tickertext),
+							context.getString(R.string.alarmreceiver_tickertext),
 							System.currentTimeMillis());
 					notif.setLatestEventInfo(context, context
 							.getString(R.string.app_name), context.getString(
@@ -64,6 +66,16 @@ public class AlarmReceiver extends BroadcastReceiver {
 				}
 			}
 		};
-		new Thread(r).start();
+		PowerManager pm = (PowerManager) context
+				.getSystemService(Context.POWER_SERVICE);
+		PowerManager.WakeLock wl = pm.newWakeLock(
+				PowerManager.PARTIAL_WAKE_LOCK, TAG);
+		wl.acquire();
+		Thread t = new Thread(r);
+		t.start();
+		while (t.isAlive()) {
+			Thread.yield();
+		}
+		wl.release();
 	}
 }

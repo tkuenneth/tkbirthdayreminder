@@ -1,3 +1,7 @@
+2.0.2
+- improved notification behavior when device is asleep
+- fixed crash on Jelly Bean
+
 2.0.1
 - minor bug fixes
 
