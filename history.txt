@@ -1,3 +1,6 @@
+2.0.3
+- better handles birthdays without a year
+
 2.0.2
 - improved notification behavior when device is asleep
 - fixed crash on Jelly Bean

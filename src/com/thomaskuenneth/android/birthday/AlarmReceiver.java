@@ -31,6 +31,13 @@ public class AlarmReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(final Context context, Intent intent) {
 		BootCompleteReceiver.startAlarm(context, true);
+		
+		PowerManager pm = (PowerManager) context
+				.getSystemService(Context.POWER_SERVICE);
+		final PowerManager.WakeLock wl = pm.newWakeLock(
+				PowerManager.PARTIAL_WAKE_LOCK, TAG);
+		wl.acquire();
+		
 		Runnable r = new Runnable() {
 			public void run() {
 				ContactsList cl = new ContactsList(context);
@@ -64,18 +71,10 @@ public class AlarmReceiver extends BroadcastReceiver {
 							.getSystemService(Context.NOTIFICATION_SERVICE);
 					nm.notify(NotificationView.NOTIFICATION_ID, notif);
 				}
+				wl.release();
 			}
 		};
-		PowerManager pm = (PowerManager) context
-				.getSystemService(Context.POWER_SERVICE);
-		PowerManager.WakeLock wl = pm.newWakeLock(
-				PowerManager.PARTIAL_WAKE_LOCK, TAG);
-		wl.acquire();
 		Thread t = new Thread(r);
 		t.start();
-		while (t.isAlive()) {
-			Thread.yield();
-		}
-		wl.release();
 	}
 }

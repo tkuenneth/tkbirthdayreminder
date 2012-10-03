@@ -25,13 +25,12 @@ import android.content.Context;
  */
 public class TKDateUtils {
 
-//	private static final String TAG = TKDateUtils.class.getSimpleName();
+	// private static final String TAG = TKDateUtils.class.getSimpleName();
+
+	public static final int INVISIBLE_YEAR = 9996;
 
 	public static final SimpleDateFormat FORMAT_YYYYMMDD = new SimpleDateFormat(
 			"yyyyMMdd");
-
-	public static final SimpleDateFormat FORMAT_YYYY_MM_DD = new SimpleDateFormat(
-			"yyyy-MM-dd");
 
 	public static final SimpleDateFormat FORMAT_WEEKDAY = new SimpleDateFormat(
 			"EEE");
@@ -43,11 +42,20 @@ public class TKDateUtils {
 			.getTimeInstance(DateFormat.SHORT);
 
 	public static String getDateAsStringYYYY_MM_DD(Date date) {
-		try {
-			return FORMAT_YYYY_MM_DD.format(date);
-		} catch (Throwable tr) {
+		StringBuilder sb = new StringBuilder();
+		if (date != null) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			int year = cal.get(Calendar.YEAR);
+			if (year == INVISIBLE_YEAR) {
+				sb.append("-");
+			} else {
+				sb.append(String.format("%04d", year));
+			}
+			sb.append(String.format("-%02d-%02d", 1 + cal.get(Calendar.MONTH),
+					cal.get(Calendar.DAY_OF_MONTH)));
 		}
-		return "";
+		return sb.toString();
 	}
 
 	public static String getNotificationDateAsString(Context context, Date date) {
@@ -80,16 +88,33 @@ public class TKDateUtils {
 			when = TKBirthdayReminder.getStringFromResources(context,
 					R.string.n_days_ago, -days);
 		}
-		int resId = (days < 0) ? R.string.past : R.string.present_and_future;
-		return TKBirthdayReminder.getStringFromResources(context, resId,
-				getAge(birthday), when, FORMAT_WEEKDAY.format(buffer));
+		int age = getAge(birthday);
+		if (age < 0) {
+			return TKBirthdayReminder.getStringFromResources(context,
+					R.string.birthday_no_year, when,
+					FORMAT_WEEKDAY.format(buffer));
+		} else {
+			int resId = (days < 0) ? R.string.past
+					: R.string.present_and_future;
+			return TKBirthdayReminder.getStringFromResources(context, resId,
+					age, when, FORMAT_WEEKDAY.format(buffer));
+		}
 	}
 
-	public static String getBirthdayDateAsString(Date birthday) {
-		if (birthday == null) {
-			return "";
+	public static String getBirthdayDateAsString(DateFormat format,
+			BirthdayItem item) {
+		StringBuilder sb = new StringBuilder();
+		Date birthday = item.getBirthday();
+		if (birthday != null) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(birthday);
+			if (cal.get(Calendar.YEAR) == INVISIBLE_YEAR) {
+				sb.append(format.format(birthday));
+			} else {
+				sb.append(FORMAT_SHORT_DATE.format(birthday));
+			}
 		}
-		return FORMAT_SHORT_DATE.format(birthday);
+		return sb.toString();
 	}
 
 	public static int getBirthdayInDays(Date birthday) {
@@ -172,7 +197,7 @@ public class TKDateUtils {
 				try {
 					result = FORMAT_YYYYMMDD.parse(date);
 				} catch (Throwable tr) {
-//					Log.e(TAG, "getDateFromString()", tr);
+					// Log.e(TAG, "getDateFromString()", tr);
 				}
 			}
 		}
@@ -190,7 +215,23 @@ public class TKDateUtils {
 				try {
 					result = FORMAT_YYYYMMDD.parse(date);
 				} catch (Throwable tr) {
-//					Log.e(TAG, "getDateFromString1()", tr);
+					// Log.e(TAG, "getDateFromString1()", tr);
+				}
+			} else {
+				p = Pattern.compile(".*-(\\d\\d)-(\\d\\d)$", Pattern.DOTALL);
+				m = p.matcher(string.subSequence(0, string.length()));
+				if (m.matches()) {
+					Calendar cal = Calendar.getInstance();
+					try {
+						cal.set(Calendar.MONTH,
+								Integer.parseInt(m.group(1)) - 1);
+						cal.set(Calendar.DAY_OF_MONTH,
+								Integer.parseInt(m.group(2)));
+						cal.set(Calendar.YEAR, INVISIBLE_YEAR);
+						result = cal.getTime();
+					} catch (Throwable tr) {
+						// Log.e(TAG, "getDateFromString1()", tr);
+					}
 				}
 			}
 		}

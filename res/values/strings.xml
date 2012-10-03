@@ -21,6 +21,7 @@
 	<string name="aquarius">Aquarius</string>
 	<string name="pisces">Pisces</string>
 
+	<string name="birthday_no_year">%1$s (%2$s)</string>
 	<string name="no_birthday_set">no birthday set</string>
 	<string name="yesterday">yesterday</string>
 	<string name="today">today</string>
@@ -34,6 +35,7 @@
     <string name="alert_dialog_abort">Abort</string>
     <string name="alert_dialog_ok">OK</string>
     <string name="alert_dialog_cancel">Cancel</string>
+    <string name="month_and_day">MMM dd</string>
     
     <string name="new_entry_dialog_date">Birthday date</string>
     

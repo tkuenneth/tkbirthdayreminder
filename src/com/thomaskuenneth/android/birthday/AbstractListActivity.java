@@ -186,10 +186,10 @@ public abstract class AbstractListActivity extends ListActivity implements
 					longClickedItem = ContactsList.createItemFromCursor(
 							getContentResolver(), c);
 					showEditBirthdayDialog(longClickedItem);
-					longClickedItem.setBirthday(new Date());
-					updateContact(longClickedItem);
+//					longClickedItem.setBirthday(new Date());
+//					updateContact(longClickedItem);
 				}
-				c.close();
+//				c.close();
 			}
 			break;
 		case (Constants.RQ_PICK_SOUND):
@@ -448,8 +448,12 @@ public abstract class AbstractListActivity extends ListActivity implements
 		createAndSetMonthAdapter();
 		createAndSetDayAdapter();
 		// Jahres-Textfeld befüllen
+		String strYear = "";
 		int intYear = newEventEvent.getYear();
-		newEventYear.setText(Integer.toString(intYear));
+		if (intYear != TKDateUtils.INVISIBLE_YEAR) {
+			strYear = Integer.toString(intYear);
+		}
+		newEventYear.setText(strYear);
 	}
 
 	private void installListeners() {
@@ -799,7 +803,7 @@ public abstract class AbstractListActivity extends ListActivity implements
 	}
 
 	private int checkYear() {
-		int intYear = 1980;
+		int intYear = TKDateUtils.INVISIBLE_YEAR;
 		try {
 			intYear = Integer.parseInt(newEventYear.getText().toString());
 		} catch (Throwable thr) {

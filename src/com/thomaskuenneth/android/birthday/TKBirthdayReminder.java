@@ -1,7 +1,7 @@
-/**
+/*
  * TKBirthdayReminder.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2011
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2012
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;

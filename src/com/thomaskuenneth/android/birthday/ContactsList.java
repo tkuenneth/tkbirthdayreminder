@@ -91,9 +91,6 @@ public class ContactsList {
 		String displayName = mainQueryCursor.getString(mainQueryCursor
 				.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 //		Log.d(TAG, "===> " + displayName + " (" + contactId + ")");
-		if ("Thomas Künneth".equals(displayName)) {
-//			Log.d(TAG, "===> " + displayName + " (" + contactId + ")");
-		}
 		// Telefonnummer, Geburtsdatum und ggf. Notizen lesen
 		String phoneNumber = null;
 		Date gebdt = null;

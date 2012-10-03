@@ -8,6 +8,8 @@ package com.thomaskuenneth.android.birthday;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -30,14 +32,15 @@ import com.thomaskuenneth.android.util.Zodiac;
 
 public class BirthdayItemListAdapter extends BaseAdapter {
 
-//	private static final String TAG = BirthdayItemListAdapter.class
-//			.getSimpleName();
-	
+	// private static final String TAG = BirthdayItemListAdapter.class
+	// .getSimpleName();
+
 	private final LayoutInflater mInflater;
 	private final List<BirthdayItem> items;
 	private final Context context;
 	private final boolean showAstrologicalSigns;
 	private final int height;
+	private final DateFormat format;
 
 	public BirthdayItemListAdapter(Context context, List<BirthdayItem> list,
 			int height) {
@@ -45,6 +48,9 @@ public class BirthdayItemListAdapter extends BaseAdapter {
 		this.items = list;
 		this.context = context;
 		this.height = height;
+		this.format = new SimpleDateFormat(
+				context.getString(R.string.month_and_day));
+
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(context);
 		showAstrologicalSigns = prefs.getBoolean(
@@ -86,7 +92,8 @@ public class BirthdayItemListAdapter extends BaseAdapter {
 		Date birthday = item.getBirthday();
 		holder.textInfo.setText(TKDateUtils.getBirthdayAsString(context,
 				birthday));
-		holder.textDate.setText(TKDateUtils.getBirthdayDateAsString(birthday));
+		holder.textDate.setText(TKDateUtils.getBirthdayDateAsString(format,
+				item));
 		holder.textZodiac.setText(showAstrologicalSigns ? Zodiac.getSign(
 				context, birthday) : "");
 
@@ -128,13 +135,13 @@ public class BirthdayItemListAdapter extends BaseAdapter {
 					float h = (float) picture.getHeight();
 					// höhe : breite = height : width
 					int h2 = (int) (((h / w)) * height);
-					picture = Bitmap.createScaledBitmap(temp, height, h2,
-							false);
+					picture = Bitmap
+							.createScaledBitmap(temp, height, h2, false);
 					temp.recycle();
 				}
 				item.setPicture(picture);
 			} catch (Throwable tr) {
-//				Log.e(TAG, "getView(): loading contact photo", tr);
+				// Log.e(TAG, "getView(): loading contact photo", tr);
 			} finally {
 				if (input != null) {
 					try {

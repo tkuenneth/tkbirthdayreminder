@@ -6,6 +6,8 @@
  */
 package com.thomaskuenneth.android.birthday;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -62,11 +64,12 @@ public class BirthdayWidget extends AppWidgetProvider {
 					i = pos;
 					break;
 				}
+				DateFormat format = new SimpleDateFormat(context.getString(R.string.month_and_day));
 				BirthdayItem item = birthdays.get(i);
 				name = item.getName();
 				Date birthday = item.getBirthday();
 				birthday2 = TKDateUtils.getBirthdayAsString(context, birthday);
-				birthday_date = TKDateUtils.getBirthdayDateAsString(birthday);
+				birthday_date = TKDateUtils.getBirthdayDateAsString(format, item);
 
 				SharedPreferences prefs = PreferenceManager
 						.getDefaultSharedPreferences(context);

@@ -21,8 +21,8 @@
 	<string name="aquarius">Wassermann</string>
 	<string name="pisces">Fische</string>
 	
+    <string name="month_and_day">dd. MMM</string>
     <string name="new_entry_dialog_date">Geburtsdatum</string>
-	
 	<string name="no_birthday_set">kein Geburtstag eingetragen</string>
 	<string name="yesterday">gestern</string>
 	<string name="today">heute</string>
