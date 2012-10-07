@@ -1,5 +1,6 @@
 2.0.3
 - better handles birthdays without a year
+- bug fixes
 
 2.0.2
 - improved notification behavior when device is asleep
