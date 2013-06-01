@@ -1,3 +1,6 @@
+prüfen: nur zukünftige Geburtstage als Option??
+
+
 2.0.3
 - better handles birthdays without a year
 - bug fixes

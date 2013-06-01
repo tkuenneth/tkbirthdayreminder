@@ -137,7 +137,9 @@ public class BirthdayItemListAdapter extends BaseAdapter {
 					int h2 = (int) (((h / w)) * height);
 					picture = Bitmap
 							.createScaledBitmap(temp, height, h2, false);
-					temp.recycle();
+					if (temp != picture) {
+						temp.recycle();
+					}
 				}
 				item.setPicture(picture);
 			} catch (Throwable tr) {
