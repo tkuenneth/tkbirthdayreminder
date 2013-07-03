@@ -814,14 +814,16 @@ public abstract class AbstractListActivity extends ListActivity implements
 	public static int getImageHeight(WindowManager wm) {
 		DisplayMetrics outMetrics = new DisplayMetrics();
 		wm.getDefaultDisplay().getMetrics(outMetrics);
-		if (DisplayMetrics.DENSITY_LOW == outMetrics.densityDpi) {
+		if (outMetrics.densityDpi <= DisplayMetrics.DENSITY_LOW) {
 			return 32;
-		} else if (DisplayMetrics.DENSITY_HIGH == outMetrics.densityDpi) {
-			return 96;
-		} else if (DisplayMetrics.DENSITY_XHIGH == outMetrics.densityDpi) {
-			return 96;
-		} else {
+		} else if (outMetrics.densityDpi <= DisplayMetrics.DENSITY_MEDIUM) {
 			return 48;
+		} else if (outMetrics.densityDpi <= DisplayMetrics.DENSITY_HIGH) {
+			return 96;
+		} else if (outMetrics.densityDpi <= DisplayMetrics.DENSITY_XHIGH) {
+			return 128;
+		} else {
+			return 144;
 		}
 	}
 }

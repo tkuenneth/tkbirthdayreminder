@@ -1,5 +1,10 @@
 prüfen: nur zukünftige Geburtstage als Option??
 
+2.0.5
+- better support for larger pixel densities
+
+2.0.4
+- bug fixes
 
 2.0.3
 - better handles birthdays without a year

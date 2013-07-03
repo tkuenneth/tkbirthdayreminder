@@ -1,7 +1,7 @@
 /*
  * AlarmReceiver.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2012
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2013
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -30,14 +30,16 @@ public class AlarmReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(final Context context, Intent intent) {
+		// Log.d(TAG, "onReceive");
+
 		BootCompleteReceiver.startAlarm(context, true);
-		
+
 		PowerManager pm = (PowerManager) context
 				.getSystemService(Context.POWER_SERVICE);
 		final PowerManager.WakeLock wl = pm.newWakeLock(
 				PowerManager.PARTIAL_WAKE_LOCK, TAG);
 		wl.acquire();
-		
+
 		Runnable r = new Runnable() {
 			public void run() {
 				ContactsList cl = new ContactsList(context);
