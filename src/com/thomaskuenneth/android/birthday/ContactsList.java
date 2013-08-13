@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Hashtable;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -25,7 +26,7 @@ import android.provider.ContactsContract;
  */
 public class ContactsList {
 
-//	private static final String TAG = ContactsList.class.getSimpleName();
+	// private static final String TAG = ContactsList.class.getSimpleName();
 
 	/*
 	 * Diese Listen können durch Aufruf des passenden Getters von den Activities
@@ -62,6 +63,7 @@ public class ContactsList {
 	}
 
 	private void queryContacts(ContentResolver contentResolver) {
+		Hashtable<String, Boolean> ht = new Hashtable<String, Boolean>();
 		// IDs und Namen aller Kontakte ermitteln
 		String[] mainQueryProjection = { ContactsContract.Contacts._ID,
 				ContactsContract.Contacts.DISPLAY_NAME };
@@ -73,6 +75,17 @@ public class ContactsList {
 			while (mainQueryCursor.moveToNext()) {
 				BirthdayItem item = createItemFromCursor(contentResolver,
 						mainQueryCursor);
+				String name = item.getName();
+				Date date = item.getBirthday();
+				if ((name != null) && (date != null)) {
+					String key = name
+							+ TKDateUtils.FORMAT_YYYYMMDD.format(date);
+					if (ht.containsKey(key)) {
+						continue;
+					} else {
+						ht.put(key, Boolean.TRUE);
+					}
+				}
 				if (addToListBirthdaySet(item)) {
 					birthdaySet.add(item);
 				}
@@ -90,7 +103,7 @@ public class ContactsList {
 				.getColumnIndex(ContactsContract.Contacts._ID));
 		String displayName = mainQueryCursor.getString(mainQueryCursor
 				.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-//		Log.d(TAG, "===> " + displayName + " (" + contactId + ")");
+		// Log.d(TAG, "===> " + displayName + " (" + contactId + ")");
 		// Telefonnummer, Geburtsdatum und ggf. Notizen lesen
 		String phoneNumber = null;
 		Date gebdt = null;
@@ -114,7 +127,7 @@ public class ContactsList {
 					int type = dataQueryCursor.getInt(1);
 					if (ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY == type) {
 						String stringBirthday = dataQueryCursor.getString(2);
-//						Log.d(TAG, "     birthday date: " + stringBirthday);
+						// Log.d(TAG, "     birthday date: " + stringBirthday);
 						Date d = TKDateUtils.getDateFromString1(stringBirthday);
 						if (d != null) {
 							gebdt = d;
@@ -123,7 +136,7 @@ public class ContactsList {
 				} else if (ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
 						.equals(mimeType)) {
 					String note = dataQueryCursor.getString(3);
-//					Log.d(TAG, "     note: " + note);
+					// Log.d(TAG, "     note: " + note);
 					Date d = TKDateUtils.getDateFromString(note);
 					if (d != null) {
 						gebdt = d;
@@ -133,7 +146,7 @@ public class ContactsList {
 					if (ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE == dataQueryCursor
 							.getInt(5)) {
 						phoneNumber = dataQueryCursor.getString(4);
-//						Log.d(TAG, "     phone: " + phoneNumber);
+						// Log.d(TAG, "     phone: " + phoneNumber);
 					}
 				}
 			}
@@ -141,7 +154,7 @@ public class ContactsList {
 			dataQueryCursor.close();
 		}
 		// jetzt Objekt erzeugen und in Listen einfügen
-		BirthdayItem item = new BirthdayItem(displayName, gebdt, 
+		BirthdayItem item = new BirthdayItem(displayName, gebdt,
 				Long.valueOf(contactId), phoneNumber);
 		return item;
 	}

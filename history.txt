@@ -1,4 +1,7 @@
 prüfen: nur zukünftige Geburtstage als Option??
+2.0.6
+- hide duplicate entries
+- widget background opacity can be set
 
 2.0.5
 - better support for larger pixel densities

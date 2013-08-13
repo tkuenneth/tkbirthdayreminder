@@ -18,6 +18,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.RemoteViews;
 
 /**
  * Dies ist die Hauptklasse von TKBirthdayReminder. Sie prüft, ob eine neue
@@ -98,6 +99,14 @@ public class TKBirthdayReminder extends AbstractListActivity {
 		return context.getString(resId, formatArgs);
 	}
 
+	public static void setWidgetAppearance(Context context, RemoteViews views,
+			int resid) {
+		int opacity = WidgetPreference.getOpacity(context);
+		int color = 0x000000;
+		opacity <<= 24;
+		views.setInt(resid, "setBackgroundColor", opacity | color);
+	}
+	
 	/**
 	 * Setzt den Alarm und die Liste mit Geburtstagen; falls diese nicht aus
 	 * einer zuletzt gespeicherten Instanz wiederhergestellt werden konnte,

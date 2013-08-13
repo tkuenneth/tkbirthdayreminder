@@ -10,7 +10,12 @@
                 android:key="checkbox_show_astrological_signs"
                 android:defaultValue="true"
                 android:title="@string/title_show_astrological_signs" />
-            
+        
+		<com.thomaskuenneth.android.birthday.WidgetPreference
+			android:title="@string/widget_appearance"
+			android:dialogTitle="@string/widget_appearance"
+		/>
+		            
     </PreferenceCategory>
      
 </PreferenceScreen>

@@ -7,7 +7,9 @@
 	<string name="settings">Einstellungen</string>
 	<string name="display_options">Anzeigeoptionen</string>
 	<string name="title_show_astrological_signs">Sternzeichen anzeigen</string>
-	
+	<string name="widget_opacity">Deckkraft</string>
+    <string name="widget_appearance">Widget-Aussehen</string>
+    	
 	<string name="aries">Widder</string>
 	<string name="taurus">Stier</string>
 	<string name="gemini">Zwillinge</string>
