@@ -1,10 +1,10 @@
 /**
  * Zodiac.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2009
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2014
  * Alle Rechte beim Autoren. All rights reserved.
  */
-package com.thomaskuenneth.android.util;
+package com.thomaskuenneth.android.birthday;
 
 import java.util.Calendar;
 import java.util.Date;

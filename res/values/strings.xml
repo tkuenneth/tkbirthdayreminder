@@ -10,6 +10,7 @@
     <string name="widget_opacity">Opacity</string>
     <string name="int_slash_int">%1$d / %2$d</string>
     <string name="widget_appearance">Widget appearance</string>
+    <string name="hide_past_birthdays">Hide past birthdays</string>
         		
 	<string name="aries">Aries</string>
 	<string name="taurus">Taurus</string>

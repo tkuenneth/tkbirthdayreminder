@@ -28,8 +28,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.thomaskuenneth.android.util.Zodiac;
-
 public class BirthdayItemListAdapter extends BaseAdapter {
 
 	// private static final String TAG = BirthdayItemListAdapter.class

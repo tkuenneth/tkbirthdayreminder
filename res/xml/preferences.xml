@@ -15,7 +15,11 @@
 			android:title="@string/widget_appearance"
 			android:dialogTitle="@string/widget_appearance"
 		/>
-		            
+        <CheckBoxPreference
+                android:key="hide_past_birthdays"
+                android:defaultValue="false"
+                android:title="@string/hide_past_birthdays" />
+        		            
     </PreferenceCategory>
      
 </PreferenceScreen>

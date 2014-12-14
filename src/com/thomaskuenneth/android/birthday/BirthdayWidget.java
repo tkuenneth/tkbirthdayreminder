@@ -22,8 +22,6 @@ import android.preference.PreferenceManager;
 import android.view.WindowManager;
 import android.widget.RemoteViews;
 
-import com.thomaskuenneth.android.util.Zodiac;
-
 public class BirthdayWidget extends AppWidgetProvider {
 
 	@Override

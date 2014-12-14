@@ -1,2 +1,1 @@
-- Geburtstage ohne Jahr besser unterstützen
 - größeres Widget für mehr Geburtstage

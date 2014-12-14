@@ -1,4 +1,9 @@
-prüfen: nur zukünftige Geburtstage als Option??
+2.0.7
+- set targetSDK to 21
+- new option to hide past birthdays
+- removed icons from menu
+- works around an issue in Android concerning navigation: now, after creating a new contact the set birthday date dialog is shown again
+
 2.0.6
 - hide duplicate entries
 - widget background opacity can be set

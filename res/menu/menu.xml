@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 	menu.xml
-	TKBirthdayReminder (c) Thomas Künneth 2009-2010
+	TKBirthdayReminder (c) Thomas Künneth 2009 - 2014
 	Alle Rechte beim Autoren. All rights reserved.
 -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+ 
+    <item android:id="@+id/new_entry"
+        android:title="@string/menu_new_entry" />
+    
     <item android:id="@+id/set_date"
         android:title="@string/menu_set_date" />
 
@@ -18,13 +21,8 @@
 
     <item android:id="@+id/set_notification_sound"
         android:title="@string/menu_set_notification_sound" />
- 
-    <item android:id="@+id/new_entry"
-        android:title="@string/menu_new_entry"
-        android:icon="@android:drawable/ic_menu_add" />
         
     <item android:id="@+id/preferences"
-        android:title="@string/settings"
-        android:icon="@android:drawable/ic_menu_preferences" />
+        android:title="@string/settings" />
  
 </menu>

@@ -1,7 +1,7 @@
 /*
  * ContactsList.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2012
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2014
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -14,7 +14,9 @@ import java.util.Hashtable;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 
 /**
@@ -56,13 +58,20 @@ public class ContactsList {
 	 * Liest alle Kontakte aus der Datenbank und befüllt die zwei Listen.
 	 */
 	private void readContacts(final Context context) {
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		boolean hidePastsBirthdays = prefs.getBoolean("hide_past_birthdays",
+				false);
 		ContentResolver contentResolver = context.getContentResolver();
-		queryContacts(contentResolver);
+		queryContacts(contentResolver, hidePastsBirthdays);
 		Collections.sort(birthdaySet, new BirthdaySetComparator());
 		Collections.sort(notifications, new NotificationsComparator());
 	}
 
-	private void queryContacts(ContentResolver contentResolver) {
+	private void queryContacts(ContentResolver contentResolver,
+			boolean hidePastsBirthdays) {
+		int intNowAsMMDD = Integer.parseInt(TKDateUtils.FORMAT_YYYYMMDD.format(
+				new Date()).substring(4, 8));
 		Hashtable<String, Boolean> ht = new Hashtable<String, Boolean>();
 		// IDs und Namen aller Kontakte ermitteln
 		String[] mainQueryProjection = { ContactsContract.Contacts._ID,
@@ -78,11 +87,19 @@ public class ContactsList {
 				String name = item.getName();
 				Date date = item.getBirthday();
 				if ((name != null) && (date != null)) {
-					String key = name
-							+ TKDateUtils.FORMAT_YYYYMMDD.format(date);
+					String strYYYYMMDD = TKDateUtils.FORMAT_YYYYMMDD
+							.format(date);
+					String key = name + strYYYYMMDD;
 					if (ht.containsKey(key)) {
 						continue;
 					} else {
+						if (hidePastsBirthdays) {
+							int intBirthdayAsMMDD = Integer
+									.parseInt(strYYYYMMDD.substring(4, 8));
+							if (intBirthdayAsMMDD < intNowAsMMDD) {
+								continue;
+							}
+						}
 						ht.put(key, Boolean.TRUE);
 					}
 				}
