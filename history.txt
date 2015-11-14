@@ -1,5 +1,6 @@
 2.0.8
 - migrated project to Android Studio
+- added a missing german translation
 
 2.0.7
 - set targetSDK to 21

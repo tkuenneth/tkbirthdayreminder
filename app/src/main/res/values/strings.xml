@@ -2,47 +2,47 @@
 
 <resources>
 
-	<string name="app_name">Birthdays</string>
+    <string name="app_name">Birthdays</string>
 
-	<string name="settings">Settings</string>
-	<string name="display_options">Display Options</string>
-	<string name="title_show_astrological_signs">Show astrological signs</string>
+    <string name="settings">Settings</string>
+    <string name="display_options">Display Options</string>
+    <string name="title_show_astrological_signs">Show astrological signs</string>
     <string name="widget_opacity">Opacity</string>
     <string name="int_slash_int">%1$d / %2$d</string>
     <string name="widget_appearance">Widget appearance</string>
     <string name="hide_past_birthdays">Hide past birthdays</string>
-        		
-	<string name="aries">Aries</string>
-	<string name="taurus">Taurus</string>
-	<string name="gemini">Gemini</string>
-	<string name="cancer">Cancer</string>
-	<string name="leo">Leo</string>
-	<string name="virgo">Virgo</string>
-	<string name="libra">Libra</string>
-	<string name="scorpius">Scorpio</string>
-	<string name="sagittarius">Sagittarius</string>
-	<string name="capricornus">Capricorn</string>
-	<string name="aquarius">Aquarius</string>
-	<string name="pisces">Pisces</string>
 
-	<string name="birthday_no_year">%1$s (%2$s)</string>
-	<string name="no_birthday_set">no birthday set</string>
-	<string name="yesterday">yesterday</string>
-	<string name="today">today</string>
-	<string name="tomorrow">tomorrow</string>
-	<string name="in_n_days">in %d days</string>
-	<string name="n_days_ago">%d days ago</string>
-	<string name="present_and_future">turns %1$d %2$s (%3$s)</string>
-	<string name="past">turned %1$d %2$s (%3$s)</string>
+    <string name="aries">Aries</string>
+    <string name="taurus">Taurus</string>
+    <string name="gemini">Gemini</string>
+    <string name="cancer">Cancer</string>
+    <string name="leo">Leo</string>
+    <string name="virgo">Virgo</string>
+    <string name="libra">Libra</string>
+    <string name="scorpius">Scorpio</string>
+    <string name="sagittarius">Sagittarius</string>
+    <string name="capricornus">Capricorn</string>
+    <string name="aquarius">Aquarius</string>
+    <string name="pisces">Pisces</string>
+
+    <string name="birthday_no_year">%1$s (%2$s)</string>
+    <string name="no_birthday_set">no birthday set</string>
+    <string name="yesterday">yesterday</string>
+    <string name="today">today</string>
+    <string name="tomorrow">tomorrow</string>
+    <string name="in_n_days">in %d days</string>
+    <string name="n_days_ago">%d days ago</string>
+    <string name="present_and_future">turns %1$d %2$s (%3$s)</string>
+    <string name="past">turned %1$d %2$s (%3$s)</string>
     <string name="welcome">Welcome</string>
     <string name="alert_dialog_continue">Continue</string>
     <string name="alert_dialog_abort">Abort</string>
     <string name="alert_dialog_ok">OK</string>
     <string name="alert_dialog_cancel">Cancel</string>
     <string name="month_and_day">MMM dd</string>
-    
+
     <string name="new_entry_dialog_date">Birthday date</string>
-    
+
     <string name="menu_set_date">Set birthday date</string>
     <string name="menu_change_date">Change birthday date</string>
     <string name="menu_remove_date">Remove birthday date</string>
@@ -62,7 +62,7 @@
     <string name="days_3">3 days</string>
     <string name="days_2">2 days</string>
     <string name="days_1">1 days</string>
-	<string name="next_notification">next check for due birthdays on %1$s at %2$s</string>
+    <string name="next_notification">next check for due birthdays on %1$s at %2$s</string>
     
     <string name="welcome_text"><b>TKBirthdayReminder</b> organizes birthdays.
 If you have questions about the app or if you think you have found a bug,
