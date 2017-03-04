@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 	styles.xml
-	TKWeek (c) Thomas Künneth 2010
+	TKWeek (c) Thomas Künneth 2010 - 2017
 	Alle Rechte beim Autoren. All rights reserved.
 -->
 
 <resources>
-
-    <style name="WidgetBackground">
-        <item name="android:background">@drawable/widget_bg</item>
-    </style>
 
     <style name="Text" />
 

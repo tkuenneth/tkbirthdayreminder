@@ -1,7 +1,7 @@
-/**
+/*
  * Sign.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2014
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2017
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -13,30 +13,29 @@ import java.util.Hashtable;
  * {@link Hashtable} könnte ein Monat als Schlüssel auf eine Instanz verweisen;
  * jeder Monat gehört zu zwei Tierkreiszeichen; der erste Tag des zweiten
  * Zeichens wird hier gespeichert.
- * 
+ *
  * @author Thomas Künneth
- * 
  */
-public class Sign {
+class Sign {
 
-	private final int firstDayOfSecondSign, firstSign, secondSign;
+    private final int firstDayOfSecondSign, firstSign, secondSign;
 
-	public Sign(int firstDayOfSecondSign, int firstSign, int secondSign) {
-		super();
-		this.firstDayOfSecondSign = firstDayOfSecondSign;
-		this.firstSign = firstSign;
-		this.secondSign = secondSign;
-	}
+    Sign(int firstDayOfSecondSign, int firstSign, int secondSign) {
+        super();
+        this.firstDayOfSecondSign = firstDayOfSecondSign;
+        this.firstSign = firstSign;
+        this.secondSign = secondSign;
+    }
 
-	public int getFirstDayOfSecondSign() {
-		return firstDayOfSecondSign;
-	}
+    int getFirstDayOfSecondSign() {
+        return firstDayOfSecondSign;
+    }
 
-	public int getFirstSign() {
-		return firstSign;
-	}
+    int getFirstSign() {
+        return firstSign;
+    }
 
-	public int getSecondSign() {
-		return secondSign;
-	}
+    int getSecondSign() {
+        return secondSign;
+    }
 }

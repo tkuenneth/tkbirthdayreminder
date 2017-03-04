@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 	birthdaywidget_info.xml
-	TKBirthdayReminder (c) Thomas Künneth 2010
+	TKBirthdayReminder (c) Thomas Künneth 2010 - 2017
 	Alle Rechte beim Autoren. All rights reserved.
 -->
 
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
 	android:label="@string/app_name"
-    android:minWidth="294dp"
-    android:minHeight="72dp"
+	android:minWidth="@dimen/AppWidget_4Cell"
+	android:minHeight="@dimen/AppWidget_1Cell"
     android:updatePeriodMillis="1800000"
     android:initialLayout="@layout/birthdaywidget_layout"
 />

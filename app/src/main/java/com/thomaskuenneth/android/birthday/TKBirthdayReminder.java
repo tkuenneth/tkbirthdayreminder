@@ -1,12 +1,10 @@
 /*
  * TKBirthdayReminder.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2012
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2017
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
-
-import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -20,148 +18,150 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
+import java.util.ArrayList;
+
 /**
  * Dies ist die Hauptklasse von TKBirthdayReminder. Sie prüft, ob eine neue
  * Version installiert wurde und zeigt ggf. einen Willkommensdialog an.
- * 
+ *
  * @author Thomas Künneth
  * @see AbstractListActivity
  */
 public class TKBirthdayReminder extends AbstractListActivity {
 
-	/**
-	 * Der aktuelle sowie der zuletzt gespeicherte versionCode. Wird verwendet,
-	 * um ggf. beim Start ein README oä. anzuzeigen.
-	 */
-	private static final String VERSION_CODE = "versionCode";
-	public static int storedVersionCode;
-	public static int currentVersionCode;
+    /**
+     * Der aktuelle sowie der zuletzt gespeicherte versionCode. Wird verwendet,
+     * um ggf. beim Start ein README oä. anzuzeigen.
+     */
+    private static final String VERSION_CODE = "versionCode";
+    public static int storedVersionCode;
+    public static int currentVersionCode;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		// auf neue Version prüfen
-		if (isNewVersion()) {
-			if (savedInstanceState == null) {
-				showDialog(Constants.WELCOME_ID);
-			}
-		} else {
-			run();
-		}
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // auf neue Version prüfen
+        if (isNewVersion()) {
+            if (savedInstanceState == null) {
+                showDialog(Constants.WELCOME_ID);
+            }
+        } else {
+            run();
+        }
+    }
 
-	@Override
-	protected Dialog onCreateDialog(int id) {
-		switch (id) {
-		case Constants.WELCOME_ID:
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle(R.string.welcome);
-			builder.setIcon(R.drawable.birthdaycake_32);
-			View textView = getLayoutInflater().inflate(R.layout.welcome, null);
-			builder.setView(textView);
-			builder.setPositiveButton(R.string.alert_dialog_continue,
-					new DialogInterface.OnClickListener() {
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case Constants.WELCOME_ID:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.welcome);
+                builder.setIcon(R.drawable.birthdaycake_32);
+                View textView = getLayoutInflater().inflate(R.layout.welcome, null);
+                builder.setView(textView);
+                builder.setPositiveButton(R.string.alert_dialog_continue,
+                        new DialogInterface.OnClickListener() {
 
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							writeToPreferences();
-							run();
-						}
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                writeToPreferences();
+                                run();
+                            }
 
-					});
-			builder.setNegativeButton(R.string.alert_dialog_abort,
-					new DialogInterface.OnClickListener() {
+                        });
+                builder.setNegativeButton(R.string.alert_dialog_abort,
+                        new DialogInterface.OnClickListener() {
 
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							finish();
-						}
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
 
-					});
-			builder.setCancelable(false);
-			return builder.create();
-		default:
-			return super.onCreateDialog(id);
-		}
-	}
+                        });
+                builder.setCancelable(false);
+                return builder.create();
+            default:
+                return super.onCreateDialog(id);
+        }
+    }
 
-	@Override
-	protected String getStateKey() {
-		return Constants.LIST_BIRTHDAY_SET;
-	}
+    @Override
+    protected String getStateKey() {
+        return Constants.LIST_BIRTHDAY_SET;
+    }
 
-	public static String getStringFromResources(Context context, int resId) {
-		return context.getString(resId);
-	}
+    public static String getStringFromResources(Context context, int resId) {
+        return context.getString(resId);
+    }
 
-	public static String getStringFromResources(Context context, int resId,
-			Object... formatArgs) {
-		return context.getString(resId, formatArgs);
-	}
+    public static String getStringFromResources(Context context, int resId,
+                                                Object... formatArgs) {
+        return context.getString(resId, formatArgs);
+    }
 
-	public static void setWidgetAppearance(Context context, RemoteViews views,
-			int resid) {
-		int opacity = WidgetPreference.getOpacity(context);
-		int color = 0x000000;
-		opacity <<= 24;
-		views.setInt(resid, "setBackgroundColor", opacity | color);
-	}
-	
-	/**
-	 * Setzt den Alarm und die Liste mit Geburtstagen; falls diese nicht aus
-	 * einer zuletzt gespeicherten Instanz wiederhergestellt werden konnte,
-	 * werden die Kontakte neu eingelesen.
-	 */
-	private void run() {
-		BootCompleteReceiver.startAlarm(this, true);
-		readContacts(false);
-	}
+    public static void setWidgetAppearance(Context context, RemoteViews views,
+                                           int resid) {
+        int opacity = WidgetPreference.getOpacity(context);
+        int color = 0x000000;
+        opacity <<= 24;
+        views.setInt(resid, "setBackgroundColor", opacity | color);
+    }
 
-	@Override
-	protected ArrayList<BirthdayItem> getProperList(ContactsList cl) {
-		return cl.getListBirthdaySet();
-	}
+    /**
+     * Setzt den Alarm und die Liste mit Geburtstagen; falls diese nicht aus
+     * einer zuletzt gespeicherten Instanz wiederhergestellt werden konnte,
+     * werden die Kontakte neu eingelesen.
+     */
+    private void run() {
+        BootCompleteReceiver.startAlarm(this, true);
+        readContacts(false);
+    }
 
-	/**
-	 * Prüft, ob seit dem letzten Start eine neue Version installiert wurde.
-	 * 
-	 * @return liefert {@code true}, wenn seit dem letzten Start eine neue
-	 *         Version installiert wurde; sonst {@code false}
-	 */
-	private boolean isNewVersion() {
-		readFromPreferences();
-		boolean newVersion = storedVersionCode < currentVersionCode;
-		Log.d(getClass().getName(), "newVersion: " + newVersion);
-		return newVersion;
-	}
+    @Override
+    protected ArrayList<BirthdayItem> getProperList(ContactsList cl) {
+        return cl.getListBirthdaySet();
+    }
 
-	/**
-	 * Belegt die beiden Variablen storedVersionCode (wird aus den shared
-	 * preferences ausgelsen) und currentVersionCode (wird aus PackageInfo
-	 * ermittelt).
-	 */
-	private void readFromPreferences() {
-		SharedPreferences prefs = getSharedPreferences(
-				Constants.SHARED_PREFS_KEY, Context.MODE_PRIVATE);
-		storedVersionCode = prefs.getInt(VERSION_CODE, 0);
-		try {
-			PackageInfo info = getPackageManager().getPackageInfo(
-					getPackageName(), 0);
-			currentVersionCode = info.versionCode;
-		} catch (NameNotFoundException e) {
-			// da es nur ein Versionscheck ist, ignorieren wir den Fehler
-			currentVersionCode = 0;
-		}
-	}
+    /**
+     * Prüft, ob seit dem letzten Start eine neue Version installiert wurde.
+     *
+     * @return liefert {@code true}, wenn seit dem letzten Start eine neue
+     * Version installiert wurde; sonst {@code false}
+     */
+    private boolean isNewVersion() {
+        readFromPreferences();
+        boolean newVersion = storedVersionCode < currentVersionCode;
+        Log.d(getClass().getName(), "newVersion: " + newVersion);
+        return newVersion;
+    }
 
-	/**
-	 * Speichert den aktuellen versionCode in den shared preferences.
-	 */
-	private void writeToPreferences() {
-		SharedPreferences prefs = getSharedPreferences(
-				Constants.SHARED_PREFS_KEY, Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.putInt(VERSION_CODE, currentVersionCode);
-		editor.commit();
-	}
+    /**
+     * Belegt die beiden Variablen storedVersionCode (wird aus den shared
+     * preferences ausgelsen) und currentVersionCode (wird aus PackageInfo
+     * ermittelt).
+     */
+    private void readFromPreferences() {
+        SharedPreferences prefs = getSharedPreferences(
+                Constants.SHARED_PREFS_KEY, Context.MODE_PRIVATE);
+        storedVersionCode = prefs.getInt(VERSION_CODE, 0);
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    getPackageName(), 0);
+            currentVersionCode = info.versionCode;
+        } catch (NameNotFoundException e) {
+            // da es nur ein Versionscheck ist, ignorieren wir den Fehler
+            currentVersionCode = 0;
+        }
+    }
+
+    /**
+     * Speichert den aktuellen versionCode in den shared preferences.
+     */
+    private void writeToPreferences() {
+        SharedPreferences prefs = getSharedPreferences(
+                Constants.SHARED_PREFS_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(VERSION_CODE, currentVersionCode);
+        editor.apply();
+    }
 }

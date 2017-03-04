@@ -1,128 +1,120 @@
-/**
+/*
  * BirthdayItem.java
  * 
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2011
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2017
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
-import java.text.ParseException;
-import java.util.Date;
-
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import java.text.ParseException;
+import java.util.Date;
 
 /**
  * Diese Klasse repräsentiert einen Eintrag in Listen von Personen (mit oder
  * ohne Geburtstag).
- * 
+ *
  * @author Thomas Künneth
- * 
  */
-public class BirthdayItem implements Parcelable {
+class BirthdayItem implements Parcelable {
 
-	private String name;
-	private Date birthday;
-	private long id;
-	private String primaryPhoneNumber;
-	private Bitmap picture;
+    private static final String TAG = BirthdayItem.class.getSimpleName();
 
-	public BirthdayItem(String name, Date birthday, long id,
-			String primaryPhoneNumber) {
-		this(name, birthday, id, primaryPhoneNumber, null);
-	}
+    private String name;
+    private Date birthday;
+    private long id;
+    private String primaryPhoneNumber;
+    private Bitmap picture;
 
-	public BirthdayItem(String name, Date birthday, long id,
-			String primaryPhoneNumber, Bitmap picture) {
-		this.name = name;
-		this.birthday = birthday;
-		this.id = id;
-		this.primaryPhoneNumber = primaryPhoneNumber;
-		this.picture = picture;
-	}
+    BirthdayItem(String name, Date birthday, long id,
+                 String primaryPhoneNumber) {
+        this(name, birthday, id, primaryPhoneNumber, null);
+    }
 
-	public String getName() {
-		return name;
-	}
+    private BirthdayItem(String name, Date birthday, long id,
+                         String primaryPhoneNumber, Bitmap picture) {
+        this.name = name;
+        this.birthday = birthday;
+        this.id = id;
+        this.primaryPhoneNumber = primaryPhoneNumber;
+        this.picture = picture;
+    }
 
-	public String getNameNotNull() {
-		return (getName() == null) ? "" : name;
-	}
+    String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    Date getBirthday() {
+        return birthday;
+    }
 
-	public Date getBirthday() {
-		return birthday;
-	}
+    void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
 
-	public void setBirthday(Date birthday) {
-		this.birthday = birthday;
-	}
+    long getId() {
+        return id;
+    }
 
-	public long getId() {
-		return id;
-	}
+    void setId(long id) {
+        this.id = id;
+    }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    String getPrimaryPhoneNumber() {
+        return primaryPhoneNumber;
+    }
 
-	public String getPrimaryPhoneNumber() {
-		return primaryPhoneNumber;
-	}
+    Bitmap getPicture() {
+        return picture;
+    }
 
-	public void setPrimaryPhoneNumber(String primaryPhoneNumber) {
-		this.primaryPhoneNumber = primaryPhoneNumber;
-	}
+    void setPicture(Bitmap picture) {
+        this.picture = picture;
+    }
 
-	public Bitmap getPicture() {
-		return picture;
-	}
+    static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public BirthdayItem createFromParcel(Parcel in) {
+            String name = in.readString();
+            Date birthday = null;
+            try {
+                birthday = TKDateUtils.FORMAT_YYYYMMDD.parse(in.readString());
+            } catch (ParseException e) {
+                Log.e(TAG, "createFromParcel()", e);
+            }
+            long id = in.readLong();
+            String primaryPhoneNumber = in.readString();
+            return new BirthdayItem(name, birthday, id, primaryPhoneNumber);
+        }
 
-	public void setPicture(Bitmap picture) {
-		this.picture = picture;
-	}
+        public BirthdayItem[] newArray(int size) {
+            return new BirthdayItem[size];
+        }
+    };
 
-	public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-		public BirthdayItem createFromParcel(Parcel in) {
-			String name = in.readString();
-			Date birthday = null;
-			try {
-				birthday = TKDateUtils.FORMAT_YYYYMMDD.parse(in.readString());
-			} catch (ParseException e) {
-			}
-			long id = in.readLong();
-			String primaryPhoneNumber = in.readString();
-			return new BirthdayItem(name, birthday, id, primaryPhoneNumber);
-		}
+    // //////////////
+    // Parcelable //
+    // //////////////
 
-		public BirthdayItem[] newArray(int size) {
-			return new BirthdayItem[size];
-		}
-	};
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
-	// //////////////
-	// Parcelable //
-	// //////////////
-
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeString(name);
-		String date = null;
-		try {
-			date = TKDateUtils.FORMAT_YYYYMMDD.format(birthday);
-		} catch (Throwable thr) {
-		}
-		dest.writeString(date == null ? "" : date);
-		dest.writeLong(id);
-		dest.writeString(primaryPhoneNumber);
-	}
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        String date = null;
+        try {
+            date = TKDateUtils.FORMAT_YYYYMMDD.format(birthday);
+        } catch (Throwable thr) {
+            Log.e(TAG, "writeToParcel()", thr);
+        }
+        dest.writeString(date == null ? "" : date);
+        dest.writeLong(id);
+        dest.writeString(primaryPhoneNumber);
+    }
 }
