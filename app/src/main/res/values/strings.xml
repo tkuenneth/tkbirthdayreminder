@@ -8,7 +8,7 @@
     <string name="display_options">Display Options</string>
     <string name="title_show_astrological_signs">Show astrological signs</string>
     <string name="widget_opacity">Opacity</string>
-    <string name="int_slash_int">%1$d / %2$d</string>
+    <string name="int_slash_int" translatable="false">%1$d / %2$d</string>
     <string name="widget_appearance">Widget appearance</string>
     <string name="hide_past_birthdays">Hide past birthdays</string>
 
@@ -25,7 +25,7 @@
     <string name="aquarius">Aquarius</string>
     <string name="pisces">Pisces</string>
 
-    <string name="birthday_no_year">%1$s (%2$s)</string>
+    <string name="birthday_no_year" translatable="false">%1$s (%2$s)</string>
     <string name="no_birthday_set">no birthday set</string>
     <string name="yesterday">yesterday</string>
     <string name="today">today</string>
@@ -34,7 +34,7 @@
     <string name="n_days_ago">%d days ago</string>
     <string name="present_and_future">turns %1$d %2$s (%3$s)</string>
     <string name="past">turned %1$d %2$s (%3$s)</string>
-    <string name="welcome">Welcome</string>
+    <string name="legal">Legal</string>
     <string name="alert_dialog_continue">Continue</string>
     <string name="alert_dialog_abort">Abort</string>
     <string name="alert_dialog_ok">OK</string>
@@ -53,8 +53,6 @@
     <string name="menu_new_entry">New contact</string>
     <string name="menu_set_notification_sound">Set notification sound</string>
     <string name="alarmreceiver_tickertext">birthday reminder</string>
-    <string name="alarmreceiver_message">%1$d birthdays. Click here for details.</string>
-    <string name="alarmreceiver_message_1">%1$d birthday. Click here for details.</string>
     <string name="days_7">7 days</string>
     <string name="days_6">6 days</string>
     <string name="days_5">5 days</string>
@@ -63,20 +61,34 @@
     <string name="days_2">2 days</string>
     <string name="days_1">1 days</string>
     <string name="next_notification">next check for due birthdays on %1$s at %2$s</string>
+    <string name="and_more">and %1$d more</string>
     
-    <string name="welcome_text"><b>TKBirthdayReminder</b> organizes birthdays.
-If you have questions about the app or if you think you have found a bug,
-please contact me by sending an email to kuennetht@googlemail.com. If there is a problem,
-I will gladly be trying to solve it. However, I may need further information to track it down.
-Thank you very much for helping me improve <b>TKBirthdayReminder</b>.
-\n\n<b>Privacy Policy</b>\nThis
+    <string name="welcome_text" translatable="false">Welcome to <b>TKBirthdayReminder</b>.
+If you have questions about TKBirthdayReminder or if you think you have found a bug,
+please contact me by sending an email to tkbirthdayreminder@thomaskuenneth.com.
+\n\n<b>Privacy Policy</b>\nThis privacy policy contains information
+about how TKBirthdayReminder handles user data. We do not sell or let
+any other third parties use your data. The app contains no advertisements.
+\n\nWhen you send an email to the TKBirthdayReminder support, we keep a record of
+our communication until the support case is closed. This includes your email,
+name and the conversation history. This is the only personal information we
+temporarily store. When the support case is closed the records are deleted.
+\n\nTo fulfill its purpose, the app must access user account data and the
+contacts database. Besides grouping and displaying birthday-related information
+TKBirthdayReminder does not process the data in unexpected ways. Specifically it does
+not send the data to thrid party servers. Please also refer to the section Use of other services.
+\n\nNon-personal information is anonymous data with which you
+cannot uniquely identify a specific individual. TKBirthdayReminder does not collect or store non-personal information.
+\n\n<b>Use of other services</b>
+\nTKBirthdayReminder relies on core Google Android Platform services, the Google
+Contacts API, Google Calendar API and Google Tasks API. How and what data these
+services process may not be controllable by TKBirthdayReminder. You can find their
+privacy policy here: http://www.google.com/policies/privacy.
 \n\n<b>Terms of use</b>\nThis program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nThe author may not be held responsible
 for any problems caused by using this program. You use <b>TKBirthdayReminder</b> completely
 at your own risk.
-\n\nPlease click <b>Continue</b> if you agree with the terms of use. <b>Abort</b> quits 
-the program.
 	</string>
 
 </resources>

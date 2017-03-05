@@ -54,9 +54,6 @@ class ContactsList {
         return notifications;
     }
 
-    /**
-     * Liest alle Kontakte aus der Datenbank und befüllt die zwei Listen.
-     */
     private void readContacts(final Context context) {
         SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(context);
@@ -70,10 +67,9 @@ class ContactsList {
 
     private void queryContacts(ContentResolver contentResolver,
                                boolean hidePastsBirthdays) {
-        int intNowAsMMDD = Integer.parseInt(TKDateUtils.FORMAT_YYYYMMDD.format(
+        final int intNowAsMMDD = Integer.parseInt(TKDateUtils.FORMAT_YYYYMMDD.format(
                 new Date()).substring(4, 8));
         Hashtable<String, Boolean> ht = new Hashtable<>();
-        // IDs und Namen aller Kontakte ermitteln
         String[] mainQueryProjection = {ContactsContract.Contacts._ID,
                 ContactsContract.Contacts.DISPLAY_NAME};
         Cursor mainQueryCursor = null;
@@ -82,9 +78,8 @@ class ContactsList {
                     ContactsContract.Contacts.CONTENT_URI, mainQueryProjection,
                     null, null, null);
         } catch (SecurityException e) {
-            Log.e(TAG, "queryContacts()", e);
+            Log.e(TAG, "queryContacts() - missing required permissions");
         }
-        // Trefferliste abarbeiten...
         if (mainQueryCursor != null) {
             while (mainQueryCursor.moveToNext()) {
                 BirthdayItem item = createItemFromCursor(contentResolver,
@@ -125,8 +120,6 @@ class ContactsList {
                 .getColumnIndex(ContactsContract.Contacts._ID));
         String displayName = mainQueryCursor.getString(mainQueryCursor
                 .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-        // Log.d(TAG, "===> " + displayName + " (" + contactId + ")");
-        // Telefonnummer, Geburtsdatum und ggf. Notizen lesen
         String phoneNumber = null;
         Date gebdt = null;
         String[] dataQueryProjection = new String[]{
@@ -149,7 +142,6 @@ class ContactsList {
                     int type = dataQueryCursor.getInt(1);
                     if (ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY == type) {
                         String stringBirthday = dataQueryCursor.getString(2);
-                        // Log.d(TAG, "     birthday date: " + stringBirthday);
                         Date d = TKDateUtils.getDateFromString1(stringBirthday);
                         if (d != null) {
                             gebdt = d;
@@ -158,7 +150,6 @@ class ContactsList {
                 } else if (ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
                         .equals(mimeType)) {
                     String note = dataQueryCursor.getString(3);
-                    // Log.d(TAG, "     note: " + note);
                     Date d = TKDateUtils.getDateFromString(note);
                     if (d != null) {
                         gebdt = d;
@@ -168,11 +159,9 @@ class ContactsList {
                     if (ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE == dataQueryCursor
                             .getInt(5)) {
                         phoneNumber = dataQueryCursor.getString(4);
-                        // Log.d(TAG, "     phone: " + phoneNumber);
                     }
                 }
             }
-            // FIXME: führt offenbar zu ANRs
             dataQueryCursor.close();
         }
         return new BirthdayItem(displayName, gebdt,
@@ -192,7 +181,7 @@ class ContactsList {
             } else if ((daysUntilBirthday < 0) || (daysUntilBirthday > 7)) {
                 return false;
             }
-            int notificationDays = AbstractListActivity
+            int notificationDays = TKBirthdayReminder
                     .getNotificationDays(context);
             int mask = 1 << (daysUntilBirthday - 1);
             if ((notificationDays & mask) == mask) {
@@ -214,13 +203,7 @@ class ContactsList {
                 return -1;
             } else {
                 int days1 = TKDateUtils.getBirthdayInDays(item1.getBirthday());
-                if (days1 < -7) {
-                    days1 = 1000 + days1;
-                }
                 int days2 = TKDateUtils.getBirthdayInDays(item2.getBirthday());
-                if (days2 < -7) {
-                    days2 = 1000 + days2;
-                }
                 if (days1 == days2) {
                     return 0;
                 } else {

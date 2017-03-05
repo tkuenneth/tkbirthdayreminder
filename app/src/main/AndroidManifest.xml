@@ -5,13 +5,15 @@
 
     <supports-screens android:smallScreens="true" />
 
+    <!-- normal protection domain -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+
+    <!-- dangerous -->
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
-    <uses-permission android:name="CALL_PHONE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
 
     <application
         android:allowBackup="true"
@@ -25,7 +27,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="NotificationView" />
         <activity android:name="PreferencesActivity" />
 
         <receiver
@@ -44,7 +45,6 @@
             </intent-filter>
         </receiver>
 
-        <!-- Broadcast Receiver that will process BirthdayWidget updates -->
         <receiver android:name=".BirthdayWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

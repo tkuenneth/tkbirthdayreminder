@@ -79,7 +79,7 @@ public class BirthdayWidget extends AppWidgetProvider {
             WindowManager wm = (WindowManager) context
                     .getSystemService(Context.WINDOW_SERVICE);
             Bitmap picture = BirthdayItemListAdapter.loadBitmap(item,
-                    context, AbstractListActivity.getImageHeight(wm));
+                    context, TKBirthdayReminder.getImageHeight(wm));
             updateViews.setImageViewBitmap(R.id.icon, picture);
         }
         updateViews.setTextViewText(R.id.text1, name);

@@ -5,20 +5,25 @@
 	Alle Rechte beim Autoren. All rights reserved.
 -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/birthdaywidget_layout"
-    android:orientation="horizontal"
     android:layout_margin="@dimen/widget_margin"
     android:background="#80000000"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView android:id="@+id/icon"
-    	android:layout_gravity="center"
+    	android:layout_gravity="center_vertical"
+		android:layout_alignParentStart="true"
+		android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
 		android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
 	<LinearLayout
+        android:layout_toRightOf="@id/icon"
+        android:layout_toEndOf="@id/icon"
+        android:layout_centerInParent="true"
 	    android:orientation="vertical"
 	    android:layout_marginLeft="4dip"
 	    android:layout_marginRight="4dip"
@@ -76,4 +81,4 @@
 
 	</LinearLayout>
 	
-</LinearLayout>
+</RelativeLayout>

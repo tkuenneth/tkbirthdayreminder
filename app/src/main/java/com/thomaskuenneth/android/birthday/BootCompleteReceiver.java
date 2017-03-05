@@ -40,33 +40,26 @@ public class BootCompleteReceiver extends BroadcastReceiver {
      *                falls die Alarmzeit schon verstrichen ist
      */
     public static void startAlarm(Context context, boolean nextDay) {
-        // Welches Intent soll beim Feuern des Alarms gestartet werden?
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent sender = PendingIntent
                 .getBroadcast(context, 0, intent, 0);
-
-        Calendar cal = new GregorianCalendar();
-        int minCurrent = (cal.get(Calendar.HOUR_OF_DAY) * 60)
-                + cal.get(Calendar.MINUTE);
-        TimePickerDialogHelper.readFromPreferences(context);
-        cal.set(GregorianCalendar.HOUR_OF_DAY, TimePickerDialogHelper.hour);
-        cal.set(GregorianCalendar.MINUTE, TimePickerDialogHelper.minute);
-        int minAlarm = (cal.get(Calendar.HOUR_OF_DAY) * 60)
-                + cal.get(Calendar.MINUTE);
-
-        if (nextDay) {
-            // Liegt die Alarmzeit in der Vergangenheit?
-            if (minCurrent >= minAlarm) {
-                cal.add(Calendar.DAY_OF_MONTH, 1);
-            }
-        }
-
+        Calendar cal = Calendar.getInstance();
+//        int minCurrent = (cal.get(Calendar.HOUR_OF_DAY) * 60)
+//                + cal.get(Calendar.MINUTE);
+//        TimePickerDialogHelper.readFromPreferences(context);
+//        cal.set(GregorianCalendar.HOUR_OF_DAY, TimePickerDialogHelper.hour);
+//        cal.set(GregorianCalendar.MINUTE, TimePickerDialogHelper.minute);
+//        int minAlarm = (cal.get(Calendar.HOUR_OF_DAY) * 60)
+//                + cal.get(Calendar.MINUTE);
+//        if (nextDay) {
+//            if (minCurrent >= minAlarm) {
+//                cal.add(Calendar.DAY_OF_MONTH, 1);
+//            }
+//        }
         AlarmManager am = (AlarmManager) context
                 .getSystemService(Service.ALARM_SERVICE);
         am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(),
                 DateUtils.DAY_IN_MILLIS, sender);
-
-        // ggf. den nächsten Alarmzeitpunkt anzeigen
         if (nextDay) {
             Toast toast = Toast.makeText(context, TKDateUtils
                             .getNotificationDateAsString(context, cal.getTime()),

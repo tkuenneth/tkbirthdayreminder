@@ -1,63 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
 	edit_birthday_date.xml
-	TKBirthdayReminder (c) Thomas Künneth 2009
+	TKBirthdayReminder (c) Thomas Künneth 2009 - 2017
 	Alle Rechte beim Autoren. All rights reserved.
 -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:padding="8dp"
+    >
 
-    <TextView
-        android:layout_height="wrap_content"
+    <Spinner
+        android:id="@+id/new_event_day"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:drawSelectorOnTop="true" />
+
+    <Spinner
+        android:id="@+id/new_event_month"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/new_event_day"
+        android:layout_marginLeft="6dip"
+        android:layout_marginStart="6dp"
+        android:layout_toEndOf="@id/new_event_day"
+        android:layout_toRightOf="@id/new_event_day"
+        android:drawSelectorOnTop="true" />
+
+    <EditText
+        android:id="@+id/new_event_year"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/new_event_month"
+        android:layout_marginEnd="6dp"
         android:layout_marginLeft="6dip"
         android:layout_marginRight="6dip"
-        android:text="@string/new_entry_dialog_date"
-        android:gravity="left"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:layout_marginStart="6dp"
+        android:layout_toEndOf="@id/new_event_month"
+        android:layout_toRightOf="@id/new_event_month"
+        android:gravity="fill"
+        android:inputType="numberDecimal"
+        android:maxLength="4"
+        android:maxLines="1"
+        android:scrollHorizontally="true" />
 
-	<RelativeLayout
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-        android:layout_marginLeft="6dip"
-		>
-		
-	    <Spinner android:id="@+id/new_event_day"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentLeft="true"
-	        android:layout_alignParentTop="true"
-	        android:drawSelectorOnTop="true"
-	    />
-		
-	    <Spinner android:id="@+id/new_event_month"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentTop="true"
-	        android:layout_toRightOf="@id/new_event_day"
-	        android:drawSelectorOnTop="true"
-	        android:layout_marginLeft="6dip"
-	    />
-	    
-	    <EditText
-	        android:id="@+id/new_event_year"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentTop="true"
-	        android:layout_toRightOf="@id/new_event_month"
-	        android:layout_marginLeft="6dip"
-	        android:layout_marginRight="6dip"
-	        android:scrollHorizontally="true"
-	        android:singleLine="true"
-	        android:inputType="numberDecimal"
-	        android:maxLength="4"
-	        android:gravity="fill"
-	       />
-		
-	</RelativeLayout>            
-
-        
-</LinearLayout>
+</RelativeLayout>

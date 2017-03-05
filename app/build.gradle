@@ -18,4 +18,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+
+    dependencies {
+        compile 'com.android.support:appcompat-v7:25.1.0'
+    }
 }
