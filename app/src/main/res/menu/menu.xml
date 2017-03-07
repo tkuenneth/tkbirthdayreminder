@@ -21,10 +21,6 @@
         android:title="@string/menu_set_alarm" />
 
     <item
-        android:id="@+id/set_notification_days"
-        android:title="@string/menu_set_notification_days" />
-
-    <item
         android:id="@+id/set_notification_sound"
         android:title="@string/menu_set_notification_sound" />
 

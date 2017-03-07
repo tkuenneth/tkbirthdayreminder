@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Diese Klasse liest Kontakte ein. Außerdem stellt sie die Listen zur
@@ -26,49 +27,65 @@ import java.util.Hashtable;
  *
  * @author Thomas Künneth
  */
-class ContactsList {
+class ContactsList implements Comparator<BirthdayItem> {
 
     private static final String TAG = ContactsList.class.getSimpleName();
 
-    /*
-     * Diese Listen können durch Aufruf des passenden Getters von den Activities
-     * verwendet werden.
-     */
-    private final ArrayList<BirthdayItem> birthdaySet;
-    private final ArrayList<BirthdayItem> notifications;
+    private final List<BirthdayItem> main;
+    private final List<BirthdayItem> widget;
+    private final List<BirthdayItem> notifications;
 
     private final Context context;
 
     ContactsList(Context context) {
-        birthdaySet = new ArrayList<>();
+        main = new ArrayList<>();
+        widget = new ArrayList<>();
         notifications = new ArrayList<>();
         this.context = context;
         readContacts(context);
     }
 
-    ArrayList<BirthdayItem> getListBirthdaySet() {
-        return birthdaySet;
+    @Override
+    public int compare(BirthdayItem item1, BirthdayItem item2) {
+        if ((item1 == null) && (item2 == null)) {
+            return 0;
+        } else if (item1 == null) {
+            return 1;
+        } else if (item2 == null) {
+            return -1;
+        } else {
+            int days1 = TKDateUtils.getBirthdayInDays(item1.getBirthday(), null);
+            int days2 = TKDateUtils.getBirthdayInDays(item2.getBirthday(), null);
+            if (days1 == days2) {
+                return 0;
+            } else {
+                return (days1 < days2) ? -1 : 1;
+            }
+        }
     }
 
-    ArrayList<BirthdayItem> getListNotifications() {
+    List<BirthdayItem> getMainList() {
+        return main;
+    }
+
+    List<BirthdayItem> getWidgetList() {
+        return widget;
+    }
+
+    List<BirthdayItem> getNotificationsList() {
         return notifications;
     }
 
     private void readContacts(final Context context) {
-        SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(context);
-        boolean hidePastsBirthdays = prefs.getBoolean("hide_past_birthdays",
-                false);
         ContentResolver contentResolver = context.getContentResolver();
-        queryContacts(contentResolver, hidePastsBirthdays);
-        Collections.sort(birthdaySet, new BirthdaySetComparator());
-        Collections.sort(notifications, new NotificationsComparator());
+        queryContacts(contentResolver);
+        Collections.sort(widget, this);
+        Collections.sort(notifications, this);
     }
 
-    private void queryContacts(ContentResolver contentResolver,
-                               boolean hidePastsBirthdays) {
-        final int intNowAsMMDD = Integer.parseInt(TKDateUtils.FORMAT_YYYYMMDD.format(
-                new Date()).substring(4, 8));
+    private void queryContacts(ContentResolver contentResolver) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean hidePastBirthdays = prefs.getBoolean("hide_past_birthdays", false);
         Hashtable<String, Boolean> ht = new Hashtable<>();
         String[] mainQueryProjection = {ContactsContract.Contacts._ID,
                 ContactsContract.Contacts.DISPLAY_NAME};
@@ -90,24 +107,19 @@ class ContactsList {
                     String strYYYYMMDD = TKDateUtils.FORMAT_YYYYMMDD
                             .format(date);
                     String key = name + strYYYYMMDD;
-                    if (ht.containsKey(key)) {
-                        continue;
-                    } else {
-                        if (hidePastsBirthdays) {
-                            int intBirthdayAsMMDD = Integer
-                                    .parseInt(strYYYYMMDD.substring(4, 8));
-                            if (intBirthdayAsMMDD < intNowAsMMDD) {
-                                continue;
-                            }
-                        }
+                    if (!ht.containsKey(key)) {
                         ht.put(key, Boolean.TRUE);
+                        Date birthday = item.getBirthday();
+                        if (shouldAddToMainList(birthday, hidePastBirthdays)) {
+                            main.add(item);
+                        }
+                        if (shouldAddToWidgetList(birthday)) {
+                            widget.add(item);
+                        }
+                        if (shouldAddToNotificationsList(birthday)) {
+                            notifications.add(item);
+                        }
                     }
-                }
-                if (addToListBirthdaySet(item)) {
-                    birthdaySet.add(item);
-                }
-                if (addToListNotifications(item)) {
-                    notifications.add(item);
                 }
             }
             mainQueryCursor.close();
@@ -168,20 +180,23 @@ class ContactsList {
                 Long.valueOf(contactId), phoneNumber);
     }
 
-    private boolean addToListBirthdaySet(BirthdayItem item) {
-        return (item.getBirthday() != null);
+    private boolean shouldAddToMainList(Date birthday, boolean hidePastBirthdays) {
+        return birthday != null && (!hidePastBirthdays || TKDateUtils.getBirthdayInDays(birthday, null) >= 0);
     }
 
-    private boolean addToListNotifications(BirthdayItem item) {
-        Date birthday = item.getBirthday();
+    private boolean shouldAddToWidgetList(Date birthday) {
+        return birthday != null;
+    }
+
+    private boolean shouldAddToNotificationsList(Date birthday) {
         if (birthday != null) {
-            int daysUntilBirthday = TKDateUtils.getBirthdayInDays(birthday);
+            int daysUntilBirthday = TKDateUtils.getBirthdayInDays(birthday, null);
             if (daysUntilBirthday == 0) {
                 return true;
             } else if ((daysUntilBirthday < 0) || (daysUntilBirthday > 7)) {
                 return false;
             }
-            int notificationDays = TKBirthdayReminder
+            int notificationDays = NotificationPreference
                     .getNotificationDays(context);
             int mask = 1 << (daysUntilBirthday - 1);
             if ((notificationDays & mask) == mask) {
@@ -189,30 +204,5 @@ class ContactsList {
             }
         }
         return false;
-    }
-
-    private static class BirthdaySetComparator implements
-            Comparator<BirthdayItem> {
-
-        public int compare(BirthdayItem item1, BirthdayItem item2) {
-            if ((item1 == null) && (item2 == null)) {
-                return 0;
-            } else if (item1 == null) {
-                return 1;
-            } else if (item2 == null) {
-                return -1;
-            } else {
-                int days1 = TKDateUtils.getBirthdayInDays(item1.getBirthday());
-                int days2 = TKDateUtils.getBirthdayInDays(item2.getBirthday());
-                if (days1 == days2) {
-                    return 0;
-                } else {
-                    return (days1 < days2) ? -1 : 1;
-                }
-            }
-        }
-    }
-
-    private static class NotificationsComparator extends BirthdaySetComparator {
     }
 }

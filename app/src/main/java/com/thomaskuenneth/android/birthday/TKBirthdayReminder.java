@@ -47,9 +47,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.RemoteViews;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 
@@ -58,6 +56,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -77,9 +76,6 @@ public class TKBirthdayReminder extends ListActivity implements
             Manifest.permission.GET_ACCOUNTS
     };
     private static final String VERSION_CODE = "versionCode";
-    private static final int[] IDS = new int[]{R.id.days_1, R.id.days_2,
-            R.id.days_3, R.id.days_4, R.id.days_5, R.id.days_6, R.id.days_7};
-    private static final String NOTIFICATION_DAYS = "notificationDays";
     private static final String NOTIFICATION_SOUND = "notificationSound";
     private static final String NEW_EVENT_EVENT = "newEventEvent";
     private static final String STATE_KEY = "stateKey";
@@ -92,7 +88,7 @@ public class TKBirthdayReminder extends ListActivity implements
     private Calendar newEventCal;
     private AnnualEvent newEventEvent;
     private BirthdayItem longClickedItem;
-    private ArrayList<BirthdayItem> list;
+    private List<BirthdayItem> list;
     private int imageHeight;
 
     @Override
@@ -102,6 +98,21 @@ public class TKBirthdayReminder extends ListActivity implements
         list = null;
         longClickedItem = null;
         newEventEvent = null;
+        getListView().setOnCreateContextMenuListener(this);
+        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                BirthdayItem item = (BirthdayItem) getListAdapter().getItem(
+                        position);
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
+                        ContactsContract.Contacts.CONTENT_URI,
+                        Long.toString(item.getId())));
+                startActivityForResult(i, Constants.RQ_SHOW_CONTACT);
+            }
+        });
+
         if (isNewVersion()) {
             if (savedInstanceState == null) {
                 showDialog(Constants.WELCOME_ID);
@@ -111,8 +122,7 @@ public class TKBirthdayReminder extends ListActivity implements
                 newEventEvent = savedInstanceState.getParcelable(NEW_EVENT_EVENT);
                 list = savedInstanceState.getParcelableArrayList(STATE_KEY);
                 if (list != null) {
-                    long id = savedInstanceState.getLong(STATE_KEY + "_"
-                            + LONG_CLICK_ITEM);
+                    long id = savedInstanceState.getLong(LONG_CLICK_ITEM);
                     for (BirthdayItem item : list) {
                         if (item.getId() == id) {
                             longClickedItem = item;
@@ -121,20 +131,6 @@ public class TKBirthdayReminder extends ListActivity implements
                     }
                 }
             }
-            getListView().setOnCreateContextMenuListener(this);
-            getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id) {
-                    BirthdayItem item = (BirthdayItem) getListAdapter().getItem(
-                            position);
-                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
-                            ContactsContract.Contacts.CONTENT_URI,
-                            Long.toString(item.getId())));
-                    startActivityForResult(i, Constants.RQ_SHOW_CONTACT);
-                }
-            });
             run();
         }
     }
@@ -142,9 +138,11 @@ public class TKBirthdayReminder extends ListActivity implements
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(STATE_KEY, list);
+        if (list instanceof ArrayList) {
+            outState.putParcelableArrayList(STATE_KEY, (ArrayList) list);
+        }
         if (longClickedItem != null) {
-            outState.putLong(STATE_KEY + "_" + LONG_CLICK_ITEM,
+            outState.putLong(LONG_CLICK_ITEM,
                     longClickedItem.getId());
         }
         if (newEventEvent != null) {
@@ -153,7 +151,9 @@ public class TKBirthdayReminder extends ListActivity implements
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions,
+                                           int[] grantResults) {
         boolean canRun = true;
         for (int result : grantResults) {
             if (result == PackageManager.PERMISSION_DENIED) {
@@ -169,7 +169,9 @@ public class TKBirthdayReminder extends ListActivity implements
     }
 
     @Override
-    public void onActivityResult(int reqCode, int resultCode, Intent data) {
+    public void onActivityResult(int reqCode,
+                                 int resultCode,
+                                 Intent data) {
         super.onActivityResult(reqCode, resultCode, data);
         switch (reqCode) {
             case (Constants.RQ_PICK_CONTACT):
@@ -270,9 +272,6 @@ public class TKBirthdayReminder extends ListActivity implements
                 picker.updateTime(TimePickerDialogHelper.hour,
                         TimePickerDialogHelper.minute);
                 break;
-            case Constants.NOTIFICATION_DAYS_DIALOG_ID:
-                updateCheckboxes(dialog);
-                break;
         }
     }
 
@@ -359,25 +358,6 @@ public class TKBirthdayReminder extends ListActivity implements
                         TimePickerDialogHelper.hour, TimePickerDialogHelper.minute,
                         true);
                 break;
-            case Constants.NOTIFICATION_DAYS_DIALOG_ID:
-                view = LayoutInflater.from(this).inflate(
-                        R.layout.notification_days, null);
-                dialog = new AlertDialog.Builder(this)
-                        .setTitle(R.string.menu_set_notification_days)
-                        .setPositiveButton(R.string.alert_dialog_ok,
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,
-                                                        int whichButton) {
-                                        updateNotificationDays((AlertDialog) dialog);
-                                    }
-                                })
-                        .setNegativeButton(R.string.alert_dialog_cancel,
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,
-                                                        int whichButton) {
-                                    }
-                                }).setView(view).create();
-                break;
         }
         return dialog;
     }
@@ -397,9 +377,6 @@ public class TKBirthdayReminder extends ListActivity implements
                 break;
             case R.id.set_alarm:
                 showDialog(Constants.TIME_DIALOG_ID);
-                break;
-            case R.id.set_notification_days:
-                showDialog(Constants.NOTIFICATION_DAYS_DIALOG_ID);
                 break;
             case R.id.set_notification_sound:
                 Intent i = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
@@ -437,6 +414,12 @@ public class TKBirthdayReminder extends ListActivity implements
         return true;
     }
 
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        TimePickerDialogHelper.writeToPreferences(this, hourOfDay, minute);
+        BootCompleteReceiver.startAlarm(this, true);
+    }
+
     public static int getImageHeight(WindowManager wm) {
         DisplayMetrics outMetrics = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(outMetrics);
@@ -468,12 +451,135 @@ public class TKBirthdayReminder extends ListActivity implements
         return context.getString(resId, formatArgs);
     }
 
-    public static void setWidgetAppearance(Context context, RemoteViews views,
-                                           int resid) {
-        int opacity = WidgetPreference.getOpacity(context);
-        int color = 0x000000;
-        opacity <<= 24;
-        views.setInt(resid, "setBackgroundColor", opacity | color);
+    /**
+     * Aktualisiert einen Kontakt in der Datenbank und anschließend die Listen.
+     *
+     * @param item der zu aktualisierende Kontakt
+     */
+    public void updateContact(BirthdayItem item) {
+        ContentResolver contentResolver = getContentResolver();
+        String id = Long.toString(item.getId());
+        // Log.d(TAG, "updateContact: " + item.getName() + " (" + id + ")");
+        // lesen vorhandener Daten
+        String[] dataQueryProjection = new String[]{
+                ContactsContract.Data.MIMETYPE,
+                ContactsContract.CommonDataKinds.Event.TYPE,
+                ContactsContract.CommonDataKinds.Event.START_DATE,
+                ContactsContract.CommonDataKinds.Note.NOTE,
+                ContactsContract.Data._ID};
+        String dataQuerySelection = ContactsContract.Data.CONTACT_ID + " = ?";
+        String[] rawSelectionArgs = new String[]{id};
+        String[] dataQuerySelectionArgs = rawSelectionArgs;
+        Cursor dataQueryCursor = contentResolver.query(
+                ContactsContract.Data.CONTENT_URI, dataQueryProjection,
+                dataQuerySelection, dataQuerySelectionArgs, null);
+        if (dataQueryCursor != null) {
+            while (dataQueryCursor.moveToNext()) {
+                String mimeType = dataQueryCursor.getString(0);
+                String dataId = dataQueryCursor.getString(4);
+                // Event - evtl. der Geburtstag?
+                if (ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE
+                        .equals(mimeType)) {
+                    int type = dataQueryCursor.getInt(1);
+                    if (ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY == type) {
+                    /* String gebdt = */
+                        dataQueryCursor.getString(2);
+                        // Log.d(TAG, "   ---> found birthday: " + gebdt);
+
+                        String where = ContactsContract.Data.CONTACT_ID
+                                + " = ? AND " + ContactsContract.Data._ID
+                                + " = ? AND " + ContactsContract.Data.MIMETYPE
+                                + " = ?";
+                        String[] selectionArgs = new String[]{
+                                id,
+                                dataId,
+                                ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE};
+                    /* int rowsDeleted = */
+                        contentResolver.delete(
+                                ContactsContract.Data.CONTENT_URI, where,
+                                selectionArgs);
+                        // Log.d(TAG, "   ---> deleting birthday " + dataId + ": "
+                        // + rowsDeleted + " row(s) affected");
+                    }
+                }
+                // oder ein Notizfeld?
+                else if (ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
+                        .equals(mimeType)) {
+                    String note = dataQueryCursor.getString(3);
+                    // Log.d(TAG, "   ---> found note: " + note + " (_ID = " +
+                    // dataId
+                    // + ")");
+                    // Notiz aktualisieren
+                    if ((note != null) && (note.length() >= 17)) {
+                        // Birthday=yyyymmdd enthält 17 Zeichen
+                        Date d = TKDateUtils.getDateFromString(note);
+                        if (d != null) {
+                            // Log.d(TAG, "   ---> extracted date: " +
+                            // d.toString());
+                            // Datum aus dem Notizfeld entfernen
+                            note = TKDateUtils.getStringFromDate(null, note);
+                            ContentValues values = new ContentValues();
+                            values.put(ContactsContract.CommonDataKinds.Note.NOTE,
+                                    note);
+                            values.put(
+                                    ContactsContract.Data.MIMETYPE,
+                                    ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE);
+                            String where = ContactsContract.Data.CONTACT_ID
+                                    + " = ? AND " + ContactsContract.Data._ID
+                                    + " = ? AND " + ContactsContract.Data.MIMETYPE
+                                    + " = ?";
+                            String[] selectionArgs = new String[]{
+                                    id,
+                                    dataId,
+                                    ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE};
+                        /* int rowsUpdated = */
+                            contentResolver.update(
+                                    ContactsContract.Data.CONTENT_URI, values,
+                                    where, selectionArgs);
+                            // Log.d(TAG, "   ---> updating note " + dataId + ": "
+                            // + rowsUpdated + " row(s) affected");
+                        }
+                    }
+                }
+            }
+            dataQueryCursor.close();
+        }
+
+        // Geburtstag einfügen
+        Date birthday = item.getBirthday();
+        if (birthday != null) {
+            // Strings für die Suche nach RawContacts
+            String[] rawProjection = new String[]{ContactsContract.RawContacts._ID};
+            String rawSelection = ContactsContract.RawContacts.CONTACT_ID + " = ?";
+            // Werte für Tabellenzeile vorbereiten
+            ContentValues values = new ContentValues();
+            values.put(ContactsContract.CommonDataKinds.Event.START_DATE,
+                    TKDateUtils.getDateAsStringYYYY_MM_DD(birthday));
+            values.put(ContactsContract.Data.MIMETYPE,
+                    ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE);
+            values.put(ContactsContract.CommonDataKinds.Event.TYPE,
+                    ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY);
+            // alle RawContacts befüllen
+            Cursor c = contentResolver.query(ContactsContract.RawContacts.CONTENT_URI,
+                    rawProjection, rawSelection, rawSelectionArgs, null);
+            if (c != null) {
+                while (c.moveToNext()) {
+                    String rawContactId = c.getString(0);
+                    values.put(
+                            ContactsContract.CommonDataKinds.Event.RAW_CONTACT_ID,
+                            rawContactId);
+                /* Uri uri = */
+                    contentResolver.insert(
+                            ContactsContract.Data.CONTENT_URI, values);
+//				Log.d(TAG, "   ---> inserting birthday for raw contact "
+//						+ rawContactId
+//						+ ((uri == null) ? " failed" : " succeeded"));
+                }
+                c.close();
+            }
+        }
+        requestSync();
+        readContacts(true);
     }
 
     @TargetApi(23)
@@ -674,168 +780,11 @@ public class TKBirthdayReminder extends ListActivity implements
         }
     }
 
-    /**
-     * Aktualisiert einen Kontakt in der Datenbank und anschließend die Listen.
-     *
-     * @param item der zu aktualisierende Kontakt
-     */
-    public void updateContact(BirthdayItem item) {
-        ContentResolver contentResolver = getContentResolver();
-        String id = Long.toString(item.getId());
-        // Log.d(TAG, "updateContact: " + item.getName() + " (" + id + ")");
-        // lesen vorhandener Daten
-        String[] dataQueryProjection = new String[]{
-                ContactsContract.Data.MIMETYPE,
-                ContactsContract.CommonDataKinds.Event.TYPE,
-                ContactsContract.CommonDataKinds.Event.START_DATE,
-                ContactsContract.CommonDataKinds.Note.NOTE,
-                ContactsContract.Data._ID};
-        String dataQuerySelection = ContactsContract.Data.CONTACT_ID + " = ?";
-        String[] rawSelectionArgs = new String[]{id};
-        String[] dataQuerySelectionArgs = rawSelectionArgs;
-        Cursor dataQueryCursor = contentResolver.query(
-                ContactsContract.Data.CONTENT_URI, dataQueryProjection,
-                dataQuerySelection, dataQuerySelectionArgs, null);
-        if (dataQueryCursor != null) {
-            while (dataQueryCursor.moveToNext()) {
-                String mimeType = dataQueryCursor.getString(0);
-                String dataId = dataQueryCursor.getString(4);
-                // Event - evtl. der Geburtstag?
-                if (ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE
-                        .equals(mimeType)) {
-                    int type = dataQueryCursor.getInt(1);
-                    if (ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY == type) {
-                    /* String gebdt = */
-                        dataQueryCursor.getString(2);
-                        // Log.d(TAG, "   ---> found birthday: " + gebdt);
-
-                        String where = ContactsContract.Data.CONTACT_ID
-                                + " = ? AND " + ContactsContract.Data._ID
-                                + " = ? AND " + ContactsContract.Data.MIMETYPE
-                                + " = ?";
-                        String[] selectionArgs = new String[]{
-                                id,
-                                dataId,
-                                ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE};
-                    /* int rowsDeleted = */
-                        contentResolver.delete(
-                                ContactsContract.Data.CONTENT_URI, where,
-                                selectionArgs);
-                        // Log.d(TAG, "   ---> deleting birthday " + dataId + ": "
-                        // + rowsDeleted + " row(s) affected");
-                    }
-                }
-                // oder ein Notizfeld?
-                else if (ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
-                        .equals(mimeType)) {
-                    String note = dataQueryCursor.getString(3);
-                    // Log.d(TAG, "   ---> found note: " + note + " (_ID = " +
-                    // dataId
-                    // + ")");
-                    // Notiz aktualisieren
-                    if ((note != null) && (note.length() >= 17)) {
-                        // Birthday=yyyymmdd enthält 17 Zeichen
-                        Date d = TKDateUtils.getDateFromString(note);
-                        if (d != null) {
-                            // Log.d(TAG, "   ---> extracted date: " +
-                            // d.toString());
-                            // Datum aus dem Notizfeld entfernen
-                            note = TKDateUtils.getStringFromDate(null, note);
-                            ContentValues values = new ContentValues();
-                            values.put(ContactsContract.CommonDataKinds.Note.NOTE,
-                                    note);
-                            values.put(
-                                    ContactsContract.Data.MIMETYPE,
-                                    ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE);
-                            String where = ContactsContract.Data.CONTACT_ID
-                                    + " = ? AND " + ContactsContract.Data._ID
-                                    + " = ? AND " + ContactsContract.Data.MIMETYPE
-                                    + " = ?";
-                            String[] selectionArgs = new String[]{
-                                    id,
-                                    dataId,
-                                    ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE};
-                        /* int rowsUpdated = */
-                            contentResolver.update(
-                                    ContactsContract.Data.CONTENT_URI, values,
-                                    where, selectionArgs);
-                            // Log.d(TAG, "   ---> updating note " + dataId + ": "
-                            // + rowsUpdated + " row(s) affected");
-                        }
-                    }
-                }
-            }
-            dataQueryCursor.close();
-        }
-
-        // Geburtstag einfügen
-        Date birthday = item.getBirthday();
-        if (birthday != null) {
-            // Strings für die Suche nach RawContacts
-            String[] rawProjection = new String[]{ContactsContract.RawContacts._ID};
-            String rawSelection = ContactsContract.RawContacts.CONTACT_ID + " = ?";
-            // Werte für Tabellenzeile vorbereiten
-            ContentValues values = new ContentValues();
-            values.put(ContactsContract.CommonDataKinds.Event.START_DATE,
-                    TKDateUtils.getDateAsStringYYYY_MM_DD(birthday));
-            values.put(ContactsContract.Data.MIMETYPE,
-                    ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE);
-            values.put(ContactsContract.CommonDataKinds.Event.TYPE,
-                    ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY);
-            // alle RawContacts befüllen
-            Cursor c = contentResolver.query(ContactsContract.RawContacts.CONTENT_URI,
-                    rawProjection, rawSelection, rawSelectionArgs, null);
-            if (c != null) {
-                while (c.moveToNext()) {
-                    String rawContactId = c.getString(0);
-                    values.put(
-                            ContactsContract.CommonDataKinds.Event.RAW_CONTACT_ID,
-                            rawContactId);
-                /* Uri uri = */
-                    contentResolver.insert(
-                            ContactsContract.Data.CONTENT_URI, values);
-//				Log.d(TAG, "   ---> inserting birthday for raw contact "
-//						+ rawContactId
-//						+ ((uri == null) ? " failed" : " succeeded"));
-                }
-                c.close();
-            }
-        }
-        requestSync();
-        readContacts(true);
-    }
-
-    private void setList(ArrayList<BirthdayItem> list) {
+    private void setList(List<BirthdayItem> list) {
         this.list = list;
         BirthdayItemListAdapter myListAdapter = new BirthdayItemListAdapter(
                 this, list, imageHeight);
         setListAdapter(myListAdapter);
-    }
-
-    private void updateCheckboxes(Dialog dialog) {
-        SharedPreferences prefs = getSharedPreferences(
-                Constants.SHARED_PREFS_KEY, Context.MODE_PRIVATE);
-        int notificationDays = prefs.getInt(NOTIFICATION_DAYS, 0);
-        for (int bit = 0; bit < 7; bit++) {
-            CheckBox cb = (CheckBox) dialog.findViewById(IDS[bit]);
-            int mask = 1 << bit;
-            cb.setChecked((notificationDays & mask) == mask);
-        }
-    }
-
-    private void updateNotificationDays(Dialog dialog) {
-        int bits = 0;
-        for (int bit = 0; bit < 7; bit++) {
-            CheckBox cb = (CheckBox) dialog.findViewById(IDS[bit]);
-            if (cb.isChecked()) {
-                bits |= (1 << bit);
-            }
-        }
-        SharedPreferences prefs = getSharedPreferences(
-                Constants.SHARED_PREFS_KEY, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(NOTIFICATION_DAYS, bits);
-        editor.apply();
     }
 
     /**
@@ -853,7 +802,7 @@ public class TKBirthdayReminder extends ListActivity implements
                 if ((list == null) || forceRead) {
                     ContactsList cl = new ContactsList(
                             TKBirthdayReminder.this);
-                    list = getProperList(cl);
+                    list = cl.getMainList();
                 }
                 h.post(new Runnable() {
 
@@ -883,18 +832,6 @@ public class TKBirthdayReminder extends ListActivity implements
         thread.start();
     }
 
-    public static int getNotificationDays(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(
-                Constants.SHARED_PREFS_KEY, Context.MODE_PRIVATE);
-        return prefs.getInt(NOTIFICATION_DAYS, 0);
-    }
-
-    @Override
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        TimePickerDialogHelper.writeToPreferences(this, hourOfDay, minute);
-        BootCompleteReceiver.startAlarm(this, true);
-    }
-
     private int checkYear() {
         int intYear = TKDateUtils.INVISIBLE_YEAR;
         String s = newEventYear.getText().toString();
@@ -906,10 +843,6 @@ public class TKBirthdayReminder extends ListActivity implements
             }
         }
         return intYear;
-    }
-
-    private ArrayList<BirthdayItem> getProperList(ContactsList cl) {
-        return cl.getListBirthdaySet();
     }
 
     private void setNotificationSoundAsString(Uri uri) {

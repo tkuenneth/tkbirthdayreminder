@@ -14,7 +14,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -119,28 +118,18 @@ class TKDateUtils {
         return sb.toString();
     }
 
-    static int getBirthdayInDays(Date birthday) {
-        return getBirthdayInDays(birthday, null);
-    }
-
-    private static synchronized int getBirthdayInDays(Date birthday, Date buffer) {
+    static synchronized int getBirthdayInDays(Date birthday, Date buffer) {
+        Calendar cal = Calendar.getInstance();
+        int daysToday = cal.get(Calendar.DAY_OF_YEAR);
         if (birthday != null) {
-            String stringBirthday = FORMAT_YYYYMMDD.format(birthday);
-            int monthBirthday = Integer
-                    .parseInt(stringBirthday.substring(4, 6)) - 1;
-            int dayBirthday = Integer.parseInt(stringBirthday.substring(6,
-                    stringBirthday.length()));
-            Calendar cal = new GregorianCalendar();
-            int daysToday = cal.get(Calendar.DAY_OF_YEAR);
-            cal.set(Calendar.DAY_OF_MONTH, dayBirthday);
-            cal.set(Calendar.MONTH, monthBirthday);
-            if (buffer != null) {
-                buffer.setTime(cal.getTimeInMillis());
-            }
-            int daysBirthday = cal.get(Calendar.DAY_OF_YEAR);
-            return daysBirthday - daysToday;
+            int year = cal.get(Calendar.YEAR);
+            cal.setTime(birthday);
+            cal.set(Calendar.YEAR, year);
         }
-        return 0;
+        if (buffer != null) {
+            buffer.setTime(cal.getTimeInMillis());
+        }
+        return cal.get(Calendar.DAY_OF_YEAR) - daysToday;
     }
 
     /**
@@ -152,7 +141,7 @@ class TKDateUtils {
     private static int getAge(Date birthday) {
         String stringBirthday = FORMAT_YYYYMMDD.format(birthday);
         int yearBirthday = Integer.parseInt(stringBirthday.substring(0, 4));
-        Calendar cal = new GregorianCalendar();
+        Calendar cal = Calendar.getInstance();
         int yearToday = cal.get(Calendar.YEAR);
         return yearToday - yearBirthday;
     }

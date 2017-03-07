@@ -11,6 +11,7 @@
     <string name="int_slash_int" translatable="false">%1$d / %2$d</string>
     <string name="widget_appearance">Widget appearance</string>
     <string name="hide_past_birthdays">Hide past birthdays</string>
+    <string name="notifications">Notifications</string>
 
     <string name="aries">Aries</string>
     <string name="taurus">Taurus</string>
@@ -49,7 +50,7 @@
     <string name="menu_dial">Call contact</string>
     <string name="menu_send_sms">SMS to %1$s</string>
     <string name="menu_set_alarm">Set notification time</string>
-    <string name="menu_set_notification_days">Set notification days</string>
+    <string name="additional_notification_days">Additional notification days</string>
     <string name="menu_new_entry">New contact</string>
     <string name="menu_set_notification_sound">Set notification sound</string>
     <string name="alarmreceiver_tickertext">birthday reminder</string>
@@ -61,8 +62,8 @@
     <string name="days_2">2 days</string>
     <string name="days_1">1 days</string>
     <string name="next_notification">next check for due birthdays on %1$s at %2$s</string>
-    <string name="and_more">and %1$d more</string>
-    
+    <string name="and_x_more">" and %1$d more"</string>
+
     <string name="welcome_text" translatable="false">Welcome to <b>TKBirthdayReminder</b>.
 If you have questions about TKBirthdayReminder or if you think you have found a bug,
 please contact me by sending an email to tkbirthdayreminder@thomaskuenneth.com.
@@ -90,5 +91,6 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nThe author may not be held
 for any problems caused by using this program. You use <b>TKBirthdayReminder</b> completely
 at your own risk.
 	</string>
+    <string name="x_more_birthdays">%1$d more birthdays</string>
 
 </resources>

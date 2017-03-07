@@ -22,7 +22,6 @@ class Constants {
     static final int MENU_SEND_SMS = R.string.menu_send_sms;
 
     static final int TIME_DIALOG_ID = 1;
-    static final int NOTIFICATION_DAYS_DIALOG_ID = 2;
     static final int DATE_DIALOG_ID = 3;
     static final int WELCOME_ID = 5;
 

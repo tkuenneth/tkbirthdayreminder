@@ -13,14 +13,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.view.WindowManager;
 import android.widget.RemoteViews;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class BirthdayWidget extends AppWidgetProvider {
@@ -35,7 +36,6 @@ public class BirthdayWidget extends AppWidgetProvider {
                                      AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         RemoteViews updateViews = new RemoteViews(context.getPackageName(),
                 R.layout.birthdaywidget_layout);
-        TKBirthdayReminder.setWidgetAppearance(context, updateViews, R.id.birthdaywidget_layout);
         updateViews(updateViews, context);
         Intent intent = new Intent(context, TKBirthdayReminder.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
@@ -52,19 +52,18 @@ public class BirthdayWidget extends AppWidgetProvider {
         String birthday_date = "";
         String birthday2 = "";
         ContactsList cl = new ContactsList(context);
-        ArrayList<BirthdayItem> birthdays = cl.getListBirthdaySet();
+        List<BirthdayItem> birthdays = cl.getWidgetList();
         if (birthdays.size() > 0) {
-            int i = 0;
-            for (int pos = 0; pos < birthdays.size(); pos++) {
-                BirthdayItem item = birthdays.get(pos);
-                if (TKDateUtils.getBirthdayInDays(item.getBirthday()) < 0) {
-                    continue;
+            int pos = 0;
+            for (int currentPos = 0; currentPos < birthdays.size(); currentPos++) {
+                BirthdayItem item = birthdays.get(currentPos);
+                pos = currentPos;
+                if (TKDateUtils.getBirthdayInDays(item.getBirthday(), null) >= 0) {
+                    break;
                 }
-                i = pos;
-                break;
             }
             DateFormat format = new SimpleDateFormat(context.getString(R.string.month_and_day), Locale.getDefault());
-            BirthdayItem item = birthdays.get(i);
+            BirthdayItem item = birthdays.get(pos);
             name = item.getName();
             Date birthday = item.getBirthday();
             birthday2 = TKDateUtils.getBirthdayAsString(context, birthday);
@@ -82,9 +81,17 @@ public class BirthdayWidget extends AppWidgetProvider {
                     context, TKBirthdayReminder.getImageHeight(wm));
             updateViews.setImageViewBitmap(R.id.icon, picture);
         }
+        int opacity = WidgetPreference.getOpacity(context);
+        int color = 0x000000;
+        opacity <<= 24;
+        updateViews.setInt(R.id.birthdaywidget_layout, "setBackgroundColor", opacity | color);
         updateViews.setTextViewText(R.id.text1, name);
+        updateViews.setInt(R.id.text1, "setTextColor", Color.WHITE);
         updateViews.setTextViewText(R.id.text2, birthday2);
+        updateViews.setInt(R.id.text2, "setTextColor", Color.WHITE);
         updateViews.setTextViewText(R.id.text3, birthday_date);
+        updateViews.setInt(R.id.text3, "setTextColor", Color.WHITE);
         updateViews.setTextViewText(R.id.text4, zodiac);
+        updateViews.setInt(R.id.text4, "setTextColor", Color.WHITE);
     }
 }

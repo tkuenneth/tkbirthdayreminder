@@ -38,7 +38,8 @@ import static android.app.PendingIntent.FLAG_ONE_SHOT;
 public class AlarmReceiver extends BroadcastReceiver {
 
     private static final String TAG = AlarmReceiver.class.getSimpleName();
-    private static final int MAX = 2;
+    private static final int MAX_NOTIFICATIONS = 14;
+    private static final int MIN_NOTIFICATIONS_FOR_GROUP = 2; // 4 ist Android 7.x default
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -51,22 +52,25 @@ public class AlarmReceiver extends BroadcastReceiver {
         Runnable r = new Runnable() {
             public void run() {
                 ContactsList cl = new ContactsList(context);
-                ArrayList<BirthdayItem> listNotifications = cl
-                        .getListNotifications();
-                int num = listNotifications.size();
-                final int remaining;
-                if (num > MAX) {
-                    remaining = num - MAX;
-                    num = MAX;
+                List<BirthdayItem> listNotifications = cl
+                        .getNotificationsList();
+                int total = listNotifications.size();
+                final int visible, remaining;
+                if (total > MAX_NOTIFICATIONS) {
+                    visible = MAX_NOTIFICATIONS;
+                    remaining = total - MAX_NOTIFICATIONS;
                 } else {
+                    visible = total;
                     remaining = 0;
                 }
-                if (num > 0) {
+                if (visible > 0) {
+                    StringBuilder sbNames = new StringBuilder();
                     WindowManager wm = (WindowManager) context
                             .getSystemService(Context.WINDOW_SERVICE);
                     List<NotificationCompat.Builder> builders = new ArrayList<>();
                     long when = System.currentTimeMillis();
-                    for (int i = 0; i < num; i++) {
+                    int numNames = 0;
+                    for (int i = 0; i < visible; i++) {
                         BirthdayItem event = listNotifications.get(i);
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
                                 ContactsContract.Contacts.CONTENT_URI,
@@ -76,53 +80,68 @@ public class AlarmReceiver extends BroadcastReceiver {
                                 when--,
                                 R.drawable.birthdaycake_32,
                                 intent);
-                        b.setGroup(Constants.SHARED_PREFS_KEY);
+                        if (total >= MIN_NOTIFICATIONS_FOR_GROUP) {
+                            b.setGroup(Constants.SHARED_PREFS_KEY);
+                        }
                         Date birthday = event.getBirthday();
                         Bitmap picture = BirthdayItemListAdapter.loadBitmap(event,
                                 context, TKBirthdayReminder.getImageHeight(wm));
                         b.setContentTitle(event.getName())
                                 .setLargeIcon(picture)
-                                .setSubText(TKDateUtils.getBirthdayAsString(context, birthday));
+                                .setContentText(TKDateUtils.getBirthdayAsString(context, birthday));
                         builders.add(b);
+                        if (numNames < 2) {
+                            if (sbNames.length() > 0) {
+                                sbNames.append(", ");
+                            }
+                            sbNames.append(b.mContentTitle);
+                            numNames += 1;
+                        }
                     }
-                    Intent intent = new Intent(context, TKBirthdayReminder.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
-                    NotificationCompat.Builder summary = createBuilder(context,
-                            when,
-                            R.drawable.birthdaycake_32,
-                            intent);
-                    summary.setGroup(Constants.SHARED_PREFS_KEY);
-                    summary.setGroupSummary(true);
-                    summary.setContentTitle(context.getString(R.string.app_name));
-                    NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
-                    for (int i = builders.size() - 1; i >= 0; i--) {
-                        NotificationCompat.Builder builder = builders.get(i);
-                        String s = String.format("%s - %s",
-                                builder.mContentTitle,
-                                builder.mSubText);
-                        Spannable sb = new SpannableString(s);
-                        sb.setSpan(new StyleSpan(Typeface.BOLD),
-                                0,
-                                builder.mContentTitle.length(),
-                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        style.addLine(sb);
+                    if (numNames < total) {
+                        sbNames.append(context.getString(R.string.and_x_more, total - numNames));
                     }
-                    if (remaining > 0) {
-                        summary.setSubText(context.getString(R.string.and_more, remaining));
+                    if (total >= MIN_NOTIFICATIONS_FOR_GROUP) {
+                        Intent intent = new Intent(context, TKBirthdayReminder.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+                        NotificationCompat.Builder summary = createBuilder(context,
+                                when,
+                                R.drawable.birthdaycake_32,
+                                intent);
+                        summary.setGroup(Constants.SHARED_PREFS_KEY);
+                        summary.setGroupSummary(true);
+                        summary.setContentTitle(context.getString(R.string.app_name));
+                        NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
+                        for (int i = builders.size() - 1; i >= 0; i--) {
+                            NotificationCompat.Builder builder = builders.get(i);
+                            String s = String.format("%s - %s",
+                                    builder.mContentTitle,
+                                    builder.mContentText);
+                            Spannable sb = new SpannableString(s);
+                            sb.setSpan(new StyleSpan(Typeface.BOLD),
+                                    0,
+                                    builder.mContentTitle.length(),
+                                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            style.addLine(sb);
+                        }
+                        style.setBigContentTitle(summary.mContentTitle);
+                        summary.setStyle(style);
+                        if (remaining > 0) {
+                            style.setSummaryText(context.getString(R.string.x_more_birthdays, remaining));
+                        }
+                        summary.setContentText(sbNames.toString());
+                        builders.add(summary);
                     }
-                    style.setBigContentTitle(summary.mContentTitle);
-                    summary.setStyle(style);
-                    builders.add(summary);
 
                     NotificationManagerCompat nm = NotificationManagerCompat.from(context);
                     nm.cancelAll();
                     int size = builders.size();
                     for (int i = 0; i < size; i++) {
                         if ((i + 1) == size) {
-                            String current = TKBirthdayReminder
+                            String tune = TKBirthdayReminder
                                     .getNotificationSoundAsString(context);
-                            if (current != null) {
-                                builders.get(i).setSound(Uri.parse(current));
+                            if (tune != null) {
+                                builders.get(i).setSound(Uri.parse(tune));
                             }
                         }
                         NotificationCompat.Builder builder = builders.get(i);

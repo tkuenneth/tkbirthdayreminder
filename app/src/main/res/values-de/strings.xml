@@ -45,7 +45,7 @@
     <string name="menu_dial">Kontakt anrufen</string>
     <string name="menu_send_sms">SMS an %1$s</string>
     <string name="menu_set_alarm">Erinnerungsuhrzeit einstellen</string>
-    <string name="menu_set_notification_days">Erinnerungstage einstellen</string>
+    <string name="additional_notification_days">Zusätzliche Erinnerungstage</string>
     <string name="menu_new_entry">Neuer Kontakt</string>
     <string name="menu_set_notification_sound">Erinnerungston einstellen</string>
     <string name="alarmreceiver_tickertext">Geburtstagserinnerung</string>
@@ -57,6 +57,8 @@
     <string name="days_2">2 Tage</string>
     <string name="days_1">1 Tage</string>
 	<string name="next_notification">Nächste Prüfung auf fällige Geburtstage am %1$s um %2$s</string>
-	<string name="and_more">und %1$d weitere</string>
+	<string name="notifications">Benachrichtigungen</string>
+	<string name="and_x_more">" und %1$d weitere"</string>
+    <string name="x_more_birthdays">%1$d weitere Geburtstage</string>
 
 </resources>

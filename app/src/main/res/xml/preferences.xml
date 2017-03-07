@@ -1,25 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen
-        xmlns:android="http://schemas.android.com/apk/res/android">
- 
-    <PreferenceCategory
-            android:title="@string/display_options">
-            
+<!--
+	preferences.xml
+	TKBirthdayReminder (c) Thomas Künneth 2010 - 2017
+	Alle Rechte beim Autoren. All rights reserved.
+-->
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/display_options">
+
         <CheckBoxPreference
-                android:key="checkbox_show_astrological_signs"
-                android:defaultValue="true"
-                android:title="@string/title_show_astrological_signs" />
-        
-		<com.thomaskuenneth.android.birthday.WidgetPreference
-			android:title="@string/widget_appearance"
-			android:dialogTitle="@string/widget_appearance"
-		/>
+            android:defaultValue="true"
+            android:key="checkbox_show_astrological_signs"
+            android:title="@string/title_show_astrological_signs" />
+
         <CheckBoxPreference
-                android:key="hide_past_birthdays"
-                android:defaultValue="false"
-                android:title="@string/hide_past_birthdays" />
-        		            
+            android:defaultValue="false"
+            android:key="hide_past_birthdays"
+            android:title="@string/hide_past_birthdays" />
+
+        <com.thomaskuenneth.android.birthday.WidgetPreference
+            android:dialogTitle="@string/widget_appearance"
+            android:title="@string/widget_appearance" />
+
     </PreferenceCategory>
-     
+
+    <PreferenceCategory android:title="@string/notifications">
+
+        <com.thomaskuenneth.android.birthday.NotificationPreference android:title="@string/additional_notification_days" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>
