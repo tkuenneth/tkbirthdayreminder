@@ -93,6 +93,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_toLeftOf="@id/text4"
                 android:layout_toStartOf="@id/text4"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
         </RelativeLayout>

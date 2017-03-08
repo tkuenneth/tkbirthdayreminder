@@ -266,25 +266,36 @@ public class TKBirthdayReminder extends ListActivity {
                 builder.setIcon(R.drawable.birthdaycake_32);
                 View textView = getLayoutInflater().inflate(R.layout.welcome, null);
                 builder.setView(textView);
-                builder.setPositiveButton(R.string.alert_dialog_continue,
-                        new DialogInterface.OnClickListener() {
+                if (isNewVersion()) {
+                    builder.setPositiveButton(R.string.alert_dialog_continue,
+                            new DialogInterface.OnClickListener() {
 
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                writeToPreferences();
-                                run();
-                            }
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    writeToPreferences();
+                                    run();
+                                }
 
-                        });
-                builder.setNegativeButton(R.string.alert_dialog_abort,
-                        new DialogInterface.OnClickListener() {
+                            });
+                    builder.setNegativeButton(R.string.alert_dialog_abort,
+                            new DialogInterface.OnClickListener() {
 
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                finish();
-                            }
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish();
+                                }
 
-                        });
+                            });
+                } else {
+                    builder.setPositiveButton(R.string.alert_dialog_ok,
+                            new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+
+                            });
+                }
                 builder.setCancelable(false);
                 return builder.create();
 
@@ -583,13 +594,8 @@ public class TKBirthdayReminder extends ListActivity {
         }
     }
 
-    /**
-     * Speichert den aktuellen versionCode in den shared preferences.
-     */
     private void writeToPreferences() {
-        SharedPreferences prefs = getSharedPreferences(
-                Constants.TKBIRTHDAYREMINDER, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
+        SharedPreferences.Editor editor = getSharedPreferences(this).edit();
         editor.putInt(VERSION_CODE, currentVersionCode);
         editor.apply();
     }

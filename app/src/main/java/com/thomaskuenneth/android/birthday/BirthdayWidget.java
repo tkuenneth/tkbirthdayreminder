@@ -53,20 +53,39 @@ public class BirthdayWidget extends AppWidgetProvider {
         String birthday2 = "";
         ContactsList cl = new ContactsList(context);
         List<BirthdayItem> birthdays = cl.getWidgetList();
-        if (birthdays.size() > 0) {
-            int pos = 0;
-            for (int currentPos = 0; currentPos < birthdays.size(); currentPos++) {
+        final int total = birthdays.size();
+        if (total > 0) {
+            int firstPos = 0;
+            int days = 0;
+            for (int currentPos = 0; currentPos < total; currentPos++) {
                 BirthdayItem item = birthdays.get(currentPos);
-                pos = currentPos;
-                if (TKDateUtils.getBirthdayInDays(item.getBirthday(), null) >= 0) {
+                firstPos = currentPos;
+                days = TKDateUtils.getBirthdayInDays(item.getBirthday(), null);
+                if (days >= 0) {
+                    break;
+                }
+            }
+            int sameDayCount = 0;
+            for (int currentPos = 0; currentPos < total; currentPos++) {
+                BirthdayItem item = birthdays.get(currentPos);
+                int currentDays = TKDateUtils.getBirthdayInDays(item.getBirthday(), null);
+                if (days == currentDays) {
+                    sameDayCount += 1;
+                } else {
                     break;
                 }
             }
             DateFormat format = new SimpleDateFormat(context.getString(R.string.month_and_day), Locale.getDefault());
-            BirthdayItem item = birthdays.get(pos);
+            BirthdayItem item = birthdays.get(firstPos);
             name = item.getName();
             Date birthday = item.getBirthday();
-            birthday2 = TKDateUtils.getBirthdayAsString(context, birthday);
+            if (sameDayCount > 1) {
+                birthday2 = TKBirthdayReminder.getStringFromResources(context,
+                        R.string.and_x_more,
+                        sameDayCount - 1).trim();
+            } else {
+                birthday2 = TKDateUtils.getBirthdayAsString(context, birthday);
+            }
             birthday_date = TKDateUtils.getBirthdayDateAsString(format, item);
 
             SharedPreferences prefs = PreferenceManager
