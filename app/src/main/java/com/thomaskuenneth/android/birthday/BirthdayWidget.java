@@ -73,8 +73,6 @@ public class BirthdayWidget extends AppWidgetProvider {
                 int currentDays = TKDateUtils.getBirthdayInDays(item.getBirthday(), null);
                 if (days == currentDays) {
                     sameDayCount += 1;
-                } else {
-                    break;
                 }
             }
             DateFormat format = new SimpleDateFormat(context.getString(R.string.month_and_day), Locale.getDefault());
