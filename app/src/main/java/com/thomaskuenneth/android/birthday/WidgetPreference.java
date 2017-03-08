@@ -6,8 +6,6 @@
  */
 package com.thomaskuenneth.android.birthday;
 
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -63,14 +61,7 @@ public class WidgetPreference extends DialogPreference implements
             Editor e = prefs.edit();
             e.putInt(OPACITY, seekbar.getProgress());
             e.apply();
-            AppWidgetManager m = AppWidgetManager.getInstance(context);
-            if (m != null) {
-                int[] appWidgetIds = m.getAppWidgetIds(new ComponentName(
-                        context, BirthdayWidget.class));
-                if ((appWidgetIds != null) && (appWidgetIds.length > 0)) {
-                    BirthdayWidget.updateWidgets(context, m, appWidgetIds);
-                }
-            }
+            TKBirthdayReminder.updateWidgets(context);
         }
     }
 

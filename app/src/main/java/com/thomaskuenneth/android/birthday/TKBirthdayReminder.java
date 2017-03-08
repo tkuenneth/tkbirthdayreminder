@@ -409,6 +409,24 @@ public class TKBirthdayReminder extends ListActivity {
         return context.getString(resId, formatArgs);
     }
 
+    public static void updateWidgets(Context context) {
+        AppWidgetManager m = AppWidgetManager
+                .getInstance(context);
+        if (m != null) {
+            int[] appWidgetIds = m
+                    .getAppWidgetIds(new ComponentName(
+                            context,
+                            BirthdayWidget.class));
+            if ((appWidgetIds != null)
+                    && (appWidgetIds.length > 0)) {
+                BirthdayWidget.updateWidgets(
+                        context, m,
+                        appWidgetIds);
+            }
+        }
+    }
+
+
     /**
      * Aktualisiert einen Kontakt in der Datenbank und anschließend die Listen.
      *
@@ -762,20 +780,7 @@ public class TKBirthdayReminder extends ListActivity {
                     @Override
                     public void run() {
                         setList(list);
-                        AppWidgetManager m = AppWidgetManager
-                                .getInstance(TKBirthdayReminder.this);
-                        if (m != null) {
-                            int[] appWidgetIds = m
-                                    .getAppWidgetIds(new ComponentName(
-                                            TKBirthdayReminder.this,
-                                            BirthdayWidget.class));
-                            if ((appWidgetIds != null)
-                                    && (appWidgetIds.length > 0)) {
-                                BirthdayWidget.updateWidgets(
-                                        TKBirthdayReminder.this, m,
-                                        appWidgetIds);
-                            }
-                        }
+                        updateWidgets(TKBirthdayReminder.this);
                     }
 
                 });
