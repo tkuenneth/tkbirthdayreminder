@@ -31,7 +31,9 @@
             android:name="PreferencesActivity"
             android:label="@string/settings" />
 
-        <activity android:name=".SoundChooser" />
+        <activity
+            android:name=".SoundChooser"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <receiver
             android:name="AlarmReceiver"
