@@ -15,6 +15,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.RemoteViews;
 
@@ -51,6 +52,7 @@ public class BirthdayWidget extends AppWidgetProvider {
         String zodiac = "";
         String birthday_date = "";
         String birthday2 = "";
+        String text5 = "";
         ContactsList cl = new ContactsList(context);
         List<BirthdayItem> birthdays = cl.getWidgetList();
         final int total = birthdays.size();
@@ -79,12 +81,11 @@ public class BirthdayWidget extends AppWidgetProvider {
             BirthdayItem item = birthdays.get(firstPos);
             name = item.getName();
             Date birthday = item.getBirthday();
+            birthday2 = TKDateUtils.getBirthdayAsString(context, birthday);
             if (sameDayCount > 1) {
-                birthday2 = TKBirthdayReminder.getStringFromResources(context,
+                text5 = TKBirthdayReminder.getStringFromResources(context,
                         R.string.and_x_more,
                         sameDayCount - 1).trim();
-            } else {
-                birthday2 = TKDateUtils.getBirthdayAsString(context, birthday);
             }
             birthday_date = TKDateUtils.getBirthdayDateAsString(format, item);
 
@@ -112,5 +113,9 @@ public class BirthdayWidget extends AppWidgetProvider {
         updateViews.setInt(R.id.text3, "setTextColor", Color.WHITE);
         updateViews.setTextViewText(R.id.text4, zodiac);
         updateViews.setInt(R.id.text4, "setTextColor", Color.WHITE);
+        updateViews.setViewVisibility(R.id.text4, text5.length() > 0 ? View.GONE : View.VISIBLE);
+        updateViews.setTextViewText(R.id.text5, text5);
+        updateViews.setInt(R.id.text5, "setTextColor", Color.WHITE);
+        updateViews.setViewVisibility(R.id.text5, text5.length() > 0 ? View.VISIBLE : View.GONE);
     }
 }
