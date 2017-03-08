@@ -62,6 +62,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_toLeftOf="@id/text3"
                 android:layout_toStartOf="@id/text3"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
         </RelativeLayout>

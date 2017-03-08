@@ -81,7 +81,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                                 R.drawable.birthdaycake_32,
                                 intent);
                         if (total >= MIN_NOTIFICATIONS_FOR_GROUP) {
-                            b.setGroup(Constants.SHARED_PREFS_KEY);
+                            b.setGroup(Constants.TKBIRTHDAYREMINDER);
                         }
                         Date birthday = event.getBirthday();
                         Bitmap picture = BirthdayItemListAdapter.loadBitmap(event,
@@ -108,7 +108,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                                 when,
                                 R.drawable.birthdaycake_32,
                                 intent);
-                        summary.setGroup(Constants.SHARED_PREFS_KEY);
+                        summary.setGroup(Constants.TKBIRTHDAYREMINDER);
                         summary.setGroupSummary(true);
                         summary.setContentTitle(context.getString(R.string.app_name));
                         NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
@@ -138,7 +138,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                     int size = builders.size();
                     for (int i = 0; i < size; i++) {
                         if ((i + 1) == size) {
-                            String tune = TKBirthdayReminder
+                            String tune = SoundChooser
                                     .getNotificationSoundAsString(context);
                             if (tune != null) {
                                 builders.get(i).setSound(Uri.parse(tune));

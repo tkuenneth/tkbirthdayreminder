@@ -17,14 +17,6 @@
         android:title="@string/menu_set_date" />
 
     <item
-        android:id="@+id/set_alarm"
-        android:title="@string/menu_set_alarm" />
-
-    <item
-        android:id="@+id/set_notification_sound"
-        android:title="@string/menu_set_notification_sound" />
-
-    <item
         android:id="@+id/preferences"
         android:title="@string/settings" />
 

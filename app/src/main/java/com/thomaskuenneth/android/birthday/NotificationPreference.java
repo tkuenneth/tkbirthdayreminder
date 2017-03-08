@@ -25,8 +25,7 @@ public class NotificationPreference extends DialogPreference {
 
     public NotificationPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-        prefs = context.getSharedPreferences(
-                Constants.SHARED_PREFS_KEY, Context.MODE_PRIVATE);
+        prefs = TKBirthdayReminder.getSharedPreferences(context);
         setDialogLayoutResource(R.layout.notification_days);
     }
 
@@ -58,8 +57,6 @@ public class NotificationPreference extends DialogPreference {
     }
 
     static int getNotificationDays(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(
-                Constants.SHARED_PREFS_KEY, Context.MODE_PRIVATE);
-        return prefs.getInt(NOTIFICATION_DAYS, 0);
+        return TKBirthdayReminder.getSharedPreferences(context).getInt(NOTIFICATION_DAYS, 0);
     }
 }

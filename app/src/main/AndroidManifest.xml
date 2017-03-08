@@ -27,7 +27,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="PreferencesActivity" />
+        <activity
+            android:name="PreferencesActivity"
+            android:label="@string/settings" />
+
+        <activity android:name=".SoundChooser" />
 
         <receiver
             android:name="AlarmReceiver"

@@ -8,7 +8,7 @@
 	<string name="display_options">Anzeigeoptionen</string>
 	<string name="title_show_astrological_signs">Sternzeichen anzeigen</string>
 	<string name="widget_opacity">Deckkraft</string>
-    <string name="widget_appearance">Widget-Aussehen</string>
+    <string name="widget_appearance">Widget Aussehen</string>
 	<string name="hide_past_birthdays">Vergangene Geburtstage ausblenden</string>
 
 	<string name="aries">Widder</string>
@@ -44,11 +44,10 @@
     <string name="menu_remove_date">Geburtsdatum entfernen</string>
     <string name="menu_dial">Kontakt anrufen</string>
     <string name="menu_send_sms">SMS an %1$s</string>
-    <string name="menu_set_alarm">Erinnerungsuhrzeit einstellen</string>
-    <string name="additional_notification_days">Zusätzliche Erinnerungstage</string>
+    <string name="notification_time">Benachrichtigungszeitpunkt</string>
+    <string name="notification_days">Zusätzliche Erinnerungstage</string>
     <string name="menu_new_entry">Neuer Kontakt</string>
-    <string name="menu_set_notification_sound">Erinnerungston einstellen</string>
-    <string name="alarmreceiver_tickertext">Geburtstagserinnerung</string>
+    <string name="notification_sound">Benachrichtigungston</string>
     <string name="days_7">7 Tage</string>
     <string name="days_6">6 Tage</string>
     <string name="days_5">5 Tage</string>

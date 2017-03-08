@@ -14,7 +14,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
-import android.app.TimePickerDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -27,7 +26,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,7 +47,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TimePicker;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -64,8 +61,7 @@ import java.util.Locale;
  *
  * @author Thomas Künneth
  */
-public class TKBirthdayReminder extends ListActivity implements
-        TimePickerDialog.OnTimeSetListener {
+public class TKBirthdayReminder extends ListActivity {
 
     public static int storedVersionCode;
     public static int currentVersionCode;
@@ -76,7 +72,6 @@ public class TKBirthdayReminder extends ListActivity implements
             Manifest.permission.GET_ACCOUNTS
     };
     private static final String VERSION_CODE = "versionCode";
-    private static final String NOTIFICATION_SOUND = "notificationSound";
     private static final String NEW_EVENT_EVENT = "newEventEvent";
     private static final String STATE_KEY = "stateKey";
     private static final String LONG_CLICK_ITEM = "longClickItem";
@@ -188,16 +183,6 @@ public class TKBirthdayReminder extends ListActivity implements
                     // c.close();
                 }
                 break;
-            case (Constants.RQ_PICK_SOUND):
-                if (resultCode == Activity.RESULT_OK) {
-                    Bundle b = data.getExtras();
-                    if (b != null) {
-                        Uri uri = (Uri) b
-                                .get(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
-                        setNotificationSoundAsString(uri);
-                    }
-                }
-                break;
             case Constants.RQ_PREFERENCES:
                 readContacts(true);
                 break;
@@ -265,12 +250,6 @@ public class TKBirthdayReminder extends ListActivity implements
         switch (id) {
             case Constants.DATE_DIALOG_ID:
                 updateViewsFromEvent();
-                break;
-            case Constants.TIME_DIALOG_ID:
-                TimePickerDialogHelper.readFromPreferences(this);
-                TimePickerDialog picker = (TimePickerDialog) dialog;
-                picker.updateTime(TimePickerDialogHelper.hour,
-                        TimePickerDialogHelper.minute);
                 break;
         }
     }
@@ -352,12 +331,6 @@ public class TKBirthdayReminder extends ListActivity implements
                 installListeners();
                 updateViewsFromEvent();
                 break;
-            case Constants.TIME_DIALOG_ID:
-                TimePickerDialogHelper.readFromPreferences(this);
-                dialog = new TimePickerDialog(this, this,
-                        TimePickerDialogHelper.hour, TimePickerDialogHelper.minute,
-                        true);
-                break;
         }
         return dialog;
     }
@@ -374,25 +347,6 @@ public class TKBirthdayReminder extends ListActivity implements
         switch (item.getItemId()) {
             case R.id.legal:
                 showDialog(Constants.WELCOME_ID);
-                break;
-            case R.id.set_alarm:
-                showDialog(Constants.TIME_DIALOG_ID);
-                break;
-            case R.id.set_notification_sound:
-                Intent i = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
-                i.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT,
-                        Boolean.FALSE);
-                i.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, Boolean.TRUE);
-                i.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE,
-                        RingtoneManager.TYPE_ALL);
-                i.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE,
-                        getString(R.string.menu_set_notification_sound));
-                String current = getNotificationSoundAsString(this);
-                if (current != null) {
-                    i.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
-                            Uri.parse(current));
-                }
-                startActivityForResult(i, Constants.RQ_PICK_SOUND);
                 break;
             case R.id.preferences:
                 Intent iPrefs = new Intent(this, PreferencesActivity.class);
@@ -414,10 +368,9 @@ public class TKBirthdayReminder extends ListActivity implements
         return true;
     }
 
-    @Override
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        TimePickerDialogHelper.writeToPreferences(this, hourOfDay, minute);
-        BootCompleteReceiver.startAlarm(this, true);
+    public static SharedPreferences getSharedPreferences(Context context) {
+        return context.getSharedPreferences(
+                Constants.TKBIRTHDAYREMINDER, Context.MODE_PRIVATE);
     }
 
     public static int getImageHeight(WindowManager wm) {
@@ -434,12 +387,6 @@ public class TKBirthdayReminder extends ListActivity implements
         } else {
             return 144;
         }
-    }
-
-    public static String getNotificationSoundAsString(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(
-                Constants.SHARED_PREFS_KEY, Context.MODE_PRIVATE);
-        return prefs.getString(NOTIFICATION_SOUND, null);
     }
 
     public static String getStringFromResources(Context context, int resId) {
@@ -624,7 +571,7 @@ public class TKBirthdayReminder extends ListActivity implements
      */
     private void readFromPreferences() {
         SharedPreferences prefs = getSharedPreferences(
-                Constants.SHARED_PREFS_KEY, Context.MODE_PRIVATE);
+                Constants.TKBIRTHDAYREMINDER, Context.MODE_PRIVATE);
         storedVersionCode = prefs.getInt(VERSION_CODE, 0);
         try {
             PackageInfo info = getPackageManager().getPackageInfo(
@@ -641,7 +588,7 @@ public class TKBirthdayReminder extends ListActivity implements
      */
     private void writeToPreferences() {
         SharedPreferences prefs = getSharedPreferences(
-                Constants.SHARED_PREFS_KEY, Context.MODE_PRIVATE);
+                Constants.TKBIRTHDAYREMINDER, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(VERSION_CODE, currentVersionCode);
         editor.apply();
@@ -843,18 +790,6 @@ public class TKBirthdayReminder extends ListActivity implements
             }
         }
         return intYear;
-    }
-
-    private void setNotificationSoundAsString(Uri uri) {
-        String sound = null;
-        if (uri != null) {
-            sound = uri.toString();
-        }
-        SharedPreferences prefs = getSharedPreferences(
-                Constants.SHARED_PREFS_KEY, Context.MODE_PRIVATE);
-        SharedPreferences.Editor e = prefs.edit();
-        e.putString(NOTIFICATION_SOUND, sound);
-        e.apply();
     }
 
     private void showEditBirthdayDialog(BirthdayItem item) {

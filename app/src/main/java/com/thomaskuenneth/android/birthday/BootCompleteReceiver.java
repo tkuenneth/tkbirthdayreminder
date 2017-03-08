@@ -12,6 +12,7 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.text.format.DateUtils;
 import android.widget.Toast;
 
@@ -44,18 +45,20 @@ public class BootCompleteReceiver extends BroadcastReceiver {
         PendingIntent sender = PendingIntent
                 .getBroadcast(context, 0, intent, 0);
         Calendar cal = Calendar.getInstance();
-//        int minCurrent = (cal.get(Calendar.HOUR_OF_DAY) * 60)
-//                + cal.get(Calendar.MINUTE);
-//        TimePickerDialogHelper.readFromPreferences(context);
-//        cal.set(GregorianCalendar.HOUR_OF_DAY, TimePickerDialogHelper.hour);
-//        cal.set(GregorianCalendar.MINUTE, TimePickerDialogHelper.minute);
-//        int minAlarm = (cal.get(Calendar.HOUR_OF_DAY) * 60)
-//                + cal.get(Calendar.MINUTE);
-//        if (nextDay) {
-//            if (minCurrent >= minAlarm) {
-//                cal.add(Calendar.DAY_OF_MONTH, 1);
-//            }
-//        }
+        int minCurrent = (cal.get(Calendar.HOUR_OF_DAY) * 60)
+                + cal.get(Calendar.MINUTE);
+        SharedPreferences prefs = TKBirthdayReminder.getSharedPreferences(context);
+        int hour = prefs.getInt(AlarmPreference.NOTIFICATION_TIME_HOUR, 12);
+        int minute = prefs.getInt(AlarmPreference.NOTIFICATION_TIME_MINUTE, 0);
+        cal.set(GregorianCalendar.HOUR_OF_DAY, hour);
+        cal.set(GregorianCalendar.MINUTE, minute);
+        int minAlarm = (cal.get(Calendar.HOUR_OF_DAY) * 60)
+                + cal.get(Calendar.MINUTE);
+        if (nextDay) {
+            if (minCurrent >= minAlarm) {
+                cal.add(Calendar.DAY_OF_MONTH, 1);
+            }
+        }
         AlarmManager am = (AlarmManager) context
                 .getSystemService(Service.ALARM_SERVICE);
         am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(),
