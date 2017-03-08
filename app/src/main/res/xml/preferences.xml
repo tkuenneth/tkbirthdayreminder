@@ -30,7 +30,11 @@
 
         <com.thomaskuenneth.android.birthday.NotificationPreference android:title="@string/notification_days" />
 
-        <com.thomaskuenneth.android.birthday.AlarmPreference android:title="@string/notification_time" />
+        <Preference android:title="@string/notification_time">
+            <intent
+                android:targetClass="com.thomaskuenneth.android.birthday.AlarmChooser"
+                android:targetPackage="com.thomaskuenneth.android.birthday" />
+        </Preference>
 
         <Preference android:title="@string/notification_sound">
             <intent

@@ -33,7 +33,11 @@
 
         <activity
             android:name=".SoundChooser"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+            android:theme="@android:style/Theme.Translucent" />
+
+        <activity
+            android:name=".AlarmChooser"
+            android:theme="@android:style/Theme.Translucent" />
 
         <receiver
             android:name="AlarmReceiver"

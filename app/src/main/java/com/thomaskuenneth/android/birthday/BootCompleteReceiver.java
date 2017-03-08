@@ -48,8 +48,8 @@ public class BootCompleteReceiver extends BroadcastReceiver {
         int minCurrent = (cal.get(Calendar.HOUR_OF_DAY) * 60)
                 + cal.get(Calendar.MINUTE);
         SharedPreferences prefs = TKBirthdayReminder.getSharedPreferences(context);
-        int hour = prefs.getInt(AlarmPreference.NOTIFICATION_TIME_HOUR, 12);
-        int minute = prefs.getInt(AlarmPreference.NOTIFICATION_TIME_MINUTE, 0);
+        int hour = prefs.getInt(AlarmChooser.NOTIFICATION_TIME_HOUR, 12);
+        int minute = prefs.getInt(AlarmChooser.NOTIFICATION_TIME_MINUTE, 0);
         cal.set(GregorianCalendar.HOUR_OF_DAY, hour);
         cal.set(GregorianCalendar.MINUTE, minute);
         int minAlarm = (cal.get(Calendar.HOUR_OF_DAY) * 60)
