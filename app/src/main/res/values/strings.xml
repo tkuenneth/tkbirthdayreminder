@@ -65,8 +65,10 @@
     <string name="x_more_birthdays">%1$d more birthdays</string>
 
     <string name="welcome_text" translatable="false">Welcome to <b>TKBirthdayReminder</b>.
-If you have questions about TKBirthdayReminder or if you think you have found a bug,
+If you have questions about this app, or if you think you have found a bug,
 please contact me by sending an email to tkbirthdayreminder@thomaskuenneth.com.
+\n\nBy using TKBirthdayReminder, you accept both the following privacy policy
+and the terms of use.
 \n\n<b>Privacy Policy</b>\nThis privacy policy contains information
 about how TKBirthdayReminder handles user data. We do not sell or let
 any other third parties use your data. The app contains no advertisements.
@@ -75,13 +77,10 @@ our communication until the support case is closed. This includes your email,
 name and the conversation history. This is the only personal information we
 temporarily store. When the support case is closed the records are deleted.
 \n\nTo fulfill its purpose, the app must access user account data and the
-contacts database. Besides grouping and displaying birthday-related information
-TKBirthdayReminder does not process the data in unexpected ways. Specifically it does
-not send the data to thrid party servers. Please also refer to the section Use of other services.
-\n\nNon-personal information is anonymous data with which you
-cannot uniquely identify a specific individual. TKBirthdayReminder does not collect or store non-personal information.
-\n\n<b>Use of other services</b>
-\nTKBirthdayReminder relies on core Google Android Platform services, the Google
+contacts database. Besides editing, grouping and displaying birthday-related information
+TKBirthdayReminder does not process the data any further. Specifically it does
+not send the data to thrid party servers.\nPlease be aware that TKBirthdayReminder
+relies on other services, specifically core Google Android Platform services, the Google
 Contacts API, Google Calendar API and Google Tasks API. How and what data these
 services process may not be controllable by TKBirthdayReminder. You can find their
 privacy policy here: http://www.google.com/policies/privacy.
