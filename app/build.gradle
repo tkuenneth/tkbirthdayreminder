@@ -8,14 +8,14 @@ android {
         applicationId "com.thomaskuenneth.android.birthday"
         minSdkVersion 11
         targetSdkVersion 25
-        versionCode = 20801
-        version = "2.0.8"
+        versionCode = 21000
+        version = "2.1.0"
     }
 
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
         }
     }
 

@@ -1,4 +1,6 @@
-2.0.8
+2.1.0
+- completely updated the code
+- much better support for notifications
 - migrated project to Android Studio
 - added a missing german translation
 

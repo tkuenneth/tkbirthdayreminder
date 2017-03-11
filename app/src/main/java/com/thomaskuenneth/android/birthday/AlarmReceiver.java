@@ -78,7 +78,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
                         NotificationCompat.Builder b = createBuilder(context,
                                 when--,
-                                R.drawable.birthdaycake_32,
+                                R.mipmap.ic_launcher,
                                 intent);
                         if (total >= MIN_NOTIFICATIONS_FOR_GROUP) {
                             b.setGroup(Constants.TKBIRTHDAYREMINDER);
@@ -106,7 +106,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
                         NotificationCompat.Builder summary = createBuilder(context,
                                 when,
-                                R.drawable.birthdaycake_32,
+                                R.mipmap.ic_launcher,
                                 intent);
                         summary.setGroup(Constants.TKBIRTHDAYREMINDER);
                         summary.setGroupSummary(true);

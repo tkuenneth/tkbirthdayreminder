@@ -119,16 +119,16 @@ class BirthdayItemListAdapter extends BaseAdapter {
                 if (input != null) {
                     picture = BitmapFactory.decodeStream(input);
                 } else {
-                    int id;
-                    if (size == 32) {
-                        id = R.drawable.birthdaycake_32;
-                    } else if (size == 48) {
-                        id = R.drawable.birthdaycake_48;
-                    } else {
-                        id = R.drawable.birthdaycake_96;
-                    }
+//                    int id;
+//                    if (size == 32) {
+//                        id = R.drawable.birthdaycake_32;
+//                    } else if (size == 48) {
+//                        id = R.drawable.birthdaycake_48;
+//                    } else {
+//                        id = R.drawable.birthdaycake_96;
+//                    }
                     picture = BitmapFactory.decodeResource(
-                            context.getResources(), id);
+                            context.getResources(), R.mipmap.ic_launcher);
                 }
                 if (picture.getHeight() != size) {
                     Bitmap temp = picture;

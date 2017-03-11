@@ -263,7 +263,7 @@ public class TKBirthdayReminder extends ListActivity {
             case Constants.WELCOME_ID:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.legal);
-                builder.setIcon(R.drawable.birthdaycake_32);
+                builder.setIcon(R.mipmap.ic_launcher);
                 View textView = getLayoutInflater().inflate(R.layout.welcome, null);
                 builder.setView(textView);
                 if (isNewVersion()) {
