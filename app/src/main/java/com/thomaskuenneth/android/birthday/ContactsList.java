@@ -81,6 +81,7 @@ class ContactsList implements Comparator<BirthdayItem> {
         queryContacts(contentResolver);
         Collections.sort(widget, this);
         Collections.sort(notifications, this);
+        Collections.sort(main, this);
     }
 
     private void queryContacts(ContentResolver contentResolver) {

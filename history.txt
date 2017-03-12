@@ -1,3 +1,7 @@
+2.1.1
+- fixed sort order
+- better notification icon
+
 2.1.0
 - completely updated the code
 - much better support for notifications

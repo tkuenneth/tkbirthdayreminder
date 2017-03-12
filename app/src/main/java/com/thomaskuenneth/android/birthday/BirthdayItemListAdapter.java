@@ -74,7 +74,7 @@ class BirthdayItemListAdapter extends BaseAdapter {
 
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.list_item_icon_text, null);
-            convertView.setPadding(4, 2, 16, 2);
+            convertView.setPadding(0, 4, 0, 4);
 
             holder = new ViewHolder();
             holder.textName = (TextView) convertView.findViewById(R.id.text1);

@@ -106,7 +106,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
                         NotificationCompat.Builder summary = createBuilder(context,
                                 when,
-                                R.mipmap.ic_launcher,
+                                R.drawable.ic_notification,
                                 intent);
                         summary.setGroup(Constants.TKBIRTHDAYREMINDER);
                         summary.setGroupSummary(true);
