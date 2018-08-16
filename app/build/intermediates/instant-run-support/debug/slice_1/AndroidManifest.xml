@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="com.thomaskuenneth.android.birthday"
+      android:versionCode="21101"
+      android:versionName="21101"
+      split="lib_slice_1_apk">
+</manifest>

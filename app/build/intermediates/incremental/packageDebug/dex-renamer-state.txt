@@ -1,0 +1,7 @@
+#Fri Jul 14 12:36:59 CEST 2017
+base.0=C\:\\Users\\tkuen\\Entwicklung\\Bitbucket\\TKBirthdayReminder\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run-bootstrap_4237f82aa1069a96be13c0ccf512f7813e818415
+renamed.1=classes2.dex
+renamed.0=classes.dex
+file.1=C\:\\Users\\tkuen\\Entwicklung\\Bitbucket\\TKBirthdayReminder\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run_a993fc79b06abe739721b8bdf3bd9875fc9d21e1\\classes.dex
+base.1=C\:\\Users\\tkuen\\Entwicklung\\Bitbucket\\TKBirthdayReminder\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run_a993fc79b06abe739721b8bdf3bd9875fc9d21e1
+file.0=C\:\\Users\\tkuen\\Entwicklung\\Bitbucket\\TKBirthdayReminder\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run-bootstrap_4237f82aa1069a96be13c0ccf512f7813e818415\\classes.dex
