@@ -2,6 +2,9 @@ to do
 kleine Icons für Benachrichtigungen passen nicht
 Zeit aus Notification rausnehmen (setWhen)
 
+2.1.2
+- updated targetSdkVersion and library versions
+
 2.1.1
 - fixed sort order
 - better notification icon

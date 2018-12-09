@@ -1,23 +1,26 @@
 /*
  * AlarmReceiver.java
- * 
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2017
+ *
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2018
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.media.AudioAttributes;
 import android.net.Uri;
+import android.os.Build;
 import android.os.PowerManager;
 import android.provider.ContactsContract;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.IntentCompat;
-import android.support.v7.app.NotificationCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
@@ -46,9 +49,12 @@ public class AlarmReceiver extends BroadcastReceiver {
         BootCompleteReceiver.startAlarm(context, true);
         PowerManager pm = (PowerManager) context
                 .getSystemService(Context.POWER_SERVICE);
-        final PowerManager.WakeLock wl = pm.newWakeLock(
-                PowerManager.PARTIAL_WAKE_LOCK, TAG);
-        wl.acquire();
+        final PowerManager.WakeLock wl = (pm != null) ? pm.newWakeLock(
+                PowerManager.PARTIAL_WAKE_LOCK, TAG) : null;
+        if (wl != null) {
+            wl.acquire();
+        }
+        initChannels(context);
         Runnable r = new Runnable() {
             public void run() {
                 ContactsList cl = new ContactsList(context);
@@ -67,7 +73,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                     StringBuilder sbNames = new StringBuilder();
                     WindowManager wm = (WindowManager) context
                             .getSystemService(Context.WINDOW_SERVICE);
-                    List<NotificationCompat.Builder> builders = new ArrayList<>();
+                    List<MyBuilder> builders = new ArrayList<>();
                     long when = System.currentTimeMillis();
                     int numNames = 0;
                     for (int i = 0; i < visible; i++) {
@@ -75,8 +81,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
                                 ContactsContract.Contacts.CONTENT_URI,
                                 Long.toString(event.getId())));
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
-                        NotificationCompat.Builder b = createBuilder(context,
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        MyBuilder b = createBuilder(context,
                                 when--,
                                 R.mipmap.ic_launcher,
                                 intent);
@@ -84,8 +90,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                             b.setGroup(Constants.TKBIRTHDAYREMINDER);
                         }
                         Date birthday = event.getBirthday();
-                        Bitmap picture = BirthdayItemListAdapter.loadBitmap(event,
-                                context, TKBirthdayReminder.getImageHeight(wm));
+                        Bitmap picture = (wm != null) ? BirthdayItemListAdapter.loadBitmap(event,
+                                context, TKBirthdayReminder.getImageHeight(wm)) : null;
                         b.setContentTitle(event.getName())
                                 .setLargeIcon(picture)
                                 .setContentText(TKDateUtils.getBirthdayAsString(context, birthday));
@@ -103,17 +109,17 @@ public class AlarmReceiver extends BroadcastReceiver {
                     }
                     if (total >= MIN_NOTIFICATIONS_FOR_GROUP) {
                         Intent intent = new Intent(context, TKBirthdayReminder.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
-                        NotificationCompat.Builder summary = createBuilder(context,
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        MyBuilder summary = createBuilder(context,
                                 when,
                                 R.drawable.ic_notification,
                                 intent);
-                        summary.setGroup(Constants.TKBIRTHDAYREMINDER);
-                        summary.setGroupSummary(true);
-                        summary.setContentTitle(context.getString(R.string.app_name));
+                        summary.setContentTitle(context.getString(R.string.app_name))
+                                .setGroupSummary(true)
+                                .setGroup(Constants.TKBIRTHDAYREMINDER);
                         NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
                         for (int i = builders.size() - 1; i >= 0; i--) {
-                            NotificationCompat.Builder builder = builders.get(i);
+                            MyBuilder builder = builders.get(i);
                             String s = String.format("%s - %s",
                                     builder.mContentTitle,
                                     builder.mContentText);
@@ -144,22 +150,24 @@ public class AlarmReceiver extends BroadcastReceiver {
                                 builders.get(i).setSound(Uri.parse(tune));
                             }
                         }
-                        NotificationCompat.Builder builder = builders.get(i);
+                        MyBuilder builder = builders.get(i);
                         nm.notify(i, builder.build());
                     }
                 }
-                wl.release();
+                if (wl != null) {
+                    wl.release();
+                }
             }
         };
         Thread t = new Thread(r);
         t.start();
     }
 
-    private static NotificationCompat.Builder createBuilder(Context context,
-                                                            long when,
-                                                            int smallIcon,
-                                                            Intent intent) {
-        NotificationCompat.Builder b = new NotificationCompat.Builder(context);
+    private static MyBuilder createBuilder(Context context,
+                                           long when,
+                                           int smallIcon,
+                                           Intent intent) {
+        NotificationCompat.Builder b = new NotificationCompat.Builder(context, Constants.CHANNEL_ID);
         b.setSmallIcon(smallIcon)
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -168,6 +176,30 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setShowWhen(false)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
                 .setContentIntent(PendingIntent.getActivity(context, 0, intent, FLAG_ONE_SHOT));
-        return b;
+        return new MyBuilder(b);
+    }
+
+    private void initChannels(Context context) {
+        if (Build.VERSION.SDK_INT < 26) {
+            return;
+        }
+        NotificationManager nm =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (nm != null) {
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_ALARM)
+                    .build();
+            NotificationChannel channel = new NotificationChannel(Constants.CHANNEL_ID,
+                    Constants.TKBIRTHDAYREMINDER,
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(Constants.TKBIRTHDAYREMINDER);
+            String tune = SoundChooser
+                    .getNotificationSoundAsString(context);
+            if (tune != null) {
+                channel.setSound(Uri.parse(tune), audioAttributes);
+            }
+            nm.createNotificationChannel(channel);
+        }
     }
 }

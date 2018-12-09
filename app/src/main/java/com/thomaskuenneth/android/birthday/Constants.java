@@ -15,6 +15,7 @@ package com.thomaskuenneth.android.birthday;
 class Constants {
 
     static final String TKBIRTHDAYREMINDER = "TKBirthdayReminder";
+    static final String CHANNEL_ID = "default";
 
     static final int MENU_CHANGE_DATE = R.string.menu_change_date;
     static final int MENU_REMOVE_DATE = R.string.menu_remove_date;
