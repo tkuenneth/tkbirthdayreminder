@@ -1,6 +1,10 @@
-to do
-kleine Icons für Benachrichtigungen passen nicht
-Zeit aus Notification rausnehmen (setWhen)
+To do:
+- kleine Icons für Benachrichtigungen passen nicht
+- Zeit aus Notification rausnehmen (setWhen)
+- bei vergangenen Geburtstagen ausblenden
+- Titel anpassen:  Bevorstehende Geburtstage
+- Icon minimal anpassen
+
 
 2.1.2
 - updated targetSdkVersion and library versions
