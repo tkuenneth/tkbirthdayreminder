@@ -60,4 +60,6 @@
 	<string name="and_x_more">" und %1$d weitere"</string>
     <string name="x_more_birthdays">%1$d weitere Geburtstage</string>
 
+	<string name="activity_not_found">Activity nicht gefunden</string>
+
 </resources>

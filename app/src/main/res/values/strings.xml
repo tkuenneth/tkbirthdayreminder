@@ -64,6 +64,8 @@
     <string name="and_x_more">" and %1$d more"</string>
     <string name="x_more_birthdays">%1$d more birthdays</string>
 
+    <string name="activity_not_found">No activity found</string>
+
     <string name="welcome_text" translatable="false">Welcome to <b>TKBirthdayReminder</b>.
 If you have questions about this app, or if you think you have found a bug,
 please contact me by sending an email to tkbirthdayreminder@thomaskuenneth.com.

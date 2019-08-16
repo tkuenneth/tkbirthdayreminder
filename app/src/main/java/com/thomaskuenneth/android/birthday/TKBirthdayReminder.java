@@ -1,7 +1,7 @@
 /*
  * TKBirthdayReminder.java
- * 
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2017
+ *
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2019
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -9,6 +9,7 @@ package com.thomaskuenneth.android.birthday;
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,7 +32,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -75,8 +78,6 @@ public class TKBirthdayReminder extends ListActivity {
     private static final String NEW_EVENT_EVENT = "newEventEvent";
     private static final String STATE_KEY = "stateKey";
     private static final String LONG_CLICK_ITEM = "longClickItem";
-    private static final DateFormat FORMAT_MONTH_SHORT = new SimpleDateFormat(
-            "MMM", Locale.getDefault());
 
     private EditText newEventYear;
     private Spinner newEventSpinnerDay, newEventSpinnerMonth;
@@ -134,7 +135,7 @@ public class TKBirthdayReminder extends ListActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (list instanceof ArrayList) {
-            outState.putParcelableArrayList(STATE_KEY, (ArrayList) list);
+            outState.putParcelableArrayList(STATE_KEY, (ArrayList<? extends Parcelable>) list);
         }
         if (longClickedItem != null) {
             outState.putLong(LONG_CLICK_ITEM,
@@ -147,8 +148,8 @@ public class TKBirthdayReminder extends ListActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions,
-                                           int[] grantResults) {
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         boolean canRun = true;
         for (int result : grantResults) {
             if (result == PackageManager.PERMISSION_DENIED) {
@@ -184,8 +185,6 @@ public class TKBirthdayReminder extends ListActivity {
                 }
                 break;
             case Constants.RQ_PREFERENCES:
-                readContacts(true);
-                break;
             case Constants.RQ_SHOW_CONTACT:
                 readContacts(true);
                 break;
@@ -247,13 +246,12 @@ public class TKBirthdayReminder extends ListActivity {
     @Override
     protected void onPrepareDialog(int id, Dialog dialog) {
         super.onPrepareDialog(id, dialog);
-        switch (id) {
-            case Constants.DATE_DIALOG_ID:
-                updateViewsFromEvent();
-                break;
+        if (id == Constants.DATE_DIALOG_ID) {
+            updateViewsFromEvent();
         }
     }
 
+    @SuppressLint("InflateParams")
     @Override
     protected Dialog onCreateDialog(int id) {
         final View view;
@@ -264,7 +262,7 @@ public class TKBirthdayReminder extends ListActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.legal);
                 builder.setIcon(R.mipmap.ic_launcher);
-                View textView = getLayoutInflater().inflate(R.layout.welcome, null);
+                @SuppressLint("InflateParams") View textView = getLayoutInflater().inflate(R.layout.welcome, null);
                 builder.setView(textView);
                 if (isNewVersion()) {
                     builder.setPositiveButton(R.string.alert_dialog_continue,
@@ -303,11 +301,9 @@ public class TKBirthdayReminder extends ListActivity {
                 newEventCal = Calendar.getInstance();
                 factory = LayoutInflater.from(this);
                 view = factory.inflate(R.layout.edit_birthday_date, null);
-                newEventSpinnerDay = (Spinner) view
-                        .findViewById(R.id.new_event_day);
-                newEventSpinnerMonth = (Spinner) view
-                        .findViewById(R.id.new_event_month);
-                newEventYear = (EditText) view.findViewById(R.id.new_event_year);
+                newEventSpinnerDay = view.findViewById(R.id.new_event_day);
+                newEventSpinnerMonth = view.findViewById(R.id.new_event_month);
+                newEventYear = view.findViewById(R.id.new_event_year);
                 dialog = new AlertDialog.Builder(this)
                         .setTitle(R.string.menu_change_date)
                         .setPositiveButton(android.R.string.ok,
@@ -445,10 +441,9 @@ public class TKBirthdayReminder extends ListActivity {
                 ContactsContract.Data._ID};
         String dataQuerySelection = ContactsContract.Data.CONTACT_ID + " = ?";
         String[] rawSelectionArgs = new String[]{id};
-        String[] dataQuerySelectionArgs = rawSelectionArgs;
         Cursor dataQueryCursor = contentResolver.query(
                 ContactsContract.Data.CONTENT_URI, dataQueryProjection,
-                dataQuerySelection, dataQuerySelectionArgs, null);
+                dataQuerySelection, rawSelectionArgs, null);
         if (dataQueryCursor != null) {
             while (dataQueryCursor.moveToNext()) {
                 String mimeType = dataQueryCursor.getString(0);
@@ -458,7 +453,7 @@ public class TKBirthdayReminder extends ListActivity {
                         .equals(mimeType)) {
                     int type = dataQueryCursor.getInt(1);
                     if (ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY == type) {
-                    /* String gebdt = */
+                        /* String gebdt = */
                         dataQueryCursor.getString(2);
                         // Log.d(TAG, "   ---> found birthday: " + gebdt);
 
@@ -470,7 +465,7 @@ public class TKBirthdayReminder extends ListActivity {
                                 id,
                                 dataId,
                                 ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE};
-                    /* int rowsDeleted = */
+                        /* int rowsDeleted = */
                         contentResolver.delete(
                                 ContactsContract.Data.CONTENT_URI, where,
                                 selectionArgs);
@@ -492,8 +487,7 @@ public class TKBirthdayReminder extends ListActivity {
                         if (d != null) {
                             // Log.d(TAG, "   ---> extracted date: " +
                             // d.toString());
-                            // Datum aus dem Notizfeld entfernen
-                            note = TKDateUtils.getStringFromDate(null, note);
+                            note = TKDateUtils.removeBirthdayFromString(note);
                             ContentValues values = new ContentValues();
                             values.put(ContactsContract.CommonDataKinds.Note.NOTE,
                                     note);
@@ -508,7 +502,7 @@ public class TKBirthdayReminder extends ListActivity {
                                     id,
                                     dataId,
                                     ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE};
-                        /* int rowsUpdated = */
+                            /* int rowsUpdated = */
                             contentResolver.update(
                                     ContactsContract.Data.CONTENT_URI, values,
                                     where, selectionArgs);
@@ -544,7 +538,7 @@ public class TKBirthdayReminder extends ListActivity {
                     values.put(
                             ContactsContract.CommonDataKinds.Event.RAW_CONTACT_ID,
                             rawContactId);
-                /* Uri uri = */
+                    /* Uri uri = */
                     contentResolver.insert(
                             ContactsContract.Data.CONTENT_URI, values);
 //				Log.d(TAG, "   ---> inserting birthday for raw contact "
@@ -688,6 +682,8 @@ public class TKBirthdayReminder extends ListActivity {
     }
 
     private void createAndSetMonthAdapter() {
+        final DateFormat formatMonthShort = new SimpleDateFormat(
+                "MMM", Locale.getDefault());
         ArrayAdapter<String> adapterMonth = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item);
         adapterMonth
@@ -695,7 +691,7 @@ public class TKBirthdayReminder extends ListActivity {
         for (int i = newEventCal.getMinimum(Calendar.MONTH); i <= newEventCal
                 .getMaximum(Calendar.MONTH); i++) {
             newEventCal.set(Calendar.MONTH, i);
-            adapterMonth.add(FORMAT_MONTH_SHORT.format(newEventCal.getTime()));
+            adapterMonth.add(formatMonthShort.format(newEventCal.getTime()));
         }
         newEventSpinnerMonth.setAdapter(adapterMonth);
         newEventSpinnerMonth.setSelection(newEventEvent.getMonth());

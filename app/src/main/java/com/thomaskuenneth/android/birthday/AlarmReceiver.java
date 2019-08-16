@@ -1,7 +1,7 @@
 /*
  * AlarmReceiver.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2018
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2019
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -52,7 +52,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         final PowerManager.WakeLock wl = (pm != null) ? pm.newWakeLock(
                 PowerManager.PARTIAL_WAKE_LOCK, TAG) : null;
         if (wl != null) {
-            wl.acquire();
+            wl.acquire(10 * 60 * 1000L /*10 minutes*/);
         }
         initChannels(context);
         Runnable r = new Runnable() {
@@ -84,10 +84,10 @@ public class AlarmReceiver extends BroadcastReceiver {
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         MyBuilder b = createBuilder(context,
                                 when--,
-                                R.mipmap.ic_launcher,
+                                R.drawable.ic_notification,
                                 intent);
                         if (total >= MIN_NOTIFICATIONS_FOR_GROUP) {
-                            b.setGroup(Constants.TKBIRTHDAYREMINDER);
+                            b.builder.setGroup(Constants.TKBIRTHDAYREMINDER);
                         }
                         Date birthday = event.getBirthday();
                         Bitmap picture = (wm != null) ? BirthdayItemListAdapter.loadBitmap(event,
@@ -180,7 +180,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     }
 
     private void initChannels(Context context) {
-        if (Build.VERSION.SDK_INT < 26) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return;
         }
         NotificationManager nm =

@@ -1,17 +1,21 @@
 /*
  * BirthdayItemListAdapter.java
- * 
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2017
+ *
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2019
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
+import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -54,7 +58,7 @@ class BirthdayItemListAdapter extends BaseAdapter {
         SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(context);
         showAstrologicalSigns = prefs.getBoolean(
-                "checkbox_show_astrological_signs", true);
+                PreferencesActivity.CHECKBOX_SHOW_ASTROLOGICAL_SIGNS, true);
     }
 
     public int getCount() {
@@ -69,6 +73,7 @@ class BirthdayItemListAdapter extends BaseAdapter {
         return position;
     }
 
+    @SuppressLint("InflateParams")
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
 
@@ -77,11 +82,11 @@ class BirthdayItemListAdapter extends BaseAdapter {
             convertView.setPadding(0, 4, 0, 4);
 
             holder = new ViewHolder();
-            holder.textName = (TextView) convertView.findViewById(R.id.text1);
-            holder.textInfo = (TextView) convertView.findViewById(R.id.text2);
-            holder.textDate = (TextView) convertView.findViewById(R.id.text3);
-            holder.textZodiac = (TextView) convertView.findViewById(R.id.text4);
-            holder.icon = (ImageView) convertView.findViewById(R.id.icon);
+            holder.textName = convertView.findViewById(R.id.text1);
+            holder.textInfo = convertView.findViewById(R.id.text2);
+            holder.textDate = convertView.findViewById(R.id.text3);
+            holder.textZodiac = convertView.findViewById(R.id.text4);
+            holder.icon = convertView.findViewById(R.id.icon);
 
             convertView.setTag(holder);
         } else {
@@ -127,22 +132,28 @@ class BirthdayItemListAdapter extends BaseAdapter {
 //                    } else {
 //                        id = R.drawable.birthdaycake_96;
 //                    }
-                    picture = BitmapFactory.decodeResource(
-                            context.getResources(), R.mipmap.ic_launcher);
-                }
-                if (picture.getHeight() != size) {
-                    Bitmap temp = picture;
-                    float w = (float) picture.getWidth();
-                    float h = (float) picture.getHeight();
-                    // höhe : breite = height : width
-                    int h2 = (int) (((h / w)) * size);
-                    picture = Bitmap
-                            .createScaledBitmap(temp, size, h2, false);
-                    if (temp != picture) {
-                        temp.recycle();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        Drawable d = context.getDrawable(R.drawable.ic_launcher_foreground);
+                        if (d != null) {
+                            picture = getBitmap(d);
+                        }
                     }
                 }
-                item.setPicture(picture);
+                if (picture != null) {
+                    if (picture.getHeight() != size) {
+                        Bitmap temp = picture;
+                        float w = (float) picture.getWidth();
+                        float h = (float) picture.getHeight();
+                        // höhe : breite = height : width
+                        int h2 = (int) (((h / w)) * size);
+                        picture = Bitmap
+                                .createScaledBitmap(temp, size, h2, false);
+                        if (temp != picture) {
+                            temp.recycle();
+                        }
+                    }
+                    item.setPicture(picture);
+                }
             } catch (Throwable tr) {
                 Log.e(TAG, "loadBitmap()", tr);
             } finally {
@@ -161,5 +172,14 @@ class BirthdayItemListAdapter extends BaseAdapter {
     private static class ViewHolder {
         TextView textName, textInfo, textDate, textZodiac;
         ImageView icon;
+    }
+
+    private static Bitmap getBitmap(Drawable vectorDrawable) {
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
+                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.draw(canvas);
+        return bitmap;
     }
 }

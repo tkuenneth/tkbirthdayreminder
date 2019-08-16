@@ -1,7 +1,7 @@
 /*
  * NotificationPreference.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2017
+ * TKBirthdayReminder (c) Thomas Künneth 2017 - 2019
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -34,7 +34,7 @@ public class NotificationPreference extends DialogPreference {
         super.onBindDialogView(view);
         int notificationDays = prefs.getInt(NOTIFICATION_DAYS, 0);
         for (int bit = 0; bit < 7; bit++) {
-            checkboxes[bit] = (CheckBox) view.findViewById(IDS[bit]);
+            checkboxes[bit] = view.findViewById(IDS[bit]);
             int mask = 1 << bit;
             checkboxes[bit].setChecked((notificationDays & mask) == mask);
         }

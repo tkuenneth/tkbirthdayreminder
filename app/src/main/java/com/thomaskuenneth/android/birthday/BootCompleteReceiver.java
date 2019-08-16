@@ -1,7 +1,7 @@
 /*
  * BootCompleteReceiver.java
- * 
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2017
+ *
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2019
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -30,7 +30,9 @@ public class BootCompleteReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        startAlarm(context.getApplicationContext(), false);
+        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
+            startAlarm(context.getApplicationContext(), false);
+        }
     }
 
     /**
@@ -61,13 +63,15 @@ public class BootCompleteReceiver extends BroadcastReceiver {
         }
         AlarmManager am = (AlarmManager) context
                 .getSystemService(Service.ALARM_SERVICE);
-        am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(),
-                DateUtils.DAY_IN_MILLIS, sender);
-        if (nextDay) {
-            Toast toast = Toast.makeText(context, TKDateUtils
-                            .getNotificationDateAsString(context, cal.getTime()),
-                    Toast.LENGTH_LONG);
-            toast.show();
+        if (am != null) {
+            am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(),
+                    DateUtils.DAY_IN_MILLIS, sender);
+            if (nextDay) {
+                Toast toast = Toast.makeText(context, TKDateUtils
+                                .getNotificationDateAsString(context, cal.getTime()),
+                        Toast.LENGTH_LONG);
+                toast.show();
+            }
         }
     }
 }

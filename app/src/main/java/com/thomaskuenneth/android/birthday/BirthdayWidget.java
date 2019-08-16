@@ -1,7 +1,7 @@
 /*
  * BirthdayWidget.java
- * 
- * TKBirthdayReminder (c) Thomas Künneth 2010 - 2017
+ *
+ * TKBirthdayReminder (c) Thomas Künneth 2010 - 2019
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -89,15 +89,17 @@ public class BirthdayWidget extends AppWidgetProvider {
 
             SharedPreferences prefs = PreferenceManager
                     .getDefaultSharedPreferences(context);
-            if (prefs.getBoolean("checkbox_show_astrological_signs", true)) {
+            if (prefs.getBoolean(PreferencesActivity.CHECKBOX_SHOW_ASTROLOGICAL_SIGNS, true)) {
                 zodiac = Zodiac.getSign(context, birthday);
             }
 
             WindowManager wm = (WindowManager) context
                     .getSystemService(Context.WINDOW_SERVICE);
-            Bitmap picture = BirthdayItemListAdapter.loadBitmap(item,
-                    context, TKBirthdayReminder.getImageHeight(wm));
-            updateViews.setImageViewBitmap(R.id.icon, picture);
+            if (wm != null) {
+                Bitmap picture = BirthdayItemListAdapter.loadBitmap(item,
+                        context, TKBirthdayReminder.getImageHeight(wm));
+                updateViews.setImageViewBitmap(R.id.icon, picture);
+            }
         }
         int opacity = WidgetPreference.getOpacity(context);
         int color = 0x000000;

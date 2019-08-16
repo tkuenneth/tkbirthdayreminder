@@ -1,7 +1,7 @@
 /*
  * WidgetPreference.java
- * 
- * TKBirthdayReminder (c) Thomas Künneth 2013 - 2017
+ *
+ * TKBirthdayReminder (c) Thomas Künneth 2013 - 2019
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -45,8 +45,8 @@ public class WidgetPreference extends DialogPreference implements
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        seekbarInfo = (TextView) view.findViewById(R.id.widget_opacity_info);
-        seekbar = (SeekBar) view.findViewById(R.id.widget_opacity);
+        seekbarInfo = view.findViewById(R.id.widget_opacity_info);
+        seekbar = view.findViewById(R.id.widget_opacity);
         seekbar.setOnSeekBarChangeListener(this);
         seekbar.setMax(255);
         seekbar.setProgress(getOpacity(getContext()));

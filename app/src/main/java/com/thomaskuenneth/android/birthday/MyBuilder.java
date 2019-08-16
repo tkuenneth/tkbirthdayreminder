@@ -1,3 +1,9 @@
+/*
+ * MyBuilder.java
+ *
+ * TKBirthdayReminder (c) Thomas Künneth 2019
+ * Alle Rechte beim Autoren. All rights reserved.
+ */
 package com.thomaskuenneth.android.birthday;
 
 import android.app.Notification;
@@ -6,16 +12,13 @@ import android.support.v4.app.NotificationCompat;
 
 class MyBuilder {
 
-    private final NotificationCompat.Builder builder;
+    final NotificationCompat.Builder builder;
+
     String mContentTitle;
     String mContentText;
 
     MyBuilder(NotificationCompat.Builder builder) {
         this.builder = builder;
-    }
-
-    void setGroup(String g) {
-        builder.setGroup(g);
     }
 
     NotificationCompat.Builder setContentTitle(String t) {

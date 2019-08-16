@@ -1,8 +1,8 @@
 /*
  * DateUtils.java
- * 
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2017
- * 
+ *
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2019
+ *
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -31,9 +31,6 @@ class TKDateUtils {
 
     static final SimpleDateFormat FORMAT_YYYYMMDD = new SimpleDateFormat(
             "yyyyMMdd", Locale.US);
-
-    private static final SimpleDateFormat FORMAT_WEEKDAY = new SimpleDateFormat(
-            "EEE", Locale.getDefault());
 
     private static final DateFormat FORMAT_SHORT_DATE = SimpleDateFormat
             .getDateInstance(DateFormat.SHORT);
@@ -65,6 +62,8 @@ class TKDateUtils {
     }
 
     static String getBirthdayAsString(Context context, Date birthday) {
+        final SimpleDateFormat formatWeekday = new SimpleDateFormat(
+                "EEE", Locale.getDefault());
         if (birthday == null) {
             return TKBirthdayReminder.getStringFromResources(context,
                     R.string.no_birthday_set);
@@ -92,12 +91,12 @@ class TKDateUtils {
         if (age < 0) {
             return TKBirthdayReminder.getStringFromResources(context,
                     R.string.birthday_no_year, when,
-                    FORMAT_WEEKDAY.format(buffer));
+                    formatWeekday.format(buffer));
         } else {
             int resId = (days < 0) ? R.string.past
                     : R.string.present_and_future;
             return TKBirthdayReminder.getStringFromResources(context, resId,
-                    age, when, FORMAT_WEEKDAY.format(buffer));
+                    age, when, formatWeekday.format(buffer));
         }
     }
 
@@ -146,7 +145,7 @@ class TKDateUtils {
         return yearToday - yearBirthday;
     }
 
-    static String getStringFromDate(Date birthday, String string) {
+    static String removeBirthdayFromString(String string) {
         StringBuilder sb = new StringBuilder();
         if (string != null) {
             Pattern p = Pattern.compile(
@@ -164,13 +163,6 @@ class TKDateUtils {
             } else {
                 sb.append(string);
             }
-        }
-        if (birthday != null) {
-            if (sb.length() > 0) {
-                sb.append('\n');
-            }
-            sb.append("Birthday=");
-            sb.append(FORMAT_YYYYMMDD.format(birthday));
         }
         return sb.toString();
     }

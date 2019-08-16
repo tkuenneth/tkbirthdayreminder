@@ -1,18 +1,20 @@
 /*
  * SoundChooser.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2017
+ * TKBirthdayReminder (c) Thomas Künneth 2017 - 2019
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Toast;
 
 public class SoundChooser extends Activity {
 
@@ -35,7 +37,11 @@ public class SoundChooser extends Activity {
             i.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
                     Uri.parse(current));
         }
-        startActivityForResult(i, RQ_PICK_SOUND);
+        try {
+            startActivityForResult(i, RQ_PICK_SOUND);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, getString(R.string.activity_not_found), Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

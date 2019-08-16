@@ -1,7 +1,7 @@
 /*
  * ContactsList.java
- * 
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2017
+ *
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2019
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -200,9 +200,7 @@ class ContactsList implements Comparator<BirthdayItem> {
             int notificationDays = NotificationPreference
                     .getNotificationDays(context);
             int mask = 1 << (daysUntilBirthday - 1);
-            if ((notificationDays & mask) == mask) {
-                return true;
-            }
+            return (notificationDays & mask) == mask;
         }
         return false;
     }
