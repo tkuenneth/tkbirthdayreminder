@@ -19,12 +19,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
 import android.provider.ContactsContract;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
 import android.view.WindowManager;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,8 +48,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         BootCompleteReceiver.startAlarm(context, true);
-        PowerManager pm = (PowerManager) context
-                .getSystemService(Context.POWER_SERVICE);
+        PowerManager pm = context.getSystemService(PowerManager.class);
         final PowerManager.WakeLock wl = (pm != null) ? pm.newWakeLock(
                 PowerManager.PARTIAL_WAKE_LOCK, TAG) : null;
         if (wl != null) {
@@ -71,8 +71,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 }
                 if (visible > 0) {
                     StringBuilder sbNames = new StringBuilder();
-                    WindowManager wm = (WindowManager) context
-                            .getSystemService(Context.WINDOW_SERVICE);
+                    WindowManager wm = context.getSystemService(WindowManager.class);
                     List<MyBuilder> builders = new ArrayList<>();
                     long when = System.currentTimeMillis();
                     int numNames = 0;
@@ -183,8 +182,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return;
         }
-        NotificationManager nm =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager nm = context.getSystemService(NotificationManager.class);
         if (nm != null) {
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
