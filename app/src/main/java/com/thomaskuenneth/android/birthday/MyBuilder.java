@@ -8,7 +8,7 @@ package com.thomaskuenneth.android.birthday;
 
 import android.app.Notification;
 import android.net.Uri;
-import android.support.v4.app.NotificationCompat;
+import androidx.core.app.NotificationCompat;
 
 class MyBuilder {
 
