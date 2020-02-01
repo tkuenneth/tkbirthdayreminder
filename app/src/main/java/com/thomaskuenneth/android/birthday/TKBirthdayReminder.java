@@ -1,7 +1,7 @@
 /*
  * TKBirthdayReminder.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2019
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2020
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -34,7 +34,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -49,6 +52,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 
 import java.text.DateFormat;
@@ -64,7 +68,7 @@ import java.util.Locale;
  *
  * @author Thomas Künneth
  */
-public class TKBirthdayReminder extends ListActivity {
+public class TKBirthdayReminder extends AppCompatActivity {
 
     public static int storedVersionCode;
     public static int currentVersionCode;
@@ -79,6 +83,7 @@ public class TKBirthdayReminder extends ListActivity {
     private static final String STATE_KEY = "stateKey";
     private static final String LONG_CLICK_ITEM = "longClickItem";
 
+    private ListView mainList;
     private EditText newEventYear;
     private Spinner newEventSpinnerDay, newEventSpinnerMonth;
     private Calendar newEventCal;
@@ -90,17 +95,19 @@ public class TKBirthdayReminder extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+        mainList = findViewById(R.id.main_list);
         imageHeight = getImageHeight(getWindowManager());
         list = null;
         longClickedItem = null;
         newEventEvent = null;
-        getListView().setOnCreateContextMenuListener(this);
-        getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mainList.setOnCreateContextMenuListener(this);
+        mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                BirthdayItem item = (BirthdayItem) getListAdapter().getItem(
+                BirthdayItem item = (BirthdayItem) mainList.getAdapter().getItem(
                         position);
                 Intent i = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
                         ContactsContract.Contacts.CONTENT_URI,
@@ -195,7 +202,7 @@ public class TKBirthdayReminder extends ListActivity {
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        BirthdayItem item = (BirthdayItem) getListAdapter()
+        BirthdayItem item = (BirthdayItem) mainList.getAdapter()
                 .getItem(mi.position);
         menu.setHeaderTitle(item.getName());
         if (item.getBirthday() != null) {
@@ -216,7 +223,7 @@ public class TKBirthdayReminder extends ListActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        longClickedItem = (BirthdayItem) getListAdapter().getItem(mi.position);
+        longClickedItem = (BirthdayItem) mainList.getAdapter().getItem(mi.position);
         switch (item.getItemId()) {
             case Constants.MENU_CHANGE_DATE:
                 showEditBirthdayDialog(longClickedItem);
@@ -751,7 +758,7 @@ public class TKBirthdayReminder extends ListActivity {
         this.list = list;
         BirthdayItemListAdapter myListAdapter = new BirthdayItemListAdapter(
                 this, list, imageHeight);
-        setListAdapter(myListAdapter);
+        mainList.setAdapter(myListAdapter);
     }
 
     /**
