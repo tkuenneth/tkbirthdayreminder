@@ -2,7 +2,7 @@
 
 <!--
 	preferences.xml
-	TKBirthdayReminder (c) Thomas Künneth 2010 - 2017
+	TKBirthdayReminder (c) Thomas Künneth 2010 - 2020
 	Alle Rechte beim Autoren. All rights reserved.
 -->
 
@@ -30,11 +30,7 @@
 
         <com.thomaskuenneth.android.birthday.NotificationPreference android:title="@string/notification_days" />
 
-        <Preference android:title="@string/notification_time">
-            <intent
-                android:targetClass="com.thomaskuenneth.android.birthday.AlarmChooser"
-                android:targetPackage="com.thomaskuenneth.android.birthday" />
-        </Preference>
+        <com.thomaskuenneth.android.birthday.AlarmChooser android:title="@string/notification_time" />
 
         <Preference android:title="@string/notification_sound">
             <intent

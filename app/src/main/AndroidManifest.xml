@@ -35,10 +35,6 @@
             android:name=".SoundChooser"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
-        <activity
-            android:name=".AlarmChooser"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-
         <receiver
             android:name="AlarmReceiver"
             android:enabled="true">

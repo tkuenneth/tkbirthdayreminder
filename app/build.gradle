@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.thomaskuenneth.android.birthday"
-        minSdkVersion 14
+        minSdkVersion 23
         targetSdkVersion 29
         versionCode = 20104
         version = "2.1.3"
