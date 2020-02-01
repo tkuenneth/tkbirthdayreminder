@@ -5,6 +5,10 @@ To do:
 - Titel anpassen:  Bevorstehende Geburtstage
 - Icon minimal anpassen
 
+2.1.5
+- dark Mode support
+- changing the notification sound works again
+- jump to system settings
 
 2.1.2
 - updated targetSdkVersion and library versions
