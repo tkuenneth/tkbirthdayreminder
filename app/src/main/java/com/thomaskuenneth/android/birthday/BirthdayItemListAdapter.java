@@ -1,7 +1,7 @@
 /*
  * BirthdayItemListAdapter.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2019
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2020
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -58,7 +58,7 @@ class BirthdayItemListAdapter extends BaseAdapter {
         SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(context);
         showAstrologicalSigns = prefs.getBoolean(
-                PreferencesActivity.CHECKBOX_SHOW_ASTROLOGICAL_SIGNS, true);
+                PreferenceFragment.CHECKBOX_SHOW_ASTROLOGICAL_SIGNS, true);
     }
 
     public int getCount() {

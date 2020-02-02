@@ -197,7 +197,7 @@ class ContactsList implements Comparator<BirthdayItem> {
             } else if ((daysUntilBirthday < 0) || (daysUntilBirthday > 7)) {
                 return false;
             }
-            int notificationDays = NotificationPreference
+            int notificationDays = NotificationPreferenceFragment
                     .getNotificationDays(context);
             int mask = 1 << (daysUntilBirthday - 1);
             return (notificationDays & mask) == mask;

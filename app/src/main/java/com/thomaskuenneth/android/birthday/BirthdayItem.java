@@ -1,6 +1,6 @@
 /*
  * BirthdayItem.java
- * 
+ *
  * TKBirthdayReminder (c) Thomas Künneth 2009 - 2017
  * Alle Rechte beim Autoren. All rights reserved.
  */
@@ -20,7 +20,7 @@ import java.util.Date;
  *
  * @author Thomas Künneth
  */
-class BirthdayItem implements Parcelable {
+public class BirthdayItem implements Parcelable {
 
     private static final String TAG = BirthdayItem.class.getSimpleName();
 
@@ -76,12 +76,15 @@ class BirthdayItem implements Parcelable {
         this.picture = picture;
     }
 
-    static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         public BirthdayItem createFromParcel(Parcel in) {
             String name = in.readString();
             Date birthday = null;
             try {
-                birthday = TKDateUtils.FORMAT_YYYYMMDD.parse(in.readString());
+                String s = in.readString();
+                if (s != null) {
+                    birthday = TKDateUtils.FORMAT_YYYYMMDD.parse(s);
+                }
             } catch (ParseException e) {
                 Log.e(TAG, "createFromParcel()", e);
             }

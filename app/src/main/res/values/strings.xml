@@ -12,6 +12,8 @@
     <string name="widget_appearance">Widget Appearance</string>
     <string name="hide_past_birthdays">Hide Past Birthdays</string>
     <string name="notifications">Notifications</string>
+    <string name="notification_sound">Notification Sound</string>
+    <string name="notification_channel_settings">Notification channel settings</string>
 
     <string name="aries">Aries</string>
     <string name="taurus">Taurus</string>
@@ -52,7 +54,6 @@
     <string name="notification_time">Notification Time</string>
     <string name="notification_days">Additional Notification Days</string>
     <string name="menu_new_entry">New Contact</string>
-    <string name="notification_sound">Notification Sound</string>
     <string name="days_7">7 days</string>
     <string name="days_6">6 days</string>
     <string name="days_5">5 days</string>

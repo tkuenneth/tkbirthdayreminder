@@ -10,6 +10,8 @@
 	<string name="widget_opacity">Deckkraft</string>
     <string name="widget_appearance">Widget Aussehen</string>
 	<string name="hide_past_birthdays">Vergangene Geburtstage ausblenden</string>
+	<string name="notification_channel_settings">Benachrichtigungskanel Einstellungen</string>
+	<string name="notification_sound">Benachrichtigungston</string>
 
 	<string name="aries">Widder</string>
 	<string name="taurus">Stier</string>
@@ -47,7 +49,6 @@
     <string name="notification_time">Benachrichtigungszeitpunkt</string>
     <string name="notification_days">Zusätzliche Erinnerungstage</string>
     <string name="menu_new_entry">Neuer Kontakt</string>
-    <string name="notification_sound">Benachrichtigungston</string>
     <string name="days_7">7 Tage</string>
     <string name="days_6">6 Tage</string>
     <string name="days_5">5 Tage</string>

@@ -45,6 +45,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     private static final int MAX_NOTIFICATIONS = 14;
     private static final int MIN_NOTIFICATIONS_FOR_GROUP = 2; // 4 ist Android 7.x default
 
+
     @Override
     public void onReceive(final Context context, Intent intent) {
         BootCompleteReceiver.startAlarm(context, true);
@@ -83,7 +84,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         MyBuilder b = createBuilder(context,
                                 when--,
-                                R.drawable.ic_notification,
                                 intent);
                         if (total >= MIN_NOTIFICATIONS_FOR_GROUP) {
                             b.builder.setGroup(Constants.TKBIRTHDAYREMINDER);
@@ -111,7 +111,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         MyBuilder summary = createBuilder(context,
                                 when,
-                                R.drawable.ic_notification,
                                 intent);
                         summary.setContentTitle(context.getString(R.string.app_name))
                                 .setGroupSummary(true)
@@ -164,10 +163,9 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     private static MyBuilder createBuilder(Context context,
                                            long when,
-                                           int smallIcon,
                                            Intent intent) {
         NotificationCompat.Builder b = new NotificationCompat.Builder(context, Constants.CHANNEL_ID);
-        b.setSmallIcon(smallIcon)
+        b.setSmallIcon(R.drawable.ic_notification)
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setWhen(when)

@@ -1,29 +1,16 @@
 - größeres Widget für mehr Geburtstage oder größe einstellbar machen
 - Hinweis auf "an Geburtstag wird auch erinnert"
-- Bug: heute war Lilos Geburtstag, aber in der Notification wurde einer von vor 6 Tagen angezeigt
-- TKBR-Icon in svg umwandeln
-- Filter, der auch in der Hauptansicht nur bestimmte Geburtstage anzeigt
+- Bug: heute war Lilos Geburtstag, aber in der Notification wurde einer
+von vor 6 Tagen angezeigt
 
 
 1.   You cannot add Birthdays for people who are not in your phones contact list - for example I have nieces and nephews who are still to young to own a mobile phone.
 2.   Also it would be really good if you could add various categories - particularly Anniversary's.
 3.   Finally the DAYS that you can choose from only go up to 30 Days  NOT   31 Days..
 
+Reminder set 1 day. Actual birthday is May 4.
+Program shows "Turns 44 today (Tue) " Today is May 3.
+Date displayed by program is 5/3/2011.
 
-
-Reminder set 1 day. Actual birthday is May 4. Program shows "Turns 44 today (Tue) " Today is May 3.  Date displayed by program is 5/3/2011.
-
-Program should say "Turns 44 in 1 day (Wednesday)" and show the actual date of birth "May, 4".
-
-Einen Song abspielen
-
-You can add .mp3 files as new ringtones to
-your phone by connecting your phone to your computer and mounting its
-sd card. If not already present, create a folder called ringtones and
-put the desired ringtone (or birthday song :-)) there.
-
-Disconnect the phone from the computer, open TKBirthdayReminder and
-and pick Set notification sound. The new ringtone - or birthday song
-:-) - should appear in the list.
-
-http://pocketpccentral.net/help/android/general/android_mp3_ringtones.htm
+Program should say "Turns 44 in 1 day (Wednesday)" and
+show the actual date of birth "May, 4".

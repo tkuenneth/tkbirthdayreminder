@@ -1,0 +1,67 @@
+package com.thomaskuenneth.android.birthday;
+
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+
+import androidx.fragment.app.FragmentManager;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceDialogFragmentCompat;
+import androidx.preference.PreferenceFragmentCompat;
+
+public class PreferenceFragment extends PreferenceFragmentCompat {
+
+    static final String CHECKBOX_SHOW_ASTROLOGICAL_SIGNS = "checkbox_show_astrological_signs";
+
+    private SharedPreferences.OnSharedPreferenceChangeListener l = new SharedPreferences.OnSharedPreferenceChangeListener() {
+
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (CHECKBOX_SHOW_ASTROLOGICAL_SIGNS.equals(key)) {
+                TKBirthdayReminder.updateWidgets(getActivity());
+            }
+        }
+    };
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.preferences, null);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        PreferenceManager.getDefaultSharedPreferences(getActivity()).registerOnSharedPreferenceChangeListener(l);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        PreferenceManager.getDefaultSharedPreferences(getActivity()).unregisterOnSharedPreferenceChangeListener(l);
+    }
+
+    @Override
+    public void onDisplayPreferenceDialog(Preference preference) {
+        String key = preference.getKey();
+        if (WidgetPreference.KEY.equals(key)) {
+            showFragment(new WidgetPreferenceFragment(), key);
+        } else if (NotificationPreference.KEY.equals(key)) {
+            showFragment(new NotificationPreferenceFragment(), key);
+        } else if (AlarmChooser.KEY.equals(key)) {
+            showFragment(new AlarmChooserFragment(), key);
+        } else {
+            super.onDisplayPreferenceDialog(preference);
+        }
+    }
+
+    private void showFragment(PreferenceDialogFragmentCompat fragment, String key) {
+        fragment.setTargetFragment(this, 0);
+        final Bundle bundle = new Bundle(1);
+        bundle.putString("key", key);
+        fragment.setArguments(bundle);
+        FragmentManager fragmentManager = getFragmentManager();
+        if (fragmentManager != null) {
+            fragment.show(fragmentManager, key);
+        }
+    }
+}

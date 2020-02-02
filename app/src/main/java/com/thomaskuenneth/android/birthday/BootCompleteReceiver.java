@@ -1,19 +1,17 @@
 /*
  * BootCompleteReceiver.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2019
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2020
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.text.format.DateUtils;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -50,8 +48,8 @@ public class BootCompleteReceiver extends BroadcastReceiver {
         int minCurrent = (cal.get(Calendar.HOUR_OF_DAY) * 60)
                 + cal.get(Calendar.MINUTE);
         SharedPreferences prefs = TKBirthdayReminder.getSharedPreferences(context);
-        int hour = prefs.getInt(AlarmChooser.NOTIFICATION_TIME_HOUR, 12);
-        int minute = prefs.getInt(AlarmChooser.NOTIFICATION_TIME_MINUTE, 0);
+        int hour = prefs.getInt(AlarmChooserFragment.NOTIFICATION_TIME_HOUR, 12);
+        int minute = prefs.getInt(AlarmChooserFragment.NOTIFICATION_TIME_MINUTE, 0);
         cal.set(GregorianCalendar.HOUR_OF_DAY, hour);
         cal.set(GregorianCalendar.MINUTE, minute);
         int minAlarm = (cal.get(Calendar.HOUR_OF_DAY) * 60)
@@ -61,11 +59,9 @@ public class BootCompleteReceiver extends BroadcastReceiver {
                 cal.add(Calendar.DAY_OF_MONTH, 1);
             }
         }
-        AlarmManager am = (AlarmManager) context
-                .getSystemService(Service.ALARM_SERVICE);
+        AlarmManager am = context.getSystemService(AlarmManager.class);
         if (am != null) {
-            am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(),
-                    DateUtils.DAY_IN_MILLIS, sender);
+            am.setExact(AlarmManager.RTC, cal.getTimeInMillis(), sender);
             if (nextDay) {
                 Toast toast = Toast.makeText(context, TKDateUtils
                                 .getNotificationDateAsString(context, cal.getTime()),

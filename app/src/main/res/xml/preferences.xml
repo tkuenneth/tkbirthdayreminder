@@ -6,7 +6,7 @@
 	Alle Rechte beim Autoren. All rights reserved.
 -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/display_options">
 
@@ -20,17 +20,15 @@
             android:key="hide_past_birthdays"
             android:title="@string/hide_past_birthdays" />
 
-        <com.thomaskuenneth.android.birthday.WidgetPreference
-            android:dialogTitle="@string/widget_appearance"
-            android:title="@string/widget_appearance" />
+        <com.thomaskuenneth.android.birthday.WidgetPreference />
 
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/notifications">
 
-        <com.thomaskuenneth.android.birthday.NotificationPreference android:title="@string/notification_days" />
+        <com.thomaskuenneth.android.birthday.NotificationPreference />
 
-        <com.thomaskuenneth.android.birthday.AlarmChooser android:title="@string/notification_time" />
+        <com.thomaskuenneth.android.birthday.AlarmChooser />
 
         <Preference android:title="@string/notification_sound">
             <intent
@@ -40,4 +38,4 @@
 
     </PreferenceCategory>
 
-</PreferenceScreen>
+</androidx.preference.PreferenceScreen>

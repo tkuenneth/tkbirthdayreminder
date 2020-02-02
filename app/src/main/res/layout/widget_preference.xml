@@ -2,39 +2,39 @@
 
 <!--
 	widget_preference.xml
-	TKBirthdayReminder (c) Thomas Künneth 2013 - 2017
+	TKBirthdayReminder (c) Thomas Künneth 2013 - 2020
 	Alle Rechte beim Autoren. All rights reserved.
 -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:padding="16dp">
 
     <TextView
+        android:id="@+id/widget_opacity_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="8dp"
         android:text="@string/widget_opacity" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/widget_opacity_info"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_below="@id/widget_opacity_label"
+        android:layout_alignParentEnd="true"
+        android:ems="5"
+        android:gravity="end" />
 
-        <SeekBar
-            android:id="@+id/widget_opacity"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+    <SeekBar
+        android:id="@+id/widget_opacity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/widget_opacity_info"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@id/widget_opacity_info" />
 
-        <TextView
-            android:id="@+id/widget_opacity_info"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:ems="5"
-            android:gravity="center_vertical|end" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
