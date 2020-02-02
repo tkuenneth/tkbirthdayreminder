@@ -1,9 +1,12 @@
 To do:
 - kleine Icons für Benachrichtigungen passen nicht
 - Zeit aus Notification rausnehmen (setWhen)
-- bei vergangenen Geburtstagen ausblenden
-- Titel anpassen:  Bevorstehende Geburtstage
+- bei vergangenen Geburtstagen ausblenden Titel anpassen:  Bevorstehende Geburtstage
 - Icon minimal anpassen
+
+- WidgetPreference: wenn 0, wird Text nicht gesetzt
+- testen: über Store-Version kopieren
+
 
 2.1.5
 - Dark Mode support
