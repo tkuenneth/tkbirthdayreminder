@@ -30,6 +30,7 @@
 
         <activity
             android:name="PreferencesActivity"
+            android:parentActivityName="com.thomaskuenneth.android.birthday.TKBirthdayReminder"
             android:label="@string/settings" />
 
         <activity

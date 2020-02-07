@@ -10,9 +10,10 @@ To do:
 
 2.1.5
 - Dark Mode support
+- Preferences have an action bar
 - Appwidget width can be increased
-- You can open notification channel settings from settings
-- Changing the notification sound is done in notification channel settings
+- You can open notification channel settings from settings (>= Android 8)
+- Changing the notification sound is done in notification channel settings  (>= Android 8)
 
 2.1.2
 - updated targetSdkVersion and library versions
