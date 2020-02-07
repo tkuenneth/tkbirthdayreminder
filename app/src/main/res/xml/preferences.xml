@@ -30,12 +30,6 @@
 
         <com.thomaskuenneth.android.birthday.AlarmChooser />
 
-        <Preference android:title="@string/notification_sound" android:key="alarm_chooser">
-            <intent
-                android:targetClass="com.thomaskuenneth.android.birthday.SoundChooser"
-                android:targetPackage="com.thomaskuenneth.android.birthday" />
-        </Preference>
-
     </PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

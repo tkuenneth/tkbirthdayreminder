@@ -1,5 +1,7 @@
 package com.thomaskuenneth.android.birthday;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,6 +33,16 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
             Preference alarm_chooser = findPreference("alarm_chooser");
             if (alarm_chooser != null) {
                 alarm_chooser.setVisible(false);
+            }
+        } else {
+            Context context = getContext();
+            if (context != null) {
+                Preference p = new Preference(context);
+                p.setTitle(R.string.notification_sound);
+                p.setKey("alarm_chooser");
+                Intent i = new Intent(context, SoundChooser.class);
+                p.setIntent(i);
+                getPreferenceScreen().addPreference(p);
             }
         }
     }
