@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.Preference;
@@ -28,20 +29,28 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        setPreferencesFromResource(R.xml.preferences, null);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Preference alarm_chooser = findPreference("alarm_chooser");
-            if (alarm_chooser != null) {
-                alarm_chooser.setVisible(false);
-            }
-        } else {
-            Context context = getContext();
-            if (context != null) {
+        Context context = getContext();
+        if (context != null) {
+            setPreferencesFromResource(R.xml.preferences, null);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Preference alarm_chooser = findPreference("alarm_chooser");
+                if (alarm_chooser != null) {
+                    alarm_chooser.setVisible(false);
+                }
+                Preference p = new Preference(context);
+                p.setTitle(R.string.notification_channel_settings);
+                p.setKey("notification_channel_settings");
+                Intent intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
+                intent.putExtra(Settings.EXTRA_CHANNEL_ID, Constants.CHANNEL_ID);
+                p.setIntent(intent);
+                getPreferenceScreen().addPreference(p);
+            } else {
                 Preference p = new Preference(context);
                 p.setTitle(R.string.notification_sound);
                 p.setKey("alarm_chooser");
-                Intent i = new Intent(context, SoundChooser.class);
-                p.setIntent(i);
+                Intent intent = new Intent(context, SoundChooser.class);
+                p.setIntent(intent);
                 getPreferenceScreen().addPreference(p);
             }
         }
