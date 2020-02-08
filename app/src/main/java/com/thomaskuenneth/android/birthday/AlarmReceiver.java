@@ -1,17 +1,19 @@
 /*
  * AlarmReceiver.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2019
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2020
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.media.AudioAttributes;
@@ -26,6 +28,7 @@ import android.view.WindowManager;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,7 +47,6 @@ public class AlarmReceiver extends BroadcastReceiver {
     private static final String TAG = AlarmReceiver.class.getSimpleName();
     private static final int MAX_NOTIFICATIONS = 14;
     private static final int MIN_NOTIFICATIONS_FOR_GROUP = 2; // 4 ist Android 7.x default
-
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -149,7 +151,12 @@ public class AlarmReceiver extends BroadcastReceiver {
                             }
                         }
                         MyBuilder builder = builders.get(i);
-                        nm.notify(i, builder.build());
+                        Notification n = builder.build();
+                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                        if (prefs.getBoolean("notification_sound_insistent", false)) {
+                            n.flags |= Notification.FLAG_INSISTENT;
+                        }
+                        nm.notify(i, n);
                     }
                 }
                 if (wl != null) {
@@ -159,6 +166,30 @@ public class AlarmReceiver extends BroadcastReceiver {
         };
         Thread t = new Thread(r);
         t.start();
+    }
+
+    public static void initChannels(Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return;
+        }
+        NotificationManager nm = context.getSystemService(NotificationManager.class);
+        if (nm != null) {
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_ALARM)
+                    .build();
+            NotificationChannel channel = new NotificationChannel(Constants.CHANNEL_ID,
+                    context.getString(R.string.notification_channel_name),
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            // Info: we could set a channel description with
+            // channel.setDescription(...)
+            String tune = SoundChooser
+                    .getNotificationSoundAsString(context);
+            if (tune != null) {
+                channel.setSound(Uri.parse(tune), audioAttributes);
+            }
+            nm.createNotificationChannel(channel);
+        }
     }
 
     private static MyBuilder createBuilder(Context context,
@@ -174,28 +205,5 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
                 .setContentIntent(PendingIntent.getActivity(context, 0, intent, FLAG_ONE_SHOT));
         return new MyBuilder(b);
-    }
-
-    private void initChannels(Context context) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            return;
-        }
-        NotificationManager nm = context.getSystemService(NotificationManager.class);
-        if (nm != null) {
-            AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .setUsage(AudioAttributes.USAGE_ALARM)
-                    .build();
-            NotificationChannel channel = new NotificationChannel(Constants.CHANNEL_ID,
-                    Constants.TKBIRTHDAYREMINDER,
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription(Constants.TKBIRTHDAYREMINDER);
-            String tune = SoundChooser
-                    .getNotificationSoundAsString(context);
-            if (tune != null) {
-                channel.setSound(Uri.parse(tune), audioAttributes);
-            }
-            nm.createNotificationChannel(channel);
-        }
     }
 }

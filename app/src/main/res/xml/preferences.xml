@@ -30,6 +30,11 @@
 
         <com.thomaskuenneth.android.birthday.AlarmChooser />
 
+        <CheckBoxPreference
+            android:title="@string/notification_sound_insistent"
+            android:key="notification_sound_insistent"
+            android:defaultValue="false" />
+
     </PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

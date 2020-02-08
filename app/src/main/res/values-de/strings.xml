@@ -12,6 +12,8 @@
 	<string name="hide_past_birthdays">Vergangene Geburtstage ausblenden</string>
 	<string name="notification_channel_settings">Benachrichtigungskanel Einstellungen</string>
 	<string name="notification_sound">Benachrichtigungston</string>
+	<string name="notification_channel_name">Bevorstehende Geburtstage</string>
+	<string name="notification_sound_insistent">Benachrichtigungston wiederholen</string>
 
 	<string name="aries">Widder</string>
 	<string name="taurus">Stier</string>

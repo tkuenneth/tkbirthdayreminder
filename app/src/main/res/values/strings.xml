@@ -14,6 +14,8 @@
     <string name="notifications">Notifications</string>
     <string name="notification_sound">Notification Sound</string>
     <string name="notification_channel_settings">Notification channel settings</string>
+    <string name="notification_channel_name">Upcoming birthdays</string>
+    <string name="notification_sound_insistent">Repeat notification sound</string>
 
     <string name="aries">Aries</string>
     <string name="taurus">Taurus</string>
