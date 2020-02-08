@@ -3,6 +3,7 @@
 <resources>
 
 	<string name="app_name">Geburtstage</string>
+	<string name="content_description_image">Ein Bild</string>
 
 	<string name="settings">Einstellungen</string>
 	<string name="display_options">Anzeigeoptionen</string>
@@ -27,8 +28,9 @@
 	<string name="capricornus">Steinbock</string>
 	<string name="aquarius">Wassermann</string>
 	<string name="pisces">Fische</string>
-	
-    <string name="month_and_day">dd. MMM</string>
+
+	<string name="year_of_birth">Geburtsjahr</string>
+	<string name="month_and_day">dd. MMM</string>
     <string name="new_entry_dialog_date">Geburtsdatum</string>
 	<string name="no_birthday_set">kein Geburtstag eingetragen</string>
 	<string name="yesterday">gestern</string>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 	welcome.xml
-	TKBirthdayReminder (c) Thomas Künneth 2009 - 2011
+	TKBirthdayReminder (c) Thomas Künneth 2009 - 2020
 	Alle Rechte beim Autoren. All rights reserved.
 -->
 
@@ -10,8 +10,8 @@
 	android:layout_height="fill_parent">
 
 	<TextView 
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent" 
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
 		android:paddingLeft="4dp"
 		android:paddingRight="4dp"
 		android:autoLink="web|email"

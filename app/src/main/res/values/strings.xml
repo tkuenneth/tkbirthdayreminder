@@ -3,6 +3,7 @@
 <resources>
 
     <string name="app_name">Birthdays</string>
+    <string name="content_description_image">An image</string>
 
     <string name="settings">Settings</string>
     <string name="display_options">Display Options</string>
@@ -30,6 +31,7 @@
     <string name="aquarius">Aquarius</string>
     <string name="pisces">Pisces</string>
 
+    <string name="year_of_birth">Year of birth</string>
     <string name="birthday_no_year" translatable="false">%1$s (%2$s)</string>
     <string name="no_birthday_set">no birthday set</string>
     <string name="yesterday">yesterday</string>
