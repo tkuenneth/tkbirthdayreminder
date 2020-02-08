@@ -174,6 +174,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
         NotificationManager nm = context.getSystemService(NotificationManager.class);
         if (nm != null) {
+            NotificationChannel oldChannel = nm.getNotificationChannel(Constants.CHANNEL_ID_OLD);
+            if (oldChannel != null) {
+                nm.deleteNotificationChannel(Constants.CHANNEL_ID_OLD);
+            }
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .setUsage(AudioAttributes.USAGE_ALARM)

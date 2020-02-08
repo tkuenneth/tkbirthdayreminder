@@ -1,3 +1,9 @@
+/*
+ * PreferenceFragment.java
+ *
+ * TKBirthdayReminder (c) Thomas Künneth 2020
+ * Alle Rechte beim Autoren. All rights reserved.
+ */
 package com.thomaskuenneth.android.birthday;
 
 import android.content.Context;
@@ -31,6 +37,7 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         Context context = getContext();
         if (context != null) {
+            AlarmReceiver.initChannels(context);
             setPreferencesFromResource(R.xml.preferences, null);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 Preference alarm_chooser = findPreference("alarm_chooser");
