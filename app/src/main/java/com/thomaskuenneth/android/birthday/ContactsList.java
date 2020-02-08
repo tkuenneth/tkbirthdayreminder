@@ -54,8 +54,8 @@ class ContactsList implements Comparator<BirthdayItem> {
         } else if (item2 == null) {
             return -1;
         } else {
-            int days1 = TKDateUtils.getBirthdayInDays(item1.getBirthday(), null);
-            int days2 = TKDateUtils.getBirthdayInDays(item2.getBirthday(), null);
+            int days1 = Utils.getBirthdayInDays(item1.getBirthday(), null);
+            int days2 = Utils.getBirthdayInDays(item2.getBirthday(), null);
             if (days1 == days2) {
                 return 0;
             } else {
@@ -105,7 +105,7 @@ class ContactsList implements Comparator<BirthdayItem> {
                 String name = item.getName();
                 Date date = item.getBirthday();
                 if ((name != null) && (date != null)) {
-                    String strYYYYMMDD = TKDateUtils.FORMAT_YYYYMMDD
+                    String strYYYYMMDD = Utils.FORMAT_YYYYMMDD
                             .format(date);
                     String key = name + strYYYYMMDD;
                     if (!ht.containsKey(key)) {
@@ -155,7 +155,7 @@ class ContactsList implements Comparator<BirthdayItem> {
                     int type = dataQueryCursor.getInt(1);
                     if (ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY == type) {
                         String stringBirthday = dataQueryCursor.getString(2);
-                        Date d = TKDateUtils.getDateFromString1(stringBirthday);
+                        Date d = Utils.getDateFromString1(stringBirthday);
                         if (d != null) {
                             gebdt = d;
                         }
@@ -163,7 +163,7 @@ class ContactsList implements Comparator<BirthdayItem> {
                 } else if (ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
                         .equals(mimeType)) {
                     String note = dataQueryCursor.getString(3);
-                    Date d = TKDateUtils.getDateFromString(note);
+                    Date d = Utils.getDateFromString(note);
                     if (d != null) {
                         gebdt = d;
                     }
@@ -182,7 +182,7 @@ class ContactsList implements Comparator<BirthdayItem> {
     }
 
     private boolean shouldAddToMainList(Date birthday, boolean hidePastBirthdays) {
-        return birthday != null && (!hidePastBirthdays || TKDateUtils.getBirthdayInDays(birthday, null) >= 0);
+        return birthday != null && (!hidePastBirthdays || Utils.getBirthdayInDays(birthday, null) >= 0);
     }
 
     private boolean shouldAddToWidgetList(Date birthday) {
@@ -191,7 +191,7 @@ class ContactsList implements Comparator<BirthdayItem> {
 
     private boolean shouldAddToNotificationsList(Date birthday) {
         if (birthday != null) {
-            int daysUntilBirthday = TKDateUtils.getBirthdayInDays(birthday, null);
+            int daysUntilBirthday = Utils.getBirthdayInDays(birthday, null);
             if (daysUntilBirthday == 0) {
                 return true;
             } else if ((daysUntilBirthday < 0) || (daysUntilBirthday > 7)) {

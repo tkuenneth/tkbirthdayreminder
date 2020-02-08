@@ -62,7 +62,7 @@ public class BirthdayWidget extends AppWidgetProvider {
             for (int currentPos = 0; currentPos < total; currentPos++) {
                 BirthdayItem item = birthdays.get(currentPos);
                 firstPos = currentPos;
-                days = TKDateUtils.getBirthdayInDays(item.getBirthday(), null);
+                days = Utils.getBirthdayInDays(item.getBirthday(), null);
                 if (days >= 0) {
                     break;
                 }
@@ -70,7 +70,7 @@ public class BirthdayWidget extends AppWidgetProvider {
             int sameDayCount = 0;
             for (int currentPos = 0; currentPos < total; currentPos++) {
                 BirthdayItem item = birthdays.get(currentPos);
-                int currentDays = TKDateUtils.getBirthdayInDays(item.getBirthday(), null);
+                int currentDays = Utils.getBirthdayInDays(item.getBirthday(), null);
                 if (days == currentDays) {
                     sameDayCount += 1;
                 }
@@ -79,13 +79,13 @@ public class BirthdayWidget extends AppWidgetProvider {
             BirthdayItem item = birthdays.get(firstPos);
             name = item.getName();
             Date birthday = item.getBirthday();
-            birthday2 = TKDateUtils.getBirthdayAsString(context, birthday);
+            birthday2 = Utils.getBirthdayAsString(context, birthday);
             if (sameDayCount > 1) {
-                text5 = TKBirthdayReminder.getStringFromResources(context,
+                text5 = Utils.trim(TKBirthdayReminder.getStringFromResources(context,
                         R.string.and_x_more,
-                        sameDayCount - 1).trim();
+                        sameDayCount - 1));
             }
-            birthday_date = TKDateUtils.getBirthdayDateAsString(format, item);
+            birthday_date = Utils.getBirthdayDateAsString(format, item);
 
             SharedPreferences prefs = PreferenceManager
                     .getDefaultSharedPreferences(context);

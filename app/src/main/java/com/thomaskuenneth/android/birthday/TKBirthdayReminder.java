@@ -488,11 +488,11 @@ public class TKBirthdayReminder extends AppCompatActivity {
                     // Notiz aktualisieren
                     if ((note != null) && (note.length() >= 17)) {
                         // Birthday=yyyymmdd enthält 17 Zeichen
-                        Date d = TKDateUtils.getDateFromString(note);
+                        Date d = Utils.getDateFromString(note);
                         if (d != null) {
                             // Log.d(TAG, "   ---> extracted date: " +
                             // d.toString());
-                            note = TKDateUtils.removeBirthdayFromString(note);
+                            note = Utils.removeBirthdayFromString(note);
                             ContentValues values = new ContentValues();
                             values.put(ContactsContract.CommonDataKinds.Note.NOTE,
                                     note);
@@ -529,7 +529,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
             // Werte für Tabellenzeile vorbereiten
             ContentValues values = new ContentValues();
             values.put(ContactsContract.CommonDataKinds.Event.START_DATE,
-                    TKDateUtils.getDateAsStringYYYY_MM_DD(birthday));
+                    Utils.getDateAsStringYYYY_MM_DD(birthday));
             values.put(ContactsContract.Data.MIMETYPE,
                     ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE);
             values.put(ContactsContract.CommonDataKinds.Event.TYPE,
@@ -627,7 +627,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
         // Jahres-Textfeld befüllen
         String strYear = "";
         int intYear = newEventEvent.getYear();
-        if (intYear != TKDateUtils.INVISIBLE_YEAR) {
+        if (intYear != Utils.INVISIBLE_YEAR) {
             strYear = Integer.toString(intYear);
         }
         newEventYear.setText(strYear);
@@ -792,7 +792,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
     }
 
     private int checkYear() {
-        int intYear = TKDateUtils.INVISIBLE_YEAR;
+        int intYear = Utils.INVISIBLE_YEAR;
         String s = newEventYear.getText().toString();
         if (s.length() > 0) {
             try {

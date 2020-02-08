@@ -83,7 +83,7 @@ public class BirthdayItem implements Parcelable {
             try {
                 String s = in.readString();
                 if (s != null) {
-                    birthday = TKDateUtils.FORMAT_YYYYMMDD.parse(s);
+                    birthday = Utils.FORMAT_YYYYMMDD.parse(s);
                 }
             } catch (ParseException e) {
                 Log.e(TAG, "createFromParcel()", e);
@@ -112,7 +112,7 @@ public class BirthdayItem implements Parcelable {
         dest.writeString(name);
         String date = null;
         try {
-            date = TKDateUtils.FORMAT_YYYYMMDD.format(birthday);
+            date = Utils.FORMAT_YYYYMMDD.format(birthday);
         } catch (Throwable thr) {
             Log.e(TAG, "writeToParcel()", thr);
         }

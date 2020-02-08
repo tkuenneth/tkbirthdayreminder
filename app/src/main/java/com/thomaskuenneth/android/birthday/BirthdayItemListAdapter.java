@@ -96,9 +96,9 @@ class BirthdayItemListAdapter extends BaseAdapter {
         BirthdayItem item = (BirthdayItem) getItem(position);
         holder.textName.setText(item.getName());
         Date birthday = item.getBirthday();
-        holder.textInfo.setText(TKDateUtils.getBirthdayAsString(context,
+        holder.textInfo.setText(Utils.getBirthdayAsString(context,
                 birthday));
-        holder.textDate.setText(TKDateUtils.getBirthdayDateAsString(format,
+        holder.textDate.setText(Utils.getBirthdayDateAsString(format,
                 item));
         holder.textZodiac.setText(showAstrologicalSigns ? Zodiac.getSign(
                 context, birthday) : "");

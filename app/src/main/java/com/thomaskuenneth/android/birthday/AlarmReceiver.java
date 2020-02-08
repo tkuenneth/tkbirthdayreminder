@@ -95,7 +95,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                                 context, TKBirthdayReminder.getImageHeight(wm)) : null;
                         b.setContentTitle(event.getName())
                                 .setLargeIcon(picture)
-                                .setContentText(TKDateUtils.getBirthdayAsString(context, birthday));
+                                .setContentText(Utils.getBirthdayAsString(context, birthday));
                         builders.add(b);
                         if (numNames < 2) {
                             if (sbNames.length() > 0) {

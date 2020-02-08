@@ -1,7 +1,7 @@
 /*
  * DateUtils.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2019
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2020
  *
  * Alle Rechte beim Autoren. All rights reserved.
  */
@@ -19,13 +19,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Diese Klasse enthält datums- und kalenderbezogene Hilfsmethoden.
+ * Diese Klasse enthält u. a. datums- und kalenderbezogene Hilfsmethoden.
  *
  * @author Thomas Künneth
  */
-class TKDateUtils {
+class Utils {
 
-    private static final String TAG = TKDateUtils.class.getSimpleName();
+    private static final String TAG = Utils.class.getSimpleName();
 
     static final int INVISIBLE_YEAR = 9996;
 
@@ -153,9 +153,9 @@ class TKDateUtils {
                     Pattern.DOTALL);
             Matcher m = p.matcher(string.subSequence(0, string.length()));
             if (m.matches()) {
-                String group1 = m.group(1).trim();
+                String group1 = trim(m.group(1));
                 sb.append(group1);
-                String group2 = m.group(2).trim();
+                String group2 = trim(m.group(2));
                 if ((group1.length() > 0) && (group2.length() > 0)) {
                     sb.append('\n');
                 }
@@ -175,10 +175,12 @@ class TKDateUtils {
             Matcher m = p.matcher(string.subSequence(0, string.length()));
             if (m.matches()) {
                 String date = m.group(1);
-                try {
-                    result = FORMAT_YYYYMMDD.parse(date);
-                } catch (Throwable tr) {
-                    // Log.e(TAG, "getDateFromString()", tr);
+                if (date != null) {
+                    try {
+                        result = FORMAT_YYYYMMDD.parse(date);
+                    } catch (Throwable tr) {
+                        // Log.e(TAG, "getDateFromString()", tr);
+                    }
                 }
             }
         }
@@ -204,10 +206,16 @@ class TKDateUtils {
                 if (m.matches()) {
                     Calendar cal = Calendar.getInstance();
                     try {
-                        cal.set(Calendar.MONTH,
-                                Integer.parseInt(m.group(1)) - 1);
-                        cal.set(Calendar.DAY_OF_MONTH,
-                                Integer.parseInt(m.group(2)));
+                        String group1 = m.group(1);
+                        if (group1 != null) {
+                            cal.set(Calendar.MONTH,
+                                    Integer.parseInt(group1) - 1);
+                        }
+                        String group2 = m.group(2);
+                        if (group2 != null) {
+                            cal.set(Calendar.DAY_OF_MONTH,
+                                    Integer.parseInt(group2));
+                        }
                         cal.set(Calendar.YEAR, INVISIBLE_YEAR);
                         result = cal.getTime();
                     } catch (Throwable tr) {
@@ -217,5 +225,12 @@ class TKDateUtils {
             }
         }
         return result;
+    }
+
+    static String trim(String s) {
+        if (s != null) {
+            return s.trim();
+        }
+        return "";
     }
 }
