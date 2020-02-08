@@ -14,23 +14,27 @@ public class WidgetPreferenceFragment extends PreferenceDialogFragmentCompat
     private static final String TAG = WidgetPreference.class.getSimpleName();
     private static final String OPACITY = "opacity";
 
+    private Context context;
     private TextView seekbarInfo;
     private SeekBar seekbar;
 
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
+        context = getContext();
         seekbarInfo = view.findViewById(R.id.widget_opacity_info);
         seekbar = view.findViewById(R.id.widget_opacity);
         seekbar.setMax(255);
+        int progress = getOpacity(context);
+        seekbar.setProgress(progress);
+        updateSeekbarInfo(progress);
         seekbar.setOnSeekBarChangeListener(this);
-        seekbar.setProgress(getOpacity(getContext()));
     }
 
     @Override
     public void onDialogClosed(boolean positiveResult) {
         final Context context = getContext();
-        if (positiveResult) {
+        if ((context != null) && (positiveResult)) {
             SharedPreferences prefs = context.getSharedPreferences(TAG,
                     Context.MODE_PRIVATE);
             SharedPreferences.Editor e = prefs.edit();
@@ -43,7 +47,7 @@ public class WidgetPreferenceFragment extends PreferenceDialogFragmentCompat
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress,
                                   boolean fromUser) {
-        seekbarInfo.setText(getContext().getString(R.string.int_slash_int, progress, seekBar.getMax()));
+        updateSeekbarInfo(progress);
     }
 
     @Override
@@ -58,5 +62,9 @@ public class WidgetPreferenceFragment extends PreferenceDialogFragmentCompat
         SharedPreferences prefs = c.getSharedPreferences(TAG,
                 Context.MODE_PRIVATE);
         return prefs.getInt(OPACITY, 128);
+    }
+
+    private void updateSeekbarInfo(int progress) {
+        seekbarInfo.setText(context.getString(R.string.int_slash_int, progress, seekbar.getMax()));
     }
 }
