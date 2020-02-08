@@ -15,6 +15,7 @@ To do:
 - You can open notification channel settings from settings (>= Android 8)
 - Changing the notification sound is done in notification channel settings  (>= Android 8)
 - New setting to replay notification sounds (cancel sound by opening notification drawer)
+- Alarm is set using setExactAndAllowWhileIdle() for proper function while in Doze
 
 2.1.2
 - updated targetSdkVersion and library versions

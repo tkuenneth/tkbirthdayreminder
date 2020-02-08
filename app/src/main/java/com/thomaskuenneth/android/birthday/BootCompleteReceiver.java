@@ -61,7 +61,7 @@ public class BootCompleteReceiver extends BroadcastReceiver {
         }
         AlarmManager am = context.getSystemService(AlarmManager.class);
         if (am != null) {
-            am.setExact(AlarmManager.RTC, cal.getTimeInMillis(), sender);
+            am.setExactAndAllowWhileIdle(AlarmManager.RTC, cal.getTimeInMillis(), sender);
             if (nextDay) {
                 Toast toast = Toast.makeText(context, Utils
                                 .getNotificationDateAsString(context, cal.getTime()),
