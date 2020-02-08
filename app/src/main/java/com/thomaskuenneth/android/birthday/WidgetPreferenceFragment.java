@@ -1,3 +1,9 @@
+/*
+ * WidgetPreferenceFragment.java
+ *
+ * TKBirthdayReminder (c) Thomas Künneth 2020
+ * Alle Rechte beim Autoren. All rights reserved.
+ */
 package com.thomaskuenneth.android.birthday;
 
 import android.content.Context;
