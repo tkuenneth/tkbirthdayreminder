@@ -1,7 +1,7 @@
 /*
  * AlarmReceiver.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2020
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2021
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -34,8 +34,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static android.app.PendingIntent.FLAG_ONE_SHOT;
-
 /**
  * Diese Klasse tritt in Aktion, wenn ein Alarm ausgelöst wurde.
  *
@@ -58,110 +56,108 @@ public class AlarmReceiver extends BroadcastReceiver {
             wl.acquire(10 * 60 * 1000L /*10 minutes*/);
         }
         initChannels(context);
-        Runnable r = new Runnable() {
-            public void run() {
-                ContactsList cl = new ContactsList(context);
-                List<BirthdayItem> listNotifications = cl
-                        .getNotificationsList();
-                int total = listNotifications.size();
-                final int visible, remaining;
-                if (total > MAX_NOTIFICATIONS) {
-                    visible = MAX_NOTIFICATIONS;
-                    remaining = total - MAX_NOTIFICATIONS;
-                } else {
-                    visible = total;
-                    remaining = 0;
-                }
-                if (visible > 0) {
-                    StringBuilder sbNames = new StringBuilder();
-                    WindowManager wm = context.getSystemService(WindowManager.class);
-                    List<MyBuilder> builders = new ArrayList<>();
-                    long when = System.currentTimeMillis();
-                    int numNames = 0;
-                    for (int i = 0; i < visible; i++) {
-                        BirthdayItem event = listNotifications.get(i);
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
-                                ContactsContract.Contacts.CONTENT_URI,
-                                Long.toString(event.getId())));
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        MyBuilder b = createBuilder(context,
-                                when--,
-                                intent);
-                        if (total >= MIN_NOTIFICATIONS_FOR_GROUP) {
-                            b.builder.setGroup(Constants.TKBIRTHDAYREMINDER);
-                        }
-                        Date birthday = event.getBirthday();
-                        Bitmap picture = (wm != null) ? BirthdayItemListAdapter.loadBitmap(event,
-                                context, TKBirthdayReminder.getImageHeight(wm)) : null;
-                        b.setContentTitle(event.getName())
-                                .setLargeIcon(picture)
-                                .setContentText(Utils.getBirthdayAsString(context, birthday));
-                        builders.add(b);
-                        if (numNames < 2) {
-                            if (sbNames.length() > 0) {
-                                sbNames.append(", ");
-                            }
-                            sbNames.append(b.mContentTitle);
-                            numNames += 1;
-                        }
-                    }
-                    if (numNames < total) {
-                        sbNames.append(context.getString(R.string.and_x_more, total - numNames));
-                    }
+        Runnable r = () -> {
+            ContactsList cl = new ContactsList(context);
+            List<BirthdayItem> listNotifications = cl
+                    .getNotificationsList();
+            int total = listNotifications.size();
+            final int visible, remaining;
+            if (total > MAX_NOTIFICATIONS) {
+                visible = MAX_NOTIFICATIONS;
+                remaining = total - MAX_NOTIFICATIONS;
+            } else {
+                visible = total;
+                remaining = 0;
+            }
+            if (visible > 0) {
+                StringBuilder sbNames = new StringBuilder();
+                WindowManager wm = context.getSystemService(WindowManager.class);
+                List<MyBuilder> builders = new ArrayList<>();
+                long when = System.currentTimeMillis();
+                int numNames = 0;
+                for (int i = 0; i < visible; i++) {
+                    BirthdayItem event = listNotifications.get(i);
+                    Intent intent1 = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
+                            ContactsContract.Contacts.CONTENT_URI,
+                            Long.toString(event.getId())));
+                    intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    MyBuilder b = createBuilder(context,
+                            when--,
+                            intent1);
                     if (total >= MIN_NOTIFICATIONS_FOR_GROUP) {
-                        Intent intent = new Intent(context, TKBirthdayReminder.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        MyBuilder summary = createBuilder(context,
-                                when,
-                                intent);
-                        summary.setContentTitle(context.getString(R.string.app_name))
-                                .setGroupSummary(true)
-                                .setGroup(Constants.TKBIRTHDAYREMINDER);
-                        NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
-                        for (int i = builders.size() - 1; i >= 0; i--) {
-                            MyBuilder builder = builders.get(i);
-                            String s = String.format("%s - %s",
-                                    builder.mContentTitle,
-                                    builder.mContentText);
-                            Spannable sb = new SpannableString(s);
-                            sb.setSpan(new StyleSpan(Typeface.BOLD),
-                                    0,
-                                    builder.mContentTitle.length(),
-                                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                            style.addLine(sb);
-                        }
-                        style.setBigContentTitle(summary.mContentTitle);
-                        summary.setStyle(style);
-                        if (remaining > 0) {
-                            style.setSummaryText(context.getString(R.string.x_more_birthdays, remaining));
-                        }
-                        summary.setContentText(sbNames.toString());
-                        builders.add(summary);
+                        b.builder.setGroup(Constants.TKBIRTHDAYREMINDER);
                     }
-
-                    NotificationManagerCompat nm = NotificationManagerCompat.from(context);
-                    nm.cancelAll();
-                    int size = builders.size();
-                    for (int i = 0; i < size; i++) {
-                        if ((i + 1) == size) {
-                            String tune = SoundChooser
-                                    .getNotificationSoundAsString(context);
-                            if (tune != null) {
-                                builders.get(i).setSound(Uri.parse(tune));
-                            }
+                    Date birthday = event.getBirthday();
+                    Bitmap picture = (wm != null) ? BirthdayItemListAdapter.loadBitmap(event,
+                            context, TKBirthdayReminder.getImageHeight(wm)) : null;
+                    b.setContentTitle(event.getName())
+                            .setLargeIcon(picture)
+                            .setContentText(Utils.getBirthdayAsString(context, birthday));
+                    builders.add(b);
+                    if (numNames < 2) {
+                        if (sbNames.length() > 0) {
+                            sbNames.append(", ");
                         }
+                        sbNames.append(b.mContentTitle);
+                        numNames += 1;
+                    }
+                }
+                if (numNames < total) {
+                    sbNames.append(context.getString(R.string.and_x_more, total - numNames));
+                }
+                if (total >= MIN_NOTIFICATIONS_FOR_GROUP) {
+                    Intent intent1 = new Intent(context, TKBirthdayReminder.class);
+                    intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    MyBuilder summary = createBuilder(context,
+                            when,
+                            intent1);
+                    summary.setContentTitle(context.getString(R.string.app_name))
+                            .setGroupSummary(true)
+                            .setGroup(Constants.TKBIRTHDAYREMINDER);
+                    NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
+                    for (int i = builders.size() - 1; i >= 0; i--) {
                         MyBuilder builder = builders.get(i);
-                        Notification n = builder.build();
-                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                        if (prefs.getBoolean("notification_sound_insistent", false)) {
-                            n.flags |= Notification.FLAG_INSISTENT;
-                        }
-                        nm.notify(i, n);
+                        String s = String.format("%s - %s",
+                                builder.mContentTitle,
+                                builder.mContentText);
+                        Spannable sb = new SpannableString(s);
+                        sb.setSpan(new StyleSpan(Typeface.BOLD),
+                                0,
+                                builder.mContentTitle.length(),
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        style.addLine(sb);
                     }
+                    style.setBigContentTitle(summary.mContentTitle);
+                    summary.setStyle(style);
+                    if (remaining > 0) {
+                        style.setSummaryText(context.getString(R.string.x_more_birthdays, remaining));
+                    }
+                    summary.setContentText(sbNames.toString());
+                    builders.add(summary);
                 }
-                if (wl != null) {
-                    wl.release();
+
+                NotificationManagerCompat nm = NotificationManagerCompat.from(context);
+                nm.cancelAll();
+                int size = builders.size();
+                for (int i = 0; i < size; i++) {
+                    if ((i + 1) == size) {
+                        String tune = SoundChooser
+                                .getNotificationSoundAsString(context);
+                        if (tune != null) {
+                            builders.get(i).setSound(Uri.parse(tune));
+                        }
+                    }
+                    MyBuilder builder = builders.get(i);
+                    Notification n = builder.build();
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    if (prefs.getBoolean("notification_sound_insistent", false)) {
+                        n.flags |= Notification.FLAG_INSISTENT;
+                    }
+                    nm.notify(i, n);
                 }
+            }
+            if (wl != null) {
+                wl.release();
             }
         };
         Thread t = new Thread(r);
@@ -207,7 +203,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setSortKey(Long.toHexString(when))
                 .setShowWhen(false)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
-                .setContentIntent(PendingIntent.getActivity(context, 0, intent, FLAG_ONE_SHOT));
+                .setContentIntent(PendingIntent.getActivity(context, 0,
+                        intent, PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE));
         return new MyBuilder(b);
     }
 }

@@ -1,7 +1,7 @@
 /*
  * BootCompleteReceiver.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2020
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2021
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -11,6 +11,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
@@ -25,6 +26,8 @@ import java.util.GregorianCalendar;
  * @see BroadcastReceiver
  */
 public class BootCompleteReceiver extends BroadcastReceiver {
+
+    private static boolean mustRegisterScreenOnReceiver = true;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -43,7 +46,7 @@ public class BootCompleteReceiver extends BroadcastReceiver {
     public static void startAlarm(Context context, boolean nextDay) {
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent sender = PendingIntent
-                .getBroadcast(context, 0, intent, 0);
+                .getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
         Calendar cal = Calendar.getInstance();
         int minCurrent = (cal.get(Calendar.HOUR_OF_DAY) * 60)
                 + cal.get(Calendar.MINUTE);
@@ -68,6 +71,17 @@ public class BootCompleteReceiver extends BroadcastReceiver {
                         Toast.LENGTH_LONG);
                 toast.show();
             }
+        }
+        if (mustRegisterScreenOnReceiver) {
+            mustRegisterScreenOnReceiver = false;
+            IntentFilter screenStateFilter = new IntentFilter();
+            screenStateFilter.addAction(Intent.ACTION_SCREEN_ON);
+            context.registerReceiver(new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    TKBirthdayReminder.updateWidgets(context);
+                }
+            }, screenStateFilter);
         }
     }
 }

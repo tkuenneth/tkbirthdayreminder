@@ -1,7 +1,7 @@
 /*
  * BirthdayWidget.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2010 - 2020
+ * TKBirthdayReminder (c) Thomas Künneth 2010 - 2021
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -40,7 +40,7 @@ public class BirthdayWidget extends AppWidgetProvider {
         updateViews(updateViews, context);
         Intent intent = new Intent(context, TKBirthdayReminder.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
-                intent, 0);
+                intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         updateViews.setOnClickPendingIntent(R.id.birthdaywidget_layout,
                 pendingIntent);
         appWidgetManager.updateAppWidget(appWidgetIds, updateViews);
