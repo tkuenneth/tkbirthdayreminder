@@ -73,7 +73,7 @@
 
     <string name="welcome_text" translatable="false">Welcome to <b>TKBirthdayReminder</b>.
 If you have questions about this app, or if you think you have found a bug,
-please contact me by sending an email to tkbirthdayreminder@thomaskuenneth.com.
+please contact me by sending an email to tkbirthdayreminder@thomaskuenneth.eu.
 \n\nBy using TKBirthdayReminder, you accept both the following privacy policy
 and the terms of use.
 \n\n<b>Privacy Policy</b>\nThis privacy policy contains information
@@ -86,7 +86,7 @@ temporarily store. When the support case is closed the records are deleted.
 \n\nTo fulfill its purpose, the app must access user account data and the
 contacts database. Besides editing, grouping and displaying birthday-related information
 TKBirthdayReminder does not process the data any further. Specifically it does
-not send the data to thrid party servers.\nPlease be aware that TKBirthdayReminder
+not send the data to third party servers.\nPlease be aware that TKBirthdayReminder
 relies on other services, specifically core Google Android Platform services, the Google
 Contacts API, Google Calendar API and Google Tasks API. How and what data these
 services process may not be controllable by TKBirthdayReminder. You can find their
