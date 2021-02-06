@@ -1,13 +1,14 @@
 /*
- * DateUtils.java
+ * Utils.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2020
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2021
  *
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 
 import java.text.DateFormat;
@@ -232,5 +233,13 @@ class Utils {
             return s.trim();
         }
         return "";
+    }
+
+    static void closeCursorCatchThrowable(Cursor c) {
+        try {
+            c.close();
+        } catch (Throwable t) {
+            Log.e(TAG, "closeCursor()", t);
+        }
     }
 }

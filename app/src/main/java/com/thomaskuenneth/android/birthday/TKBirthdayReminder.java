@@ -18,7 +18,6 @@ import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -172,14 +171,14 @@ public class TKBirthdayReminder extends AppCompatActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     Uri contactData = data.getData();
                     Cursor c = managedQuery(contactData, null, null, null, null);
-                    if (c.moveToFirst()) {
-                        longClickedItem = ContactsList.createItemFromCursor(
-                                getContentResolver(), c);
-                        showEditBirthdayDialog(longClickedItem);
-                        // longClickedItem.setBirthday(new Date());
-                        // updateContact(longClickedItem);
+                    if (c != null) {
+                        if (c.moveToFirst()) {
+                            longClickedItem = ContactsList.createItemFromCursor(
+                                    getContentResolver(), c);
+                            showEditBirthdayDialog(longClickedItem);
+                        }
+                        Utils.closeCursorCatchThrowable(c);
                     }
-                    // c.close();
                 }
                 break;
             case Constants.RQ_PREFERENCES:
@@ -288,33 +287,27 @@ public class TKBirthdayReminder extends AppCompatActivity {
                 dialog = new AlertDialog.Builder(this)
                         .setTitle(R.string.menu_change_date)
                         .setPositiveButton(android.R.string.ok,
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,
-                                                        int whichButton) {
-                                        newEventEvent.setYear(checkYear());
-                                        Calendar cal = Calendar.getInstance();
-                                        cal.set(Calendar.YEAR,
-                                                newEventEvent.getYear());
-                                        cal.set(Calendar.MONTH,
-                                                newEventEvent.getMonth());
-                                        cal.set(Calendar.DAY_OF_MONTH,
-                                                newEventEvent.getDay());
-                                        if (longClickedItem != null) {
-                                            longClickedItem.setBirthday(cal
-                                                    .getTime());
-                                            updateContact(longClickedItem);
-                                        }
-                                        newEventEvent = null;
-                                        removeDialog(Constants.DATE_DIALOG_ID);
+                                (dialog15, whichButton) -> {
+                                    newEventEvent.setYear(checkYear());
+                                    Calendar cal = Calendar.getInstance();
+                                    cal.set(Calendar.YEAR,
+                                            newEventEvent.getYear());
+                                    cal.set(Calendar.MONTH,
+                                            newEventEvent.getMonth());
+                                    cal.set(Calendar.DAY_OF_MONTH,
+                                            newEventEvent.getDay());
+                                    if (longClickedItem != null) {
+                                        longClickedItem.setBirthday(cal
+                                                .getTime());
+                                        updateContact(longClickedItem);
                                     }
+                                    newEventEvent = null;
+                                    removeDialog(Constants.DATE_DIALOG_ID);
                                 })
                         .setNegativeButton(android.R.string.cancel,
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,
-                                                        int whichButton) {
-                                        newEventEvent = null;
-                                        removeDialog(Constants.DATE_DIALOG_ID);
-                                    }
+                                (dialog14, whichButton) -> {
+                                    newEventEvent = null;
+                                    removeDialog(Constants.DATE_DIALOG_ID);
                                 }).setView(view).create();
                 installListeners();
                 updateViewsFromEvent();
@@ -493,7 +486,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
                     }
                 }
             }
-            dataQueryCursor.close();
+            Utils.closeCursorCatchThrowable(dataQueryCursor);
         }
 
         // Geburtstag einfügen
@@ -519,14 +512,10 @@ public class TKBirthdayReminder extends AppCompatActivity {
                     values.put(
                             ContactsContract.CommonDataKinds.Event.RAW_CONTACT_ID,
                             rawContactId);
-                    /* Uri uri = */
                     contentResolver.insert(
                             ContactsContract.Data.CONTENT_URI, values);
-//				Log.d(TAG, "   ---> inserting birthday for raw contact "
-//						+ rawContactId
-//						+ ((uri == null) ? " failed" : " succeeded"));
                 }
-                c.close();
+                Utils.closeCursorCatchThrowable(c);
             }
         }
         requestSync();
@@ -764,5 +753,4 @@ public class TKBirthdayReminder extends AppCompatActivity {
                 : new AnnualEvent(birthday);
         showDialog(Constants.DATE_DIALOG_ID);
     }
-
 }
