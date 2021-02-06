@@ -1,7 +1,7 @@
 /*
  * BirthdayItemListAdapter.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2020
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2021
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -15,7 +15,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -25,6 +24,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -124,19 +125,9 @@ class BirthdayItemListAdapter extends BaseAdapter {
                 if (input != null) {
                     picture = BitmapFactory.decodeStream(input);
                 } else {
-//                    int id;
-//                    if (size == 32) {
-//                        id = R.drawable.birthdaycake_32;
-//                    } else if (size == 48) {
-//                        id = R.drawable.birthdaycake_48;
-//                    } else {
-//                        id = R.drawable.birthdaycake_96;
-//                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        Drawable d = context.getDrawable(R.drawable.ic_launcher_foreground);
-                        if (d != null) {
-                            picture = getBitmap(d);
-                        }
+                    Drawable d = ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground);
+                    if (d != null) {
+                        picture = getBitmap(d);
                     }
                 }
                 if (picture != null) {
