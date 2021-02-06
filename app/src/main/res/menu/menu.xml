@@ -2,14 +2,17 @@
 
 <!--
 	menu.xml
-	TKBirthdayReminder (c) Thomas Künneth 2009 - 2017
+	TKBirthdayReminder (c) Thomas Künneth 2009 - 2021
 	Alle Rechte beim Autoren. All rights reserved.
 -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/new_entry"
+        android:icon="@drawable/ic_baseline_create_24"
+        app:showAsAction="ifRoom"
         android:title="@string/menu_new_entry" />
 
     <item
@@ -18,6 +21,8 @@
 
     <item
         android:id="@+id/preferences"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_baseline_settings_24"
         android:title="@string/settings" />
 
     <item
