@@ -1,7 +1,7 @@
 /*
  * TKBirthdayReminder.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2020
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2021
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -10,7 +10,6 @@ import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -27,7 +26,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -100,18 +98,13 @@ public class TKBirthdayReminder extends AppCompatActivity {
         longClickedItem = null;
         newEventEvent = null;
         mainList.setOnCreateContextMenuListener(this);
-        mainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                BirthdayItem item = (BirthdayItem) mainList.getAdapter().getItem(
-                        position);
-                Intent i = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
-                        ContactsContract.Contacts.CONTENT_URI,
-                        Long.toString(item.getId())));
-                startActivityForResult(i, Constants.RQ_SHOW_CONTACT);
-            }
+        mainList.setOnItemClickListener((parent, view, position, id) -> {
+            BirthdayItem item = (BirthdayItem) mainList.getAdapter().getItem(
+                    position);
+            Intent i = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
+                    ContactsContract.Contacts.CONTENT_URI,
+                    Long.toString(item.getId())));
+            startActivityForResult(i, Constants.RQ_SHOW_CONTACT);
         });
 
         if (isNewVersion()) {
@@ -137,7 +130,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (list instanceof ArrayList) {
             outState.putParcelableArrayList(STATE_KEY, (ArrayList<? extends Parcelable>) list);
@@ -271,32 +264,15 @@ public class TKBirthdayReminder extends AppCompatActivity {
                 builder.setView(textView);
                 if (isNewVersion()) {
                     builder.setPositiveButton(R.string.alert_dialog_continue,
-                            new DialogInterface.OnClickListener() {
-
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    writeToPreferences();
-                                    run();
-                                }
-
+                            (dialog1, which) -> {
+                                writeToPreferences();
+                                run();
                             });
                     builder.setNegativeButton(R.string.alert_dialog_abort,
-                            new DialogInterface.OnClickListener() {
-
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    finish();
-                                }
-
-                            });
+                            (dialog12, which) -> finish());
                 } else {
                     builder.setPositiveButton(R.string.alert_dialog_ok,
-                            new DialogInterface.OnClickListener() {
-
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-
+                            (dialog13, which) -> {
                             });
                 }
                 builder.setCancelable(false);
@@ -557,13 +533,10 @@ public class TKBirthdayReminder extends AppCompatActivity {
         readContacts(true);
     }
 
-    @TargetApi(23)
     private boolean hasPermission(String permission) {
-        return Build.VERSION.SDK_INT < 23 ||
-                checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
+        return checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
     }
 
-    @TargetApi(23)
     private void run() {
         boolean canRun = true;
         for (String p : PERMISSIONS) {
@@ -627,9 +600,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
         // Jahres-Textfeld befüllen
         String strYear = "";
         int intYear = newEventEvent.getYear();
-        if (intYear != Utils.INVISIBLE_YEAR) {
-            strYear = Integer.toString(intYear);
-        }
+        if (intYear != Utils.INVISIBLE_YEAR) strYear = Integer.toString(intYear);
         newEventYear.setText(strYear);
     }
 
@@ -641,14 +612,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
                     public void onItemSelected(AdapterView<?> parent,
                                                View view, int position, long id) {
                         newEventEvent.setMonth(position);
-                        newEventSpinnerDay.post(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                createAndSetDayAdapter();
-                            }
-
-                        });
+                        newEventSpinnerDay.post(() -> createAndSetDayAdapter());
                     }
 
                     @Override
@@ -766,27 +730,17 @@ public class TKBirthdayReminder extends AppCompatActivity {
      */
     protected void readContacts(final boolean forceRead) {
         final Handler h = new Handler(Looper.myLooper());
-        Thread thread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                Looper.prepare();
-                if ((list == null) || forceRead) {
-                    ContactsList cl = new ContactsList(
-                            TKBirthdayReminder.this);
-                    list = cl.getMainList();
-                }
-                h.post(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        setList(list);
-                        updateWidgets(TKBirthdayReminder.this);
-                    }
-
-                });
+        Thread thread = new Thread(() -> {
+            Looper.prepare();
+            if ((list == null) || forceRead) {
+                ContactsList cl = new ContactsList(
+                        TKBirthdayReminder.this);
+                list = cl.getMainList();
             }
-
+            h.post(() -> {
+                setList(list);
+                updateWidgets(TKBirthdayReminder.this);
+            });
         });
         thread.start();
     }
