@@ -39,6 +39,7 @@
 
         <receiver
             android:name="AlarmReceiver"
+            android:exported="true"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.ALARM_SERVICE" />
@@ -47,13 +48,15 @@
 
         <receiver
             android:name="BootCompleteReceiver"
+            android:exported="true"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".BirthdayWidget">
+        <receiver android:name=".BirthdayWidget"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
