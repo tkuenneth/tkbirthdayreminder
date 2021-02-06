@@ -1,7 +1,7 @@
 /*
  * ContactsList.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2019
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2021
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -178,7 +178,7 @@ class ContactsList implements Comparator<BirthdayItem> {
             dataQueryCursor.close();
         }
         return new BirthdayItem(displayName, gebdt,
-                Long.valueOf(contactId), phoneNumber);
+                Long.parseLong(contactId), phoneNumber);
     }
 
     private boolean shouldAddToMainList(Date birthday, boolean hidePastBirthdays) {
