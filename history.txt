@@ -1,12 +1,10 @@
-To do:
-- kleine Icons für Benachrichtigungen passen nicht
-- Zeit aus Notification rausnehmen (setWhen)
-- bei vergangenen Geburtstagen ausblenden Titel anpassen:  Bevorstehende Geburtstage
-- Icon minimal anpassen
+2.1.7
+- AppIcon optimiert
+- ActionBar Icons hinzugefügt
+- Versionsname wird korrekt angezeigt
 
-- WidgetPreference: wenn 0, wird Text nicht gesetzt
-- testen: über Store-Version kopieren
-
+2.1.6
+- Verbesserungen beim Aktualisieren der AppWidgets
 
 2.1.5
 - Dark Mode support
