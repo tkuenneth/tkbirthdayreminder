@@ -2,15 +2,14 @@
 
 <!--
 	edit_birthday_date.xml
-	TKBirthdayReminder (c) Thomas Künneth 2009 - 2020
+	TKBirthdayReminder (c) Thomas Künneth 2009 - 2021
 	Alle Rechte beim Autoren. All rights reserved.
 -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
-    >
+    android:padding="8dp">
 
     <Spinner
         android:id="@+id/new_event_day"
@@ -30,17 +29,18 @@
         android:drawSelectorOnTop="true" />
 
     <EditText
-        android:hint="@string/year_of_birth"
         android:id="@+id/new_event_year"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/new_event_month"
-        android:layout_marginEnd="6dp"
-        android:layout_marginLeft="6dip"
-        android:layout_marginRight="6dip"
         android:layout_marginStart="6dp"
+        android:layout_marginLeft="6dip"
+        android:layout_marginEnd="6dp"
+        android:layout_marginRight="6dip"
         android:layout_toEndOf="@id/new_event_month"
         android:gravity="fill"
+        android:hint="@string/year_of_birth"
+        android:importantForAutofill="no"
         android:inputType="numberDecimal"
         android:maxLength="4"
         android:maxLines="1"
