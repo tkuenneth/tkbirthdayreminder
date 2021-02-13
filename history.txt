@@ -1,6 +1,7 @@
 2.1.8
 - Updated email address in Legal
 - Fixed a typo in Legal
+- Further improved widget updates
 
 2.1.7
 - AppIcon optimiert

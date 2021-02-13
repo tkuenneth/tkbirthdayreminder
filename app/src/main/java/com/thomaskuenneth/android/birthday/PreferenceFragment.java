@@ -1,7 +1,7 @@
 /*
  * PreferenceFragment.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2020
+ * TKBirthdayReminder (c) Thomas Künneth 2020 - 2021
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 
-import androidx.fragment.app.FragmentManager;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat;
@@ -23,13 +22,9 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
 
     static final String CHECKBOX_SHOW_ASTROLOGICAL_SIGNS = "checkbox_show_astrological_signs";
 
-    private SharedPreferences.OnSharedPreferenceChangeListener l = new SharedPreferences.OnSharedPreferenceChangeListener() {
-
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (CHECKBOX_SHOW_ASTROLOGICAL_SIGNS.equals(key)) {
-                TKBirthdayReminder.updateWidgets(getActivity());
-            }
+    private final SharedPreferences.OnSharedPreferenceChangeListener l = (sharedPreferences, key) -> {
+        if (CHECKBOX_SHOW_ASTROLOGICAL_SIGNS.equals(key)) {
+            TKBirthdayReminder.updateWidgets(getActivity());
         }
     };
 
@@ -94,9 +89,6 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
         final Bundle bundle = new Bundle(1);
         bundle.putString("key", key);
         fragment.setArguments(bundle);
-        FragmentManager fragmentManager = getFragmentManager();
-        if (fragmentManager != null) {
-            fragment.show(fragmentManager, key);
-        }
+        fragment.show(getParentFragmentManager(), key);
     }
 }

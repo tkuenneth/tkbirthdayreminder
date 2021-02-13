@@ -170,7 +170,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
             case (Constants.RQ_PICK_CONTACT):
                 if (resultCode == Activity.RESULT_OK) {
                     Uri contactData = data.getData();
-                    Cursor c = managedQuery(contactData, null, null, null, null);
+                    Cursor c = getContentResolver().query(contactData, null, null, null, null);
                     if (c != null) {
                         if (c.moveToFirst()) {
                             longClickedItem = ContactsList.createItemFromCursor(
@@ -325,26 +325,21 @@ public class TKBirthdayReminder extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.legal:
-                showDialog(Constants.WELCOME_ID);
-                break;
-            case R.id.preferences:
-                Intent iPrefs = new Intent(this, PreferencesActivity.class);
-                startActivityForResult(iPrefs, Constants.RQ_PREFERENCES);
-                break;
-            case R.id.new_entry:
-                Intent intentContact = new Intent(
-                        ContactsContract.Intents.Insert.ACTION,
-                        ContactsContract.Contacts.CONTENT_URI);
-                intentContact.putExtra("finishActivityOnSaveCompleted", true);
-                startActivityForResult(intentContact, Constants.RQ_PICK_CONTACT);
-                break;
-            case R.id.set_date:
-                Intent intent = new Intent(Intent.ACTION_PICK,
-                        ContactsContract.Contacts.CONTENT_URI);
-                startActivityForResult(intent, Constants.RQ_PICK_CONTACT);
-                break;
+        if (item.getItemId() == R.id.legal) {
+            showDialog(Constants.WELCOME_ID);
+        } else if (item.getItemId() == R.id.preferences) {
+            Intent iPrefs = new Intent(this, PreferencesActivity.class);
+            startActivityForResult(iPrefs, Constants.RQ_PREFERENCES);
+        } else if (item.getItemId() == R.id.new_entry) {
+            Intent intentContact = new Intent(
+                    ContactsContract.Intents.Insert.ACTION,
+                    ContactsContract.Contacts.CONTENT_URI);
+            intentContact.putExtra("finishActivityOnSaveCompleted", true);
+            startActivityForResult(intentContact, Constants.RQ_PICK_CONTACT);
+        } else if (item.getItemId() == R.id.set_date) {
+            Intent intent = new Intent(Intent.ACTION_PICK,
+                    ContactsContract.Contacts.CONTENT_URI);
+            startActivityForResult(intent, Constants.RQ_PICK_CONTACT);
         }
         return true;
     }
@@ -443,24 +438,17 @@ public class TKBirthdayReminder extends AppCompatActivity {
                         contentResolver.delete(
                                 ContactsContract.Data.CONTENT_URI, where,
                                 selectionArgs);
-                        // Log.d(TAG, "   ---> deleting birthday " + dataId + ": "
-                        // + rowsDeleted + " row(s) affected");
                     }
                 }
                 // oder ein Notizfeld?
                 else if (ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
                         .equals(mimeType)) {
                     String note = dataQueryCursor.getString(3);
-                    // Log.d(TAG, "   ---> found note: " + note + " (_ID = " +
-                    // dataId
-                    // + ")");
                     // Notiz aktualisieren
                     if ((note != null) && (note.length() >= 17)) {
                         // Birthday=yyyymmdd enthält 17 Zeichen
                         Date d = Utils.getDateFromString(note);
                         if (d != null) {
-                            // Log.d(TAG, "   ---> extracted date: " +
-                            // d.toString());
                             note = Utils.removeBirthdayFromString(note);
                             ContentValues values = new ContentValues();
                             values.put(ContactsContract.CommonDataKinds.Note.NOTE,
@@ -476,12 +464,9 @@ public class TKBirthdayReminder extends AppCompatActivity {
                                     id,
                                     dataId,
                                     ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE};
-                            /* int rowsUpdated = */
                             contentResolver.update(
                                     ContactsContract.Data.CONTENT_URI, values,
                                     where, selectionArgs);
-                            // Log.d(TAG, "   ---> updating note " + dataId + ": "
-                            // + rowsUpdated + " row(s) affected");
                         }
                     }
                 }

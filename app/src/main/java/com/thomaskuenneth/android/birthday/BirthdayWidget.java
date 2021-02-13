@@ -93,8 +93,8 @@ public class BirthdayWidget extends AppWidgetProvider {
                 zodiac = Zodiac.getSign(context, birthday);
             }
 
-            WindowManager wm = (WindowManager) context
-                    .getSystemService(Context.WINDOW_SERVICE);
+            WindowManager wm = context
+                    .getSystemService(WindowManager.class);
             if (wm != null) {
                 Bitmap picture = BirthdayItemListAdapter.loadBitmap(item,
                         context, TKBirthdayReminder.getImageHeight(wm));

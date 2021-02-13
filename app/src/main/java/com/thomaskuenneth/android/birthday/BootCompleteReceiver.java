@@ -11,7 +11,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
@@ -26,8 +25,6 @@ import java.util.GregorianCalendar;
  * @see BroadcastReceiver
  */
 public class BootCompleteReceiver extends BroadcastReceiver {
-
-    private static boolean mustRegisterScreenOnReceiver = true;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -72,16 +69,6 @@ public class BootCompleteReceiver extends BroadcastReceiver {
                 toast.show();
             }
         }
-        if (mustRegisterScreenOnReceiver) {
-            mustRegisterScreenOnReceiver = false;
-            IntentFilter screenStateFilter = new IntentFilter();
-            screenStateFilter.addAction(Intent.ACTION_SCREEN_ON);
-            context.registerReceiver(new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    TKBirthdayReminder.updateWidgets(context);
-                }
-            }, screenStateFilter);
-        }
+        TKBirthdayReminder.updateWidgets(context);
     }
 }
