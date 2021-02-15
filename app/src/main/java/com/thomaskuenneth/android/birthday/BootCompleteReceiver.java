@@ -69,6 +69,6 @@ public class BootCompleteReceiver extends BroadcastReceiver {
                 toast.show();
             }
         }
-        TKBirthdayReminder.updateWidgets(context);
+        TKBirthdayReminder.updateWidgets(context.getApplicationContext());
     }
 }
