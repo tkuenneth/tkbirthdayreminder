@@ -8,7 +8,7 @@ android {
         applicationId "com.thomaskuenneth.android.birthday"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 2010802
+        versionCode 2010803
         versionName "2.1.8"
     }
 
