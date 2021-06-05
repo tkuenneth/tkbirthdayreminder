@@ -1,7 +1,7 @@
 /*
  * BirthdayItem.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2017
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2021
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -24,10 +24,11 @@ public class BirthdayItem implements Parcelable {
 
     private static final String TAG = BirthdayItem.class.getSimpleName();
 
-    private String name;
+    private final String name;
+    private final String primaryPhoneNumber;
+
     private Date birthday;
     private long id;
-    private String primaryPhoneNumber;
     private Bitmap picture;
 
     BirthdayItem(String name, Date birthday, long id,

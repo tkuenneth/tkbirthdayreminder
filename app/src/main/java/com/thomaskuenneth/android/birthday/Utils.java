@@ -199,7 +199,7 @@ class Utils {
                 try {
                     result = FORMAT_YYYYMMDD.parse(date);
                 } catch (Throwable tr) {
-                    Log.e(TAG, "getDateFromString1()", tr);
+                    Log.e(TAG, String.format("getDateFromString1(%s)", date), tr);
                 }
             } else {
                 p = Pattern.compile(".*-(\\d\\d)-(\\d\\d)$", Pattern.DOTALL);

@@ -201,12 +201,14 @@ public class TKBirthdayReminder extends AppCompatActivity {
             menu.add(Menu.NONE, Constants.MENU_REMOVE_DATE, Menu.NONE,
                     Constants.MENU_REMOVE_DATE);
         }
-        if (item.getPrimaryPhoneNumber() != null) {
-            menu.add(Menu.NONE, Constants.MENU_DIAL, Menu.NONE,
-                    Constants.MENU_DIAL);
-            String string = getString(Constants.MENU_SEND_SMS,
-                    item.getPrimaryPhoneNumber());
-            menu.add(Menu.NONE, Constants.MENU_SEND_SMS, Menu.NONE, string);
+        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {
+            if (item.getPrimaryPhoneNumber() != null) {
+                menu.add(Menu.NONE, Constants.MENU_DIAL, Menu.NONE,
+                        Constants.MENU_DIAL);
+                String string = getString(Constants.MENU_SEND_SMS,
+                        item.getPrimaryPhoneNumber());
+                menu.add(Menu.NONE, Constants.MENU_SEND_SMS, Menu.NONE, string);
+            }
         }
     }
 

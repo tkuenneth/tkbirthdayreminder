@@ -1,3 +1,7 @@
+2.1.9
+- Context menu shows "Send SMS" and "Call" only if device has telephony
+- Fix ANR while widget updates the birthday list
+
 2.1.8
 - Updated email address in Legal
 - Fixed a typo in Legal
