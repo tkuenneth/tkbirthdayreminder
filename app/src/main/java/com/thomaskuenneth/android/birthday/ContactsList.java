@@ -100,27 +100,31 @@ class ContactsList implements Comparator<BirthdayItem> {
         }
         if (mainQueryCursor != null) {
             while (mainQueryCursor.moveToNext()) {
-                BirthdayItem item = createItemFromCursor(contentResolver,
-                        mainQueryCursor);
-                String name = item.getName();
-                Date date = item.getBirthday();
-                if ((name != null) && (date != null)) {
-                    String strYYYYMMDD = Utils.FORMAT_YYYYMMDD
-                            .format(date);
-                    String key = name + strYYYYMMDD;
-                    if (!ht.containsKey(key)) {
-                        ht.put(key, Boolean.TRUE);
-                        Date birthday = item.getBirthday();
-                        if (shouldAddToMainList(birthday, hidePastBirthdays)) {
-                            main.add(item);
-                        }
-                        if (shouldAddToWidgetList(birthday)) {
-                            widget.add(item);
-                        }
-                        if (shouldAddToNotificationsList(birthday)) {
-                            notifications.add(item);
+                try {
+                    BirthdayItem item = createItemFromCursor(contentResolver,
+                            mainQueryCursor);
+                    String name = item.getName();
+                    Date date = item.getBirthday();
+                    if ((name != null) && (date != null)) {
+                        String strYYYYMMDD = Utils.FORMAT_YYYYMMDD
+                                .format(date);
+                        String key = name + strYYYYMMDD;
+                        if (!ht.containsKey(key)) {
+                            ht.put(key, Boolean.TRUE);
+                            Date birthday = item.getBirthday();
+                            if (shouldAddToMainList(birthday, hidePastBirthdays)) {
+                                main.add(item);
+                            }
+                            if (shouldAddToWidgetList(birthday)) {
+                                widget.add(item);
+                            }
+                            if (shouldAddToNotificationsList(birthday)) {
+                                notifications.add(item);
+                            }
                         }
                     }
+                } catch (Exception e) {
+                    Log.e(TAG, e.getMessage(), e);
                 }
             }
             mainQueryCursor.close();
