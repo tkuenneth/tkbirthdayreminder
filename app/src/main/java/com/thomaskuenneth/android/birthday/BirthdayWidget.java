@@ -48,8 +48,8 @@ public class BirthdayWidget extends AppWidgetProvider {
                 String zodiac = "";
                 String birthday_date = "";
                 String birthday2 = "";
-                String text5 = "";
                 final int total = birthdays.size();
+                boolean moreThanOne = false;
                 if (total > 0) {
                     int firstPos = 0;
                     int days = 0;
@@ -73,14 +73,15 @@ public class BirthdayWidget extends AppWidgetProvider {
                     BirthdayItem item = birthdays.get(firstPos);
                     name = item.getName();
                     Date birthday = item.getBirthday();
-                    birthday2 = Utils.getBirthdayAsString(context, birthday);
-                    if (sameDayCount > 1) {
-                        text5 = Utils.trim(TKBirthdayReminder.getStringFromResources(context,
+                    moreThanOne = sameDayCount > 1;
+                    if (moreThanOne) {
+                        birthday2 = Utils.trim(TKBirthdayReminder.getStringFromResources(context,
                                 R.string.and_x_more,
                                 sameDayCount - 1));
+                    } else {
+                        birthday2 = Utils.getBirthdayAsString(context, birthday);
                     }
                     birthday_date = Utils.getBirthdayDateAsString(format, item);
-
                     SharedPreferences prefs = PreferenceManager
                             .getDefaultSharedPreferences(context);
                     if (prefs.getBoolean(PreferenceFragment.CHECKBOX_SHOW_ASTROLOGICAL_SIGNS, true)) {
@@ -107,10 +108,7 @@ public class BirthdayWidget extends AppWidgetProvider {
                 updateViews.setInt(R.id.text3, "setTextColor", Color.WHITE);
                 updateViews.setTextViewText(R.id.text4, zodiac);
                 updateViews.setInt(R.id.text4, "setTextColor", Color.WHITE);
-                updateViews.setViewVisibility(R.id.text4, text5.length() > 0 ? View.GONE : View.VISIBLE);
-                updateViews.setTextViewText(R.id.text5, text5);
-                updateViews.setInt(R.id.text5, "setTextColor", Color.WHITE);
-                updateViews.setViewVisibility(R.id.text5, text5.length() > 0 ? View.VISIBLE : View.GONE);
+                updateViews.setViewVisibility(R.id.text4, moreThanOne ? View.GONE : View.VISIBLE);
 
                 Intent intent = new Intent(context, TKBirthdayReminder.class);
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,

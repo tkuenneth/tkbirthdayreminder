@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!--
 	birthdaywidget_layout.xml
-	TKBirthdayReminder (c) Thomas Künneth 2010 - 2017
+	TKBirthdayReminder (c) Thomas Künneth 2010 - 2021
 	Alle Rechte beim Autoren. All rights reserved.
 -->
 
@@ -13,6 +12,61 @@
     android:layout_margin="@dimen/widget_margin"
     android:background="#80000000">
 
-    <include layout="@layout/list_item_icon_text" />
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:contentDescription="@string/content_description_image"
+        android:scaleType="centerCrop" />
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_toEndOf="@id/icon">
+
+        <TextView
+            android:id="@+id/text3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="8dp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/text3"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/text3"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/text4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text3"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="8dp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/text2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text1"
+            android:layout_alignBaseline="@id/text4"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/text4"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </RelativeLayout>
 
 </RelativeLayout>
