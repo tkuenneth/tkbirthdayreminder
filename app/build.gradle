@@ -8,7 +8,7 @@ android {
         applicationId "com.thomaskuenneth.android.birthday"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 2010803
+        versionCode 2010902
         versionName "2.1.9"
     }
 
@@ -20,7 +20,7 @@ android {
     }
 
     dependencies {
-        implementation 'androidx.appcompat:appcompat:1.2.0'
+        implementation 'androidx.appcompat:appcompat:1.3.0'
         implementation 'androidx.preference:preference:1.1.1'
     }
 }
