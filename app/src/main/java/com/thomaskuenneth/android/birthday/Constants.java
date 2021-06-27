@@ -1,7 +1,7 @@
 /*
  * Constants.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2020
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2021
  * Alle Rechte beim Autoren. All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -24,7 +24,6 @@ class Constants {
     static final int MENU_SEND_SMS = R.string.menu_send_sms;
 
     static final int DATE_DIALOG_ID = 3;
-    static final int WELCOME_ID = 5;
 
     static final int RQ_PICK_CONTACT = 0x2311;
     static final int RQ_PREFERENCES = 0x0606;
