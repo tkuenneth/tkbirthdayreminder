@@ -20,9 +20,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -65,15 +63,11 @@ import java.util.Locale;
  */
 public class TKBirthdayReminder extends AppCompatActivity {
 
-    public static int storedVersionCode;
-    public static int currentVersionCode;
-
     private static final String TAG = TKBirthdayReminder.class.getSimpleName();
     private static final String[] PERMISSIONS = new String[]{Manifest.permission.READ_CONTACTS,
             Manifest.permission.WRITE_CONTACTS,
             Manifest.permission.GET_ACCOUNTS
     };
-    private static final String VERSION_CODE = "versionCode";
     private static final String NEW_EVENT_EVENT = "newEventEvent";
     private static final String STATE_KEY = "stateKey";
     private static final String LONG_CLICK_ITEM = "longClickItem";
@@ -106,26 +100,20 @@ public class TKBirthdayReminder extends AppCompatActivity {
             startActivityForResult(i, Constants.RQ_SHOW_CONTACT);
         });
 
-        if (isNewVersion()) {
-            if (savedInstanceState == null) {
-                showDialog(Constants.WELCOME_ID);
-            }
-        } else {
-            if (savedInstanceState != null) {
-                newEventEvent = savedInstanceState.getParcelable(NEW_EVENT_EVENT);
-                list = savedInstanceState.getParcelableArrayList(STATE_KEY);
-                if (list != null) {
-                    long id = savedInstanceState.getLong(LONG_CLICK_ITEM);
-                    for (BirthdayItem item : list) {
-                        if (item.getId() == id) {
-                            longClickedItem = item;
-                            break;
-                        }
+        if (savedInstanceState != null) {
+            newEventEvent = savedInstanceState.getParcelable(NEW_EVENT_EVENT);
+            list = savedInstanceState.getParcelableArrayList(STATE_KEY);
+            if (list != null) {
+                long id = savedInstanceState.getLong(LONG_CLICK_ITEM);
+                for (BirthdayItem item : list) {
+                    if (item.getId() == id) {
+                        longClickedItem = item;
+                        break;
                     }
                 }
             }
-            run();
         }
+        run();
     }
 
     @Override
@@ -147,6 +135,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         boolean canRun = true;
         for (int result : grantResults) {
             if (result == PackageManager.PERMISSION_DENIED) {
@@ -256,64 +245,40 @@ public class TKBirthdayReminder extends AppCompatActivity {
         final View view;
         final LayoutInflater factory;
         Dialog dialog = null;
-        switch (id) {
-            case Constants.WELCOME_ID:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(R.string.legal);
-                builder.setIcon(R.mipmap.ic_launcher);
-                @SuppressLint("InflateParams") View textView = getLayoutInflater().inflate(R.layout.welcome, null);
-                builder.setView(textView);
-                if (isNewVersion()) {
-                    builder.setPositiveButton(R.string.alert_dialog_continue,
-                            (dialog1, which) -> {
-                                writeToPreferences();
-                                run();
-                            });
-                    builder.setNegativeButton(R.string.alert_dialog_abort,
-                            (dialog12, which) -> finish());
-                } else {
-                    builder.setPositiveButton(R.string.alert_dialog_ok,
-                            (dialog13, which) -> {
-                            });
-                }
-                builder.setCancelable(false);
-                return builder.create();
-
-            case Constants.DATE_DIALOG_ID:
-                newEventCal = Calendar.getInstance();
-                factory = LayoutInflater.from(this);
-                view = factory.inflate(R.layout.edit_birthday_date, null);
-                newEventSpinnerDay = view.findViewById(R.id.new_event_day);
-                newEventSpinnerMonth = view.findViewById(R.id.new_event_month);
-                newEventYear = view.findViewById(R.id.new_event_year);
-                dialog = new AlertDialog.Builder(this)
-                        .setTitle(R.string.menu_change_date)
-                        .setPositiveButton(android.R.string.ok,
-                                (dialog15, whichButton) -> {
-                                    newEventEvent.setYear(checkYear());
-                                    Calendar cal = Calendar.getInstance();
-                                    cal.set(Calendar.YEAR,
-                                            newEventEvent.getYear());
-                                    cal.set(Calendar.MONTH,
-                                            newEventEvent.getMonth());
-                                    cal.set(Calendar.DAY_OF_MONTH,
-                                            newEventEvent.getDay());
-                                    if (longClickedItem != null) {
-                                        longClickedItem.setBirthday(cal
-                                                .getTime());
-                                        updateContact(longClickedItem);
-                                    }
-                                    newEventEvent = null;
-                                    removeDialog(Constants.DATE_DIALOG_ID);
-                                })
-                        .setNegativeButton(android.R.string.cancel,
-                                (dialog14, whichButton) -> {
-                                    newEventEvent = null;
-                                    removeDialog(Constants.DATE_DIALOG_ID);
-                                }).setView(view).create();
-                installListeners();
-                updateViewsFromEvent();
-                break;
+        if (id == Constants.DATE_DIALOG_ID) {
+            newEventCal = Calendar.getInstance();
+            factory = LayoutInflater.from(this);
+            view = factory.inflate(R.layout.edit_birthday_date, null);
+            newEventSpinnerDay = view.findViewById(R.id.new_event_day);
+            newEventSpinnerMonth = view.findViewById(R.id.new_event_month);
+            newEventYear = view.findViewById(R.id.new_event_year);
+            dialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.menu_change_date)
+                    .setPositiveButton(android.R.string.ok,
+                            (dialog15, whichButton) -> {
+                                newEventEvent.setYear(checkYear());
+                                Calendar cal = Calendar.getInstance();
+                                cal.set(Calendar.YEAR,
+                                        newEventEvent.getYear());
+                                cal.set(Calendar.MONTH,
+                                        newEventEvent.getMonth());
+                                cal.set(Calendar.DAY_OF_MONTH,
+                                        newEventEvent.getDay());
+                                if (longClickedItem != null) {
+                                    longClickedItem.setBirthday(cal
+                                            .getTime());
+                                    updateContact(longClickedItem);
+                                }
+                                newEventEvent = null;
+                                removeDialog(Constants.DATE_DIALOG_ID);
+                            })
+                    .setNegativeButton(android.R.string.cancel,
+                            (dialog14, whichButton) -> {
+                                newEventEvent = null;
+                                removeDialog(Constants.DATE_DIALOG_ID);
+                            }).setView(view).create();
+            installListeners();
+            updateViewsFromEvent();
         }
         return dialog;
     }
@@ -327,9 +292,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.legal) {
-            showDialog(Constants.WELCOME_ID);
-        } else if (item.getItemId() == R.id.preferences) {
+        if (item.getItemId() == R.id.preferences) {
             Intent iPrefs = new Intent(this, PreferencesActivity.class);
             startActivityForResult(iPrefs, Constants.RQ_PREFERENCES);
         } else if (item.getItemId() == R.id.new_entry) {
@@ -526,44 +489,6 @@ public class TKBirthdayReminder extends AppCompatActivity {
             BootCompleteReceiver.startAlarm(this, true);
             readContacts(false);
         }
-    }
-
-    /**
-     * Prüft, ob seit dem letzten Start eine neue Version installiert wurde.
-     *
-     * @return liefert {@code true}, wenn seit dem letzten Start eine neue
-     * Version installiert wurde; sonst {@code false}
-     */
-    private boolean isNewVersion() {
-        readFromPreferences();
-        boolean newVersion = storedVersionCode < currentVersionCode;
-        Log.d(TAG, "newVersion: " + newVersion);
-        return newVersion;
-    }
-
-    /**
-     * Belegt die beiden Variablen storedVersionCode (wird aus den shared
-     * preferences ausgelsen) und currentVersionCode (wird aus PackageInfo
-     * ermittelt).
-     */
-    private void readFromPreferences() {
-        SharedPreferences prefs = getSharedPreferences(
-                Constants.TKBIRTHDAYREMINDER, Context.MODE_PRIVATE);
-        storedVersionCode = prefs.getInt(VERSION_CODE, 0);
-        try {
-            PackageInfo info = getPackageManager().getPackageInfo(
-                    getPackageName(), 0);
-            currentVersionCode = info.versionCode;
-        } catch (NameNotFoundException e) {
-            // da es nur ein Versionscheck ist, ignorieren wir den Fehler
-            currentVersionCode = 0;
-        }
-    }
-
-    private void writeToPreferences() {
-        SharedPreferences.Editor editor = getSharedPreferences(this).edit();
-        editor.putInt(VERSION_CODE, currentVersionCode);
-        editor.apply();
     }
 
     private void updateViewsFromEvent() {
