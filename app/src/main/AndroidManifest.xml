@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <!-- dangerous -->
     <uses-permission android:name="android.permission.READ_CONTACTS" />
@@ -21,7 +22,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name">
 
-        <activity android:name="TKBirthdayReminder">
+        <activity android:name="TKBirthdayReminder"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -36,6 +38,11 @@
         <activity
             android:name=".SoundChooser"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <activity
+            android:name=".LegalActivity"
+            android:parentActivityName="com.thomaskuenneth.android.birthday.TKBirthdayReminder"
+            android:label="@string/legal" />
 
         <receiver
             android:name="AlarmReceiver"

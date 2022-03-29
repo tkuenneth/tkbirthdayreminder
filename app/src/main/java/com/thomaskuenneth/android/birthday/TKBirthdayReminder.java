@@ -305,6 +305,9 @@ public class TKBirthdayReminder extends AppCompatActivity {
             Intent intent = new Intent(Intent.ACTION_PICK,
                     ContactsContract.Contacts.CONTENT_URI);
             startActivityForResult(intent, Constants.RQ_PICK_CONTACT);
+        } else if (item.getItemId() == R.id.legal) {
+            Intent intent = new Intent(this, LegalActivity.class);
+            startActivity(intent);
         }
         return true;
     }
