@@ -90,7 +90,7 @@ not send the data to third party servers.\nPlease be aware that TKBirthdayRemind
 relies on other services, specifically core Google Android Platform services, the Google
 Contacts API, Google Calendar API and Google Tasks API. How and what data these
 services process may not be controllable by TKBirthdayReminder. You can find their
-privacy policy here: http://www.google.com/policies/privacy.
+privacy policy here: https://www.google.com/policies/privacy.
 \n\n<b>Terms of use</b>\nThis program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\nThe author may not be held responsible
