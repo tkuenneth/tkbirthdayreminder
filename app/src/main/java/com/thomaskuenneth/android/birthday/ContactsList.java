@@ -1,8 +1,8 @@
 /*
  * ContactsList.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2021
- * Alle Rechte beim Autoren. All rights reserved.
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2022
+ * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
@@ -21,12 +21,6 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
-/**
- * Diese Klasse liest Kontakte ein. Außerdem stellt sie die Listen zur
- * Verfügung, die in den entsprechenden Activities angezeigt werden.
- *
- * @author Thomas Künneth
- */
 class ContactsList implements Comparator<BirthdayItem> {
 
     private static final String TAG = ContactsList.class.getSimpleName();
