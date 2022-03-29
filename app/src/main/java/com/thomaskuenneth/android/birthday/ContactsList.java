@@ -134,9 +134,9 @@ class ContactsList implements Comparator<BirthdayItem> {
     static BirthdayItem createItemFromCursor(
             ContentResolver contentResolver, Cursor mainQueryCursor) {
         String contactId = mainQueryCursor.getString(mainQueryCursor
-                .getColumnIndex(ContactsContract.Contacts._ID));
+                .getColumnIndexOrThrow(ContactsContract.Contacts._ID));
         String displayName = mainQueryCursor.getString(mainQueryCursor
-                .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                .getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
         String phoneNumber = null;
         Date gebdt = null;
         String[] dataQueryProjection = new String[]{
