@@ -1,8 +1,8 @@
 /*
  * AlarmChooser.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2017 - 2020
- * Alle Rechte beim Autoren. All rights reserved.
+ * TKBirthdayReminder (c) Thomas Künneth 2017 - 2022
+ * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 

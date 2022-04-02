@@ -1,8 +1,8 @@
 /*
  * AlarmReceiver.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2021
- * Alle Rechte beim Autoren. All rights reserved.
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2022
+ * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
@@ -34,17 +34,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Diese Klasse tritt in Aktion, wenn ein Alarm ausgelöst wurde.
- *
- * @author Thomas Künneth
- * @see BroadcastReceiver
- */
 public class AlarmReceiver extends BroadcastReceiver {
 
     private static final String TAG = AlarmReceiver.class.getSimpleName();
     private static final int MAX_NOTIFICATIONS = 14;
-    private static final int MIN_NOTIFICATIONS_FOR_GROUP = 2; // 4 ist Android 7.x default
+    private static final int MIN_NOTIFICATIONS_FOR_GROUP = 2;
+    public static final long TEN_MINUTES_IN_MILLIS = 10 * 60 * 1000L;
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -53,7 +48,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         final PowerManager.WakeLock wl = (pm != null) ? pm.newWakeLock(
                 PowerManager.PARTIAL_WAKE_LOCK, TAG) : null;
         if (wl != null) {
-            wl.acquire(10 * 60 * 1000L /*10 minutes*/);
+            wl.acquire(TEN_MINUTES_IN_MILLIS);
         }
         initChannels(context);
         Runnable r = () -> {
@@ -204,7 +199,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setShowWhen(false)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
                 .setContentIntent(PendingIntent.getActivity(context, 0,
-                        intent, PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE));
+                        intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
         return new MyBuilder(b);
     }
 }

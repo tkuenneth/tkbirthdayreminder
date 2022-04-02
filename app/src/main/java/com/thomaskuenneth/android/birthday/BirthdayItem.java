@@ -1,8 +1,8 @@
 /*
  * BirthdayItem.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2021
- * Alle Rechte beim Autoren. All rights reserved.
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2022
+ * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
@@ -14,12 +14,6 @@ import android.util.Log;
 import java.text.ParseException;
 import java.util.Date;
 
-/**
- * Diese Klasse repräsentiert einen Eintrag in Listen von Personen (mit oder
- * ohne Geburtstag).
- *
- * @author Thomas Künneth
- */
 public class BirthdayItem implements Parcelable {
 
     private static final String TAG = BirthdayItem.class.getSimpleName();
@@ -28,7 +22,7 @@ public class BirthdayItem implements Parcelable {
     private final String primaryPhoneNumber;
 
     private Date birthday;
-    private long id;
+    private final long id;
     private Bitmap picture;
 
     BirthdayItem(String name, Date birthday, long id,
@@ -61,10 +55,6 @@ public class BirthdayItem implements Parcelable {
         return id;
     }
 
-    void setId(long id) {
-        this.id = id;
-    }
-
     String getPrimaryPhoneNumber() {
         return primaryPhoneNumber;
     }
@@ -77,7 +67,7 @@ public class BirthdayItem implements Parcelable {
         this.picture = picture;
     }
 
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+    public static final Parcelable.Creator<BirthdayItem> CREATOR = new Parcelable.Creator<BirthdayItem>() {
         public BirthdayItem createFromParcel(Parcel in) {
             String name = in.readString();
             Date birthday = null;
@@ -98,10 +88,6 @@ public class BirthdayItem implements Parcelable {
             return new BirthdayItem[size];
         }
     };
-
-    // //////////////
-    // Parcelable //
-    // //////////////
 
     @Override
     public int describeContents() {

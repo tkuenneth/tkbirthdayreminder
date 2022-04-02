@@ -1,8 +1,8 @@
 /*
  * AlarmChooserFragment.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2020
- * Alle Rechte beim Autoren. All rights reserved.
+ * TKBirthdayReminder (c) Thomas Künneth 2020 - 2022
+ * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
@@ -12,6 +12,7 @@ import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.TimePicker;
 
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceDialogFragmentCompat;
 
 public class AlarmChooserFragment extends PreferenceDialogFragmentCompat {
@@ -23,7 +24,7 @@ public class AlarmChooserFragment extends PreferenceDialogFragmentCompat {
     private TimePicker picker;
 
     @Override
-    protected void onBindDialogView(View view) {
+    protected void onBindDialogView(@NonNull View view) {
         super.onBindDialogView(view);
         picker = view.findViewById(R.id.notification_time_picker);
         Context context = getContext();

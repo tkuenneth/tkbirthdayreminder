@@ -1,8 +1,8 @@
 /*
  * BootCompleteReceiver.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2021
- * Alle Rechte beim Autoren. All rights reserved.
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2022
+ * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
@@ -17,13 +17,6 @@ import android.widget.Toast;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-/**
- * Diese Klasse sorgt dafür, dass am Ende des Bootvorgangs ein Alarm gesetzt
- * wird.
- *
- * @author Thomas Künneth
- * @see BroadcastReceiver
- */
 public class BootCompleteReceiver extends BroadcastReceiver {
 
     @Override
@@ -33,13 +26,6 @@ public class BootCompleteReceiver extends BroadcastReceiver {
         }
     }
 
-    /**
-     * Stellt den Alarm.
-     *
-     * @param context Kontext
-     * @param nextDay legt fest, ob der Alarm auf den nächsten Tag verschoben wird,
-     *                falls die Alarmzeit schon verstrichen ist
-     */
     public static void startAlarm(Context context, boolean nextDay) {
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent sender = PendingIntent

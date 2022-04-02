@@ -72,6 +72,17 @@ public class TKBirthdayReminder extends AppCompatActivity {
     private static final String STATE_KEY = "stateKey";
     private static final String LONG_CLICK_ITEM = "longClickItem";
 
+    private static final int DATE_DIALOG_ID = 3;
+
+    private static final int RQ_PICK_CONTACT = 0x2311;
+    private static final int RQ_PREFERENCES = 0x0606;
+    private static final int RQ_SHOW_CONTACT = 0x0103;
+
+    private static final int MENU_CHANGE_DATE = R.string.menu_change_date;
+    private static final int MENU_REMOVE_DATE = R.string.menu_remove_date;
+    private static final int MENU_DIAL = R.string.menu_dial;
+    private static final int MENU_SEND_SMS = R.string.menu_send_sms;
+
     private ListView mainList;
     private EditText newEventYear;
     private Spinner newEventSpinnerDay, newEventSpinnerMonth;
@@ -97,7 +108,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
             Intent i = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
                     ContactsContract.Contacts.CONTENT_URI,
                     Long.toString(item.getId())));
-            startActivityForResult(i, Constants.RQ_SHOW_CONTACT);
+            startActivityForResult(i, RQ_SHOW_CONTACT);
         });
 
         if (savedInstanceState != null) {
@@ -156,7 +167,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
                                  Intent data) {
         super.onActivityResult(reqCode, resultCode, data);
         switch (reqCode) {
-            case (Constants.RQ_PICK_CONTACT):
+            case (RQ_PICK_CONTACT):
                 if (resultCode == Activity.RESULT_OK) {
                     Uri contactData = data.getData();
                     Cursor c = getContentResolver().query(contactData, null, null, null, null);
@@ -170,8 +181,8 @@ public class TKBirthdayReminder extends AppCompatActivity {
                     }
                 }
                 break;
-            case Constants.RQ_PREFERENCES:
-            case Constants.RQ_SHOW_CONTACT:
+            case RQ_PREFERENCES:
+            case RQ_SHOW_CONTACT:
                 readContacts(true);
                 break;
         }
@@ -185,18 +196,18 @@ public class TKBirthdayReminder extends AppCompatActivity {
                 .getItem(mi.position);
         menu.setHeaderTitle(item.getName());
         if (item.getBirthday() != null) {
-            menu.add(Menu.NONE, Constants.MENU_CHANGE_DATE, Menu.NONE,
-                    Constants.MENU_CHANGE_DATE);
-            menu.add(Menu.NONE, Constants.MENU_REMOVE_DATE, Menu.NONE,
-                    Constants.MENU_REMOVE_DATE);
+            menu.add(Menu.NONE, MENU_CHANGE_DATE, Menu.NONE,
+                    MENU_CHANGE_DATE);
+            menu.add(Menu.NONE, MENU_REMOVE_DATE, Menu.NONE,
+                    MENU_REMOVE_DATE);
         }
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {
             if (item.getPrimaryPhoneNumber() != null) {
-                menu.add(Menu.NONE, Constants.MENU_DIAL, Menu.NONE,
-                        Constants.MENU_DIAL);
-                String string = getString(Constants.MENU_SEND_SMS,
+                menu.add(Menu.NONE, MENU_DIAL, Menu.NONE,
+                        MENU_DIAL);
+                String string = getString(MENU_SEND_SMS,
                         item.getPrimaryPhoneNumber());
-                menu.add(Menu.NONE, Constants.MENU_SEND_SMS, Menu.NONE, string);
+                menu.add(Menu.NONE, MENU_SEND_SMS, Menu.NONE, string);
             }
         }
     }
@@ -206,20 +217,20 @@ public class TKBirthdayReminder extends AppCompatActivity {
         AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         longClickedItem = (BirthdayItem) mainList.getAdapter().getItem(mi.position);
         switch (item.getItemId()) {
-            case Constants.MENU_CHANGE_DATE:
+            case MENU_CHANGE_DATE:
                 showEditBirthdayDialog(longClickedItem);
                 break;
-            case Constants.MENU_REMOVE_DATE:
+            case MENU_REMOVE_DATE:
                 longClickedItem.setBirthday(null);
                 updateContact(longClickedItem);
                 break;
-            case Constants.MENU_DIAL:
+            case MENU_DIAL:
                 Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"
                         + longClickedItem.getPrimaryPhoneNumber()));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 break;
-            case Constants.MENU_SEND_SMS:
+            case MENU_SEND_SMS:
                 Uri smsUri = Uri.parse("smsto://"
                         + longClickedItem.getPrimaryPhoneNumber());
                 Intent sendIntent = new Intent(Intent.ACTION_SENDTO, smsUri);
@@ -234,7 +245,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
     @Override
     protected void onPrepareDialog(int id, Dialog dialog) {
         super.onPrepareDialog(id, dialog);
-        if (id == Constants.DATE_DIALOG_ID) {
+        if (id == DATE_DIALOG_ID) {
             updateViewsFromEvent();
         }
     }
@@ -245,7 +256,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
         final View view;
         final LayoutInflater factory;
         Dialog dialog = null;
-        if (id == Constants.DATE_DIALOG_ID) {
+        if (id == DATE_DIALOG_ID) {
             newEventCal = Calendar.getInstance();
             factory = LayoutInflater.from(this);
             view = factory.inflate(R.layout.edit_birthday_date, null);
@@ -270,12 +281,12 @@ public class TKBirthdayReminder extends AppCompatActivity {
                                     updateContact(longClickedItem);
                                 }
                                 newEventEvent = null;
-                                removeDialog(Constants.DATE_DIALOG_ID);
+                                removeDialog(DATE_DIALOG_ID);
                             })
                     .setNegativeButton(android.R.string.cancel,
                             (dialog14, whichButton) -> {
                                 newEventEvent = null;
-                                removeDialog(Constants.DATE_DIALOG_ID);
+                                removeDialog(DATE_DIALOG_ID);
                             }).setView(view).create();
             installListeners();
             updateViewsFromEvent();
@@ -294,17 +305,17 @@ public class TKBirthdayReminder extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.preferences) {
             Intent iPrefs = new Intent(this, PreferencesActivity.class);
-            startActivityForResult(iPrefs, Constants.RQ_PREFERENCES);
+            startActivityForResult(iPrefs, RQ_PREFERENCES);
         } else if (item.getItemId() == R.id.new_entry) {
             Intent intentContact = new Intent(
                     ContactsContract.Intents.Insert.ACTION,
                     ContactsContract.Contacts.CONTENT_URI);
             intentContact.putExtra("finishActivityOnSaveCompleted", true);
-            startActivityForResult(intentContact, Constants.RQ_PICK_CONTACT);
+            startActivityForResult(intentContact, RQ_PICK_CONTACT);
         } else if (item.getItemId() == R.id.set_date) {
             Intent intent = new Intent(Intent.ACTION_PICK,
                     ContactsContract.Contacts.CONTENT_URI);
-            startActivityForResult(intent, Constants.RQ_PICK_CONTACT);
+            startActivityForResult(intent, RQ_PICK_CONTACT);
         } else if (item.getItemId() == R.id.legal) {
             Intent intent = new Intent(this, LegalActivity.class);
             startActivity(intent);
@@ -359,17 +370,10 @@ public class TKBirthdayReminder extends AppCompatActivity {
         }
     }
 
-
-    /**
-     * Aktualisiert einen Kontakt in der Datenbank und anschließend die Listen.
-     *
-     * @param item der zu aktualisierende Kontakt
-     */
     public void updateContact(BirthdayItem item) {
         ContentResolver contentResolver = getContentResolver();
         String id = Long.toString(item.getId());
-        // Log.d(TAG, "updateContact: " + item.getName() + " (" + id + ")");
-        // lesen vorhandener Daten
+        logDebug(TAG, "updateContact: " + item.getName() + " (" + id + ")");
         String[] dataQueryProjection = new String[]{
                 ContactsContract.Data.MIMETYPE,
                 ContactsContract.CommonDataKinds.Event.TYPE,
@@ -385,15 +389,13 @@ public class TKBirthdayReminder extends AppCompatActivity {
             while (dataQueryCursor.moveToNext()) {
                 String mimeType = dataQueryCursor.getString(0);
                 String dataId = dataQueryCursor.getString(4);
-                // Event - evtl. der Geburtstag?
+                // Event - maybe the birthday?
                 if (ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE
                         .equals(mimeType)) {
                     int type = dataQueryCursor.getInt(1);
                     if (ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY == type) {
-                        /* String gebdt = */
-                        dataQueryCursor.getString(2);
-                        // Log.d(TAG, "   ---> found birthday: " + gebdt);
-
+                        String gebdt = dataQueryCursor.getString(2);
+                        logDebug(TAG, "   ---> found birthday: " + gebdt);
                         String where = ContactsContract.Data.CONTACT_ID
                                 + " = ? AND " + ContactsContract.Data._ID
                                 + " = ? AND " + ContactsContract.Data.MIMETYPE
@@ -402,19 +404,18 @@ public class TKBirthdayReminder extends AppCompatActivity {
                                 id,
                                 dataId,
                                 ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE};
-                        /* int rowsDeleted = */
                         contentResolver.delete(
                                 ContactsContract.Data.CONTENT_URI, where,
                                 selectionArgs);
                     }
                 }
-                // oder ein Notizfeld?
+                // Or a notes field?
                 else if (ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE
                         .equals(mimeType)) {
                     String note = dataQueryCursor.getString(3);
-                    // Notiz aktualisieren
+                    // update note
                     if ((note != null) && (note.length() >= 17)) {
-                        // Birthday=yyyymmdd enthält 17 Zeichen
+                        // Birthday=yyyymmdd contains 17 chars
                         Date d = Utils.getDateFromString(note);
                         if (d != null) {
                             note = Utils.removeBirthdayFromString(note);
@@ -441,14 +442,11 @@ public class TKBirthdayReminder extends AppCompatActivity {
             }
             Utils.closeCursorCatchThrowable(dataQueryCursor);
         }
-
-        // Geburtstag einfügen
+        // Insert birthday
         Date birthday = item.getBirthday();
         if (birthday != null) {
-            // Strings für die Suche nach RawContacts
             String[] rawProjection = new String[]{ContactsContract.RawContacts._ID};
             String rawSelection = ContactsContract.RawContacts.CONTACT_ID + " = ?";
-            // Werte für Tabellenzeile vorbereiten
             ContentValues values = new ContentValues();
             values.put(ContactsContract.CommonDataKinds.Event.START_DATE,
                     Utils.getDateAsStringYYYY_MM_DD(birthday));
@@ -456,7 +454,6 @@ public class TKBirthdayReminder extends AppCompatActivity {
                     ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE);
             values.put(ContactsContract.CommonDataKinds.Event.TYPE,
                     ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY);
-            // alle RawContacts befüllen
             Cursor c = contentResolver.query(ContactsContract.RawContacts.CONTENT_URI,
                     rawProjection, rawSelection, rawSelectionArgs, null);
             if (c != null) {
@@ -473,6 +470,12 @@ public class TKBirthdayReminder extends AppCompatActivity {
         }
         requestSync();
         readContacts(true);
+    }
+
+    public static void logDebug(String tag, String msg) {
+        if (Log.isLoggable(tag, Log.DEBUG)) {
+            Log.d(tag, msg);
+        }
     }
 
     private boolean hasPermission(String permission) {
@@ -666,6 +669,6 @@ public class TKBirthdayReminder extends AppCompatActivity {
         Date birthday = item.getBirthday();
         newEventEvent = (birthday == null) ? new AnnualEvent()
                 : new AnnualEvent(birthday);
-        showDialog(Constants.DATE_DIALOG_ID);
+        showDialog(DATE_DIALOG_ID);
     }
 }

@@ -1,8 +1,8 @@
 /*
  * AnnualEvent.java
- * 
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2017
- * Alle Rechte beim Autoren. All rights reserved.
+ *
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2022
+ * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
@@ -12,15 +12,9 @@ import android.os.Parcelable;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Diese Klasse repräsentiert ein jährliches Ereignis. Dieses hat eine
- * Beschreibung sowie die Felder Monat, Tag und Jahr.
- *
- * @author Thomas Künneth
- */
 class AnnualEvent implements Parcelable {
 
-    private String descr;
+    private final String descr;
     private int year, month, day;
 
     AnnualEvent() {
@@ -72,7 +66,7 @@ class AnnualEvent implements Parcelable {
         this.day = day;
     }
 
-    static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+    static final Parcelable.Creator<AnnualEvent> CREATOR = new Parcelable.Creator<AnnualEvent>() {
         public AnnualEvent createFromParcel(Parcel in) {
             String descr = in.readString();
             int year = in.readInt();
@@ -85,10 +79,6 @@ class AnnualEvent implements Parcelable {
             return new AnnualEvent[size];
         }
     };
-
-    /************************
-     * Parcelable interface *
-     ************************/
 
     @Override
     public int describeContents() {
