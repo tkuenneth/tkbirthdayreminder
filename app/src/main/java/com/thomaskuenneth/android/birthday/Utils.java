@@ -1,9 +1,9 @@
 /*
  * Utils.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2021
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2022
  *
- * Alle Rechte beim Autoren. All rights reserved.
+ * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
@@ -19,11 +19,6 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Diese Klasse enthält u. a. datums- und kalenderbezogene Hilfsmethoden.
- *
- * @author Thomas Künneth
- */
 class Utils {
 
     private static final String TAG = Utils.class.getSimpleName();
@@ -132,12 +127,6 @@ class Utils {
         return cal.get(Calendar.DAY_OF_YEAR) - daysToday;
     }
 
-    /**
-     * Ermittelt das Alter.
-     *
-     * @param birthday Geburtsdatum
-     * @return Alter
-     */
     private static int getAge(Date birthday) {
         String stringBirthday = FORMAT_YYYYMMDD.format(birthday);
         int yearBirthday = Integer.parseInt(stringBirthday.substring(0, 4));
@@ -180,7 +169,7 @@ class Utils {
                     try {
                         result = FORMAT_YYYYMMDD.parse(date);
                     } catch (Throwable tr) {
-                        // Log.e(TAG, "getDateFromString()", tr);
+                        logError(TAG, "getDateFromString()", tr);
                     }
                 }
             }
@@ -220,7 +209,7 @@ class Utils {
                         cal.set(Calendar.YEAR, INVISIBLE_YEAR);
                         result = cal.getTime();
                     } catch (Throwable tr) {
-                        // Log.e(TAG, "getDateFromString1()", tr);
+                        logError(TAG, "getDateFromString1()", tr);
                     }
                 }
             }
@@ -239,7 +228,19 @@ class Utils {
         try {
             c.close();
         } catch (Throwable t) {
-            Log.e(TAG, "closeCursor()", t);
+            logError(TAG, "closeCursor()", t);
+        }
+    }
+
+    static void logDebug(String tag, String msg) {
+        if (Log.isLoggable(tag, Log.DEBUG)) {
+            Log.d(tag, msg);
+        }
+    }
+
+    static void logError(String tag, String msg, Throwable tr) {
+        if (Log.isLoggable(tag, Log.ERROR)) {
+            Log.e(tag, msg, tr);
         }
     }
 }

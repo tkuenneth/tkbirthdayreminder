@@ -1,8 +1,8 @@
 /*
  * TKBirthdayReminder.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2021
- * Alle Rechte beim Autoren. All rights reserved.
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2022
+ * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
@@ -31,7 +31,6 @@ import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -56,11 +55,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Dies ist die Hauptklasse von TKBirthdayReminder.
- *
- * @author Thomas Künneth
- */
 public class TKBirthdayReminder extends AppCompatActivity {
 
     private static final String TAG = TKBirthdayReminder.class.getSimpleName();
@@ -373,7 +367,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
     public void updateContact(BirthdayItem item) {
         ContentResolver contentResolver = getContentResolver();
         String id = Long.toString(item.getId());
-        logDebug(TAG, "updateContact: " + item.getName() + " (" + id + ")");
+        Utils.logDebug(TAG, "updateContact: " + item.getName() + " (" + id + ")");
         String[] dataQueryProjection = new String[]{
                 ContactsContract.Data.MIMETYPE,
                 ContactsContract.CommonDataKinds.Event.TYPE,
@@ -395,7 +389,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
                     int type = dataQueryCursor.getInt(1);
                     if (ContactsContract.CommonDataKinds.Event.TYPE_BIRTHDAY == type) {
                         String gebdt = dataQueryCursor.getString(2);
-                        logDebug(TAG, "   ---> found birthday: " + gebdt);
+                        Utils.logDebug(TAG, "   ---> found birthday: " + gebdt);
                         String where = ContactsContract.Data.CONTACT_ID
                                 + " = ? AND " + ContactsContract.Data._ID
                                 + " = ? AND " + ContactsContract.Data.MIMETYPE
@@ -470,12 +464,6 @@ public class TKBirthdayReminder extends AppCompatActivity {
         }
         requestSync();
         readContacts(true);
-    }
-
-    public static void logDebug(String tag, String msg) {
-        if (Log.isLoggable(tag, Log.DEBUG)) {
-            Log.d(tag, msg);
-        }
     }
 
     private boolean hasPermission(String permission) {
@@ -599,7 +587,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
         try {
             accounts = am.getAccounts();
         } catch (SecurityException e) {
-            Log.e(TAG, "requestSync()", e);
+            Utils.logError(TAG, "requestSync()", e);
         }
         if (accounts != null) {
             int i = 0;
@@ -659,7 +647,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
             try {
                 intYear = Integer.parseInt(s);
             } catch (Throwable thr) {
-                Log.e(TAG, "checkYear()", thr);
+                Utils.logError(TAG, "checkYear()", thr);
             }
         }
         return intYear;
