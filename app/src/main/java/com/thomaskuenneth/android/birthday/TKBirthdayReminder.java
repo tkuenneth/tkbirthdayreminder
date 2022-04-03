@@ -47,6 +47,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -73,6 +74,9 @@ public class TKBirthdayReminder extends AppCompatActivity {
     private static final String NEW_EVENT_EVENT = "newEventEvent";
     private static final String STATE_KEY = "stateKey";
     private static final String LONG_CLICK_ITEM = "longClickItem";
+
+    private static final int APP_VERSION = BuildConfig.VERSION_CODE;
+    private static final String HIDE_MESSAGE_KEY = "hideMessageAppVersion";
 
     private static final int DATE_DIALOG_ID = 3;
 
@@ -131,29 +135,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            TextView info = findViewById(R.id.info);
-            String s = getString(R.string.check_notification_channel_settings);
-            String settings = getString(R.string.notification_channel_settings);
-            Spannable spannable = new SpannableString(s);
-            int pos = s.indexOf(settings);
-            if (pos >= 0) {
-                spannable.setSpan(new ClickableSpan() {
-                    @Override
-                    public void onClick(@NonNull View widget) {
-                        Intent i = PreferenceFragment.createNotificationChannelSettingsIntent(TKBirthdayReminder.this);
-                        startActivity(i);
-                    }
-                }, pos, pos + settings.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                info.setMovementMethod(LinkMovementMethod.getInstance());
-            }
-            info.setText(spannable);
-            if (shouldCheckNotificationSettings(getSystemService(NotificationManager.class))) {
-                info.setVisibility(View.VISIBLE);
-            } else {
-                info.setVisibility(View.GONE);
-            }
-        }
+        checkNotificationVisibility();
     }
 
     @Override
@@ -540,10 +522,8 @@ public class TKBirthdayReminder extends AppCompatActivity {
         if (newEventEvent == null) {
             return;
         }
-        // Spinner vorbereiten
         createAndSetMonthAdapter();
         createAndSetDayAdapter();
-        // Jahres-Textfeld befüllen
         String strYear = "";
         int intYear = newEventEvent.getYear();
         if (intYear != Utils.INVISIBLE_YEAR) strYear = Integer.toString(intYear);
@@ -709,5 +689,40 @@ public class TKBirthdayReminder extends AppCompatActivity {
         newEventEvent = (birthday == null) ? new AnnualEvent()
                 : new AnnualEvent(birthday);
         showDialog(DATE_DIALOG_ID);
+    }
+
+    private void checkNotificationVisibility() {
+        boolean visible = false;
+        if (shouldCheckNotificationVisibility() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            TextView info = findViewById(R.id.info);
+            String s = getString(R.string.check_notification_channel_settings);
+            String settings = getString(R.string.notification_channel_settings);
+            Spannable spannable = new SpannableString(s);
+            int pos = s.indexOf(settings);
+            if (pos >= 0) {
+                spannable.setSpan(new ClickableSpan() {
+                    @Override
+                    public void onClick(@NonNull View widget) {
+                        Intent i = PreferenceFragment.createNotificationChannelSettingsIntent(TKBirthdayReminder.this);
+                        startActivity(i);
+                    }
+                }, pos, pos + settings.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                info.setMovementMethod(LinkMovementMethod.getInstance());
+            }
+            info.setText(spannable);
+            Button b = findViewById(R.id.dismiss);
+            b.setOnClickListener(view -> {
+                SharedPreferences prefs = getSharedPreferences(this);
+                prefs.edit().putInt(HIDE_MESSAGE_KEY, APP_VERSION).apply();
+                findViewById(R.id.info_layout).setVisibility(View.GONE);
+            });
+            visible = shouldCheckNotificationSettings(getSystemService(NotificationManager.class));
+        }
+        findViewById(R.id.info_layout).setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    private boolean shouldCheckNotificationVisibility() {
+        int lastSavedVersion = getSharedPreferences(this).getInt(HIDE_MESSAGE_KEY, 0);
+        return lastSavedVersion < APP_VERSION;
     }
 }

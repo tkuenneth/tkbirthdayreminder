@@ -67,6 +67,7 @@
 
 	<string name="activity_not_found">Activity nicht gefunden</string>
 
-    <string name="check_notification_channel_settings">Bitte Benachrichtigungskanal Einstellungen prüfen</string>
+    <string name="check_notification_channel_settings">Benachrichtigungen sind aus oder lautlos. Bitte Benachrichtigungskanal Einstellungen prüfen.</string>
+	<string name="hide_message">Hinweis ausblenden</string>
 
 </resources>
