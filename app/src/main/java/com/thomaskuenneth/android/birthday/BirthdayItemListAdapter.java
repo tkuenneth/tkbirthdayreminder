@@ -17,7 +17,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,7 +134,6 @@ class BirthdayItemListAdapter extends BaseAdapter {
                         Bitmap temp = picture;
                         float w = (float) picture.getWidth();
                         float h = (float) picture.getHeight();
-                        // höhe : breite = height : width
                         int h2 = (int) (((h / w)) * size);
                         picture = Bitmap
                                 .createScaledBitmap(temp, size, h2, false);
@@ -146,13 +144,13 @@ class BirthdayItemListAdapter extends BaseAdapter {
                     item.setPicture(picture);
                 }
             } catch (Throwable tr) {
-                Log.e(TAG, "loadBitmap()", tr);
+                Utils.logError(TAG, "loadBitmap()", tr);
             } finally {
                 if (input != null) {
                     try {
                         input.close();
                     } catch (IOException e) {
-                        Log.e(TAG, "loadBitmap()", e);
+                        Utils.logError(TAG, "loadBitmap()", e);
                     }
                 }
             }

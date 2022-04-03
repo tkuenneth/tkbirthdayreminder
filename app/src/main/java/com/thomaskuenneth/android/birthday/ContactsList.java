@@ -12,7 +12,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,7 +89,7 @@ class ContactsList implements Comparator<BirthdayItem> {
                     ContactsContract.Contacts.CONTENT_URI, mainQueryProjection,
                     null, null, null);
         } catch (SecurityException e) {
-            Log.e(TAG, "queryContacts() - missing required permissions");
+            Utils.logError(TAG, "queryContacts() - missing required permissions", e);
         }
         if (mainQueryCursor != null) {
             while (mainQueryCursor.moveToNext()) {
@@ -102,6 +101,7 @@ class ContactsList implements Comparator<BirthdayItem> {
                     if ((name != null) && (date != null)) {
                         String strYYYYMMDD = Utils.FORMAT_YYYYMMDD
                                 .format(date);
+                        Utils.logDebug(TAG, name + ": " + strYYYYMMDD);
                         String key = name + strYYYYMMDD;
                         if (!ht.containsKey(key)) {
                             ht.put(key, Boolean.TRUE);
@@ -118,7 +118,7 @@ class ContactsList implements Comparator<BirthdayItem> {
                         }
                     }
                 } catch (Exception e) {
-                    Log.e(TAG, e.getMessage(), e);
+                    Utils.logError(TAG, e.getMessage(), e);
                 }
             }
             mainQueryCursor.close();

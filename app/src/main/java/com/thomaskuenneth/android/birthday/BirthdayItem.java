@@ -9,7 +9,6 @@ package com.thomaskuenneth.android.birthday;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -77,7 +76,7 @@ public class BirthdayItem implements Parcelable {
                     birthday = Utils.FORMAT_YYYYMMDD.parse(s);
                 }
             } catch (ParseException e) {
-                Log.e(TAG, "createFromParcel()", e);
+                Utils.logError(TAG, "createFromParcel()", e);
             }
             long id = in.readLong();
             String primaryPhoneNumber = in.readString();
@@ -101,7 +100,7 @@ public class BirthdayItem implements Parcelable {
         try {
             date = Utils.FORMAT_YYYYMMDD.format(birthday);
         } catch (Throwable thr) {
-            Log.e(TAG, "writeToParcel()", thr);
+            Utils.logError(TAG, "writeToParcel()", thr);
         }
         dest.writeString(date == null ? "" : date);
         dest.writeLong(id);
