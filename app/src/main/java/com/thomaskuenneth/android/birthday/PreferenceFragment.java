@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 
+import androidx.annotation.RequiresApi;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 import androidx.preference.PreferenceFragmentCompat;
@@ -42,10 +43,7 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
                 Preference p = new Preference(context);
                 p.setTitle(R.string.notification_channel_settings);
                 p.setKey("notification_channel_settings");
-                Intent intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
-                intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
-                intent.putExtra(Settings.EXTRA_CHANNEL_ID, Constants.CHANNEL_ID);
-                p.setIntent(intent);
+                p.setIntent(createNotificationChannelSettingsIntent(requireContext()));
                 getPreferenceScreen().addPreference(p);
             } else {
                 Preference p = new Preference(context);
@@ -82,6 +80,14 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
         } else {
             super.onDisplayPreferenceDialog(preference);
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static Intent createNotificationChannelSettingsIntent(Context context) {
+        Intent intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+        intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
+        intent.putExtra(Settings.EXTRA_CHANNEL_ID, Constants.CHANNEL_ID);
+        return intent;
     }
 
     private void showFragment(PreferenceDialogFragmentCompat fragment, String key) {

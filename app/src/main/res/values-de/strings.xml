@@ -11,7 +11,7 @@
 	<string name="widget_opacity">Deckkraft</string>
     <string name="widget_appearance">Widget Aussehen</string>
 	<string name="hide_past_birthdays">Vergangene Geburtstage ausblenden</string>
-	<string name="notification_channel_settings">Benachrichtigungskanel Einstellungen</string>
+	<string name="notification_channel_settings">Benachrichtigungskanal Einstellungen</string>
 	<string name="notification_sound">Benachrichtigungston</string>
 	<string name="notification_channel_name">Bevorstehende Geburtstage</string>
 	<string name="notification_sound_insistent">Benachrichtigungston wiederholen</string>
@@ -66,5 +66,7 @@
     <string name="x_more_birthdays">%1$d weitere Geburtstage</string>
 
 	<string name="activity_not_found">Activity nicht gefunden</string>
+
+    <string name="check_notification_channel_settings">Bitte Benachrichtigungskanal Einstellungen prüfen</string>
 
 </resources>

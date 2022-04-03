@@ -13,6 +13,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -23,13 +25,18 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.DisplayMetrics;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -43,6 +50,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -104,7 +112,6 @@ public class TKBirthdayReminder extends AppCompatActivity {
                     Long.toString(item.getId())));
             startActivityForResult(i, RQ_SHOW_CONTACT);
         });
-
         if (savedInstanceState != null) {
             newEventEvent = savedInstanceState.getParcelable(NEW_EVENT_EVENT);
             list = savedInstanceState.getParcelableArrayList(STATE_KEY);
@@ -119,6 +126,34 @@ public class TKBirthdayReminder extends AppCompatActivity {
             }
         }
         run();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            TextView info = findViewById(R.id.info);
+            String s = getString(R.string.check_notification_channel_settings);
+            String settings = getString(R.string.notification_channel_settings);
+            Spannable spannable = new SpannableString(s);
+            int pos = s.indexOf(settings);
+            if (pos >= 0) {
+                spannable.setSpan(new ClickableSpan() {
+                    @Override
+                    public void onClick(@NonNull View widget) {
+                        Intent i = PreferenceFragment.createNotificationChannelSettingsIntent(TKBirthdayReminder.this);
+                        startActivity(i);
+                    }
+                }, pos, pos + settings.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                info.setMovementMethod(LinkMovementMethod.getInstance());
+            }
+            info.setText(spannable);
+            if (shouldCheckNotificationSettings(getSystemService(NotificationManager.class))) {
+                info.setVisibility(View.VISIBLE);
+            } else {
+                info.setVisibility(View.GONE);
+            }
+        }
     }
 
     @Override
@@ -464,6 +499,22 @@ public class TKBirthdayReminder extends AppCompatActivity {
         }
         requestSync();
         readContacts(true);
+    }
+
+    public static boolean shouldCheckNotificationSettings(NotificationManager nm) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            if (!nm.areNotificationsEnabled())
+                return true;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                List<NotificationChannel> channels = nm.getNotificationChannels();
+                for (NotificationChannel channel : channels) {
+                    if (channel.getImportance() <= NotificationManager.IMPORTANCE_LOW) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private boolean hasPermission(String permission) {

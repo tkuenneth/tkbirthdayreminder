@@ -71,6 +71,8 @@
 
     <string name="activity_not_found">No activity found</string>
 
+    <string name="check_notification_channel_settings">Please check Notification channel settings</string>
+
     <string name="welcome_text" translatable="false">Welcome to <b>TKBirthdayReminder</b>.
 If you have questions about this app, or if you think you have found a bug,
 please contact me by sending an email to tkbirthdayreminder@thomaskuenneth.eu.
