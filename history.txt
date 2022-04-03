@@ -1,3 +1,7 @@
+2.2.0
+- Tools and library upgrades
+- Check if notifications are off or silent
+
 2.1.9
 - Context menu shows "Send SMS" and "Call" only if device has telephony
 - Fix ANR while widget updates the birthday list

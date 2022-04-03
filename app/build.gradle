@@ -7,8 +7,8 @@ android {
         applicationId "com.thomaskuenneth.android.birthday"
         minSdkVersion 23
         targetSdkVersion 32
-        versionCode 2010903
-        versionName "2.1.9"
+        versionCode 2020001
+        versionName "2.2.0"
     }
 
     buildTypes {
