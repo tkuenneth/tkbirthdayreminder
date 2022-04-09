@@ -12,12 +12,12 @@
 - Further improved widget updates
 
 2.1.7
-- AppIcon optimiert
-- ActionBar Icons hinzugefügt
-- Versionsname wird korrekt angezeigt
+- Optimized app icon
+- ActionBar icons added
+- version name is shown correctly
 
 2.1.6
-- Verbesserungen beim Aktualisieren der AppWidgets
+- Appwidget updates are more reliable
 
 2.1.5
 - Dark Mode support
@@ -80,27 +80,27 @@
 - can hide astrological signs
 
 1.3.5
-- should_sync auf true
+- set should_sync to true
 - widget improvements
 
 1.3.4
 - widget
 
 1.3.3
-- sollte auf dem Milestone jetzt besser laufen
+- should run more smoothly on the Motorola Milestone
 
 1.3.2
-- läuft wieder unter Android 2.x
+- works again on Android 2.x
 
 1.3.1
-- Limitierung auf Android 1.x
+- restricted to run on Android 1.x
 
 1.3.0
-- kleinere Bugfixes
+- minor bug fixes
 
 1.2.9
-- kein Geflacker mehr bei Welcome-Dialog und Orientierungswechsel
-- Daten ändern klappt besser unter Android 2.0
+- no flicker when showing the welcome screen upon orientation changes
+- Changing data works more reliable on Android 2.0
 
 1.2.8
 - NPE-check in BirthdayItem.writeToParcel()
@@ -115,11 +115,11 @@
 - improved list layout
 
 1.2.5
-- neu: Anzeige Wochentag d. Geburtstags in diesem Jahr
-- neu: Anzeige des Tierkreiszeichens
+- new: weekday of the birthday
+- new: the zodiac sign corresponding to the birthday can be shown
 
 1.2.4
-- beim Anlegen lokaler Kontakte sollte Jahr korrekt gesetzt werden
+- local contacts have the correct year after their creation
 
 1.2.3
 - notifications sorted by birthday, not alphabetically
@@ -137,7 +137,7 @@
 - improved support for landscape mode
 
 1.2.0
-- improved stability and startup behaviour
+- improved stability and startup behavior
 
 1.1.9
 - minor refactoring
