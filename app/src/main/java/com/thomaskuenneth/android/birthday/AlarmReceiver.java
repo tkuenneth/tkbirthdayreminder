@@ -135,7 +135,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 nm.cancelAll();
                 int size = builders.size();
                 for (int i = 0; i < size; i++) {
-                    if ((i + 1) == size) {
+                    if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.O) && ((i + 1) == size)) {
                         String tune = SoundChooser
                                 .getNotificationSoundAsString(context);
                         if (tune != null) {
