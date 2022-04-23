@@ -1,3 +1,6 @@
+2.2.1
+- The notification channel is no longer created with a custom sound
+
 2.2.0
 - Tools and library upgrades
 - Check if notifications are off or silent

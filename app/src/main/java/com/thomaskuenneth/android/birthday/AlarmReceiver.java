@@ -169,6 +169,10 @@ public class AlarmReceiver extends BroadcastReceiver {
             if (oldChannel != null) {
                 nm.deleteNotificationChannel(Constants.CHANNEL_ID_OLD);
             }
+            oldChannel = nm.getNotificationChannel(Constants.CHANNEL_ID_OLD_2);
+            if (oldChannel != null) {
+                nm.deleteNotificationChannel(Constants.CHANNEL_ID_OLD_2);
+            }
             AudioAttributes audioAttributes = new AudioAttributes.Builder()
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .setUsage(AudioAttributes.USAGE_ALARM)
@@ -178,11 +182,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                     NotificationManager.IMPORTANCE_DEFAULT);
             // Info: we could set a channel description with
             // channel.setDescription(...)
-            String tune = SoundChooser
-                    .getNotificationSoundAsString(context);
-            if (tune != null) {
-                channel.setSound(Uri.parse(tune), audioAttributes);
-            }
             nm.createNotificationChannel(channel);
         }
     }
