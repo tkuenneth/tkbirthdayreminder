@@ -1,8 +1,8 @@
 /*
  * WidgetPreferenceFragment.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2020
- * Alle Rechte beim Autoren. All rights reserved.
+ * TKBirthdayReminder (c) Thomas Künneth 2020 - 2022
+ * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceDialogFragmentCompat;
 
 public class WidgetPreferenceFragment extends PreferenceDialogFragmentCompat
@@ -25,7 +26,7 @@ public class WidgetPreferenceFragment extends PreferenceDialogFragmentCompat
     private SeekBar seekbar;
 
     @Override
-    protected void onBindDialogView(View view) {
+    protected void onBindDialogView(@NonNull View view) {
         super.onBindDialogView(view);
         context = getContext();
         seekbarInfo = view.findViewById(R.id.widget_opacity_info);

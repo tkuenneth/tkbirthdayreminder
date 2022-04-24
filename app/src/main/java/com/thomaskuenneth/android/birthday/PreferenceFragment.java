@@ -1,8 +1,8 @@
 /*
  * PreferenceFragment.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2020 - 2021
- * Alle Rechte beim Autoren. All rights reserved.
+ * TKBirthdayReminder (c) Thomas Künneth 2020 - 2022
+ * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 

@@ -1,3 +1,6 @@
+2.2.2
+- Code clean-up
+
 2.2.1
 - The notification channel is no longer created with a custom sound
 

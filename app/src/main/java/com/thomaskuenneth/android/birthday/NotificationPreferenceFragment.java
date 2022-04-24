@@ -1,3 +1,9 @@
+/*
+ * NotificationPreferenceFragment.java
+ *
+ * TKBirthdayReminder (c) Thomas Künneth 2022
+ * All rights reserved.
+ */
 package com.thomaskuenneth.android.birthday;
 
 import android.content.Context;
@@ -5,6 +11,7 @@ import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.CheckBox;
 
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceDialogFragmentCompat;
 
 public class NotificationPreferenceFragment extends PreferenceDialogFragmentCompat {
@@ -19,7 +26,7 @@ public class NotificationPreferenceFragment extends PreferenceDialogFragmentComp
     private SharedPreferences prefs;
 
     @Override
-    protected void onBindDialogView(View view) {
+    protected void onBindDialogView(@NonNull View view) {
         super.onBindDialogView(view);
         Context context = getContext();
         if (context != null) {
