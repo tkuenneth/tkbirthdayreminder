@@ -16,7 +16,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
@@ -173,15 +172,9 @@ public class AlarmReceiver extends BroadcastReceiver {
             if (oldChannel != null) {
                 nm.deleteNotificationChannel(Constants.CHANNEL_ID_OLD_2);
             }
-            AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .setUsage(AudioAttributes.USAGE_ALARM)
-                    .build();
             NotificationChannel channel = new NotificationChannel(Constants.CHANNEL_ID,
                     context.getString(R.string.notification_channel_name),
                     NotificationManager.IMPORTANCE_DEFAULT);
-            // Info: we could set a channel description with
-            // channel.setDescription(...)
             nm.createNotificationChannel(channel);
         }
     }
