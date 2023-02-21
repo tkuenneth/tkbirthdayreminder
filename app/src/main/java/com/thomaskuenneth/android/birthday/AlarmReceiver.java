@@ -24,6 +24,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -147,7 +148,11 @@ public class AlarmReceiver extends BroadcastReceiver {
                     if (prefs.getBoolean("notification_sound_insistent", false)) {
                         n.flags |= Notification.FLAG_INSISTENT;
                     }
-                    nm.notify(i, n);
+                    try {
+                        nm.notify(i, n);
+                    } catch (SecurityException e) {
+                        Toast.makeText(context, context.getString(R.string.missing_permission), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
             if (wl != null) {

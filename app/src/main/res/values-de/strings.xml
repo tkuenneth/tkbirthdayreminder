@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
+	<string name="missing_permission">Fehlende Berechtigung</string>
 
 	<string name="app_name">Geburtstage</string>
 	<string name="content_description_image">Ein Bild</string>
