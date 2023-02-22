@@ -114,6 +114,9 @@ public class TKBirthdayReminder extends AppCompatActivity {
             Intent i = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
                     ContactsContract.Contacts.CONTENT_URI,
                     Long.toString(item.getId())));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                i.addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT | Intent.FLAG_ACTIVITY_NEW_TASK);
+            }
             startActivityForResult(i, RQ_SHOW_CONTACT);
         });
         if (savedInstanceState != null) {
@@ -649,11 +652,6 @@ public class TKBirthdayReminder extends AppCompatActivity {
         mainList.setAdapter(myListAdapter);
     }
 
-    /**
-     * Liest die Kontakte neu ein.
-     *
-     * @param forceRead Ignoriert evtl. bereits gelesene Kontakte
-     */
     protected void readContacts(final boolean forceRead) {
         final Handler h = new Handler(Looper.myLooper());
         Thread thread = new Thread(() -> {
