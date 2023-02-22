@@ -5,3 +5,4 @@
 .idea/
 **/app/release
 *.plb
+local.properties
