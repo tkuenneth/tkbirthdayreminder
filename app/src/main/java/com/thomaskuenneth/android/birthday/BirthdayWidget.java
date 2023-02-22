@@ -111,6 +111,7 @@ public class BirthdayWidget extends AppWidgetProvider {
                 updateViews.setViewVisibility(R.id.text4, moreThanOne ? View.GONE : View.VISIBLE);
 
                 Intent intent = new Intent(context, TKBirthdayReminder.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                         intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
                 updateViews.setOnClickPendingIntent(R.id.birthdaywidget_layout,
