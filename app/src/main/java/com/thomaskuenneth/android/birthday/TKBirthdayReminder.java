@@ -695,15 +695,15 @@ public class TKBirthdayReminder extends AppCompatActivity {
         boolean visible = false;
         if (shouldCheckNotificationVisibility() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             TextView info = findViewById(R.id.info);
-            String s = getString(R.string.check_notification_channel_settings);
-            String settings = getString(R.string.notification_channel_settings);
+            String s = getString(R.string.check_notification_settings);
+            String settings = getString(R.string.notification_settings);
             Spannable spannable = new SpannableString(s);
             int pos = s.indexOf(settings);
             if (pos >= 0) {
                 spannable.setSpan(new ClickableSpan() {
                     @Override
                     public void onClick(@NonNull View widget) {
-                        Intent i = PreferenceFragment.createNotificationChannelSettingsIntent(TKBirthdayReminder.this);
+                        Intent i = PreferenceFragment.createNotificationSettingsIntent(TKBirthdayReminder.this);
                         startActivity(i);
                     }
                 }, pos, pos + settings.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
