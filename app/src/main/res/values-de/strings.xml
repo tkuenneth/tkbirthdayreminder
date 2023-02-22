@@ -71,4 +71,7 @@
     <string name="check_notification_settings">Benachrichtigungen sind aus oder lautlos. Bitte die Benachrichtigungseinstellungen prüfen.</string>
 	<string name="hide_message">Hinweis ausblenden</string>
 
+	<string name="exact_alarms_are_off">Damit TKBirthdayReminder Sie über bevorstehende Geburtstage informieren kann, erlauben Sie bitte das Einrichten von Wecker und Erinnerungen.</string>
+	<string name="abc">Wecker und Erinnerungen</string>
+
 </resources>
