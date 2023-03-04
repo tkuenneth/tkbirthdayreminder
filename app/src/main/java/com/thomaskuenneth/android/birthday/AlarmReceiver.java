@@ -151,7 +151,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                     try {
                         nm.notify(i, n);
                     } catch (SecurityException e) {
-                        Toast.makeText(context, context.getString(R.string.missing_permission), Toast.LENGTH_SHORT).show();
+                        showToastMissingPermission(context);
                     }
                 }
             }
@@ -161,6 +161,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         };
         Thread t = new Thread(r);
         t.start();
+    }
+
+    public static void showToastMissingPermission(Context context) {
+        Toast.makeText(context, context.getString(R.string.missing_permission), Toast.LENGTH_SHORT).show();
     }
 
     public static void initChannels(Context context) {

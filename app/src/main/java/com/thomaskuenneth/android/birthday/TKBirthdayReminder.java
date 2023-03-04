@@ -168,6 +168,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
         if (canRun) {
             run();
         } else {
+            AlarmReceiver.showToastMissingPermission(this);
             finish();
         }
     }
