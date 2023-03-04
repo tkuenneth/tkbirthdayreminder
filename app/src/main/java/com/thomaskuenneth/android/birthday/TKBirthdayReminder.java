@@ -143,6 +143,12 @@ public class TKBirthdayReminder extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (list instanceof ArrayList) {
@@ -509,10 +515,15 @@ public class TKBirthdayReminder extends AppCompatActivity {
         return true;
     }
 
-    private void run() {
+    private boolean updateUI() {
         boolean hasRequiredPermissions = hasRequiredPermissions();
         checkNotificationVisibility(hasRequiredPermissions);
         checkExactAlarmVisibility(hasRequiredPermissions);
+        return hasRequiredPermissions;
+    }
+
+    private void run() {
+        boolean hasRequiredPermissions = updateUI();
         findViewById(R.id.main_list).setVisibility(hasRequiredPermissions ? View.VISIBLE : View.GONE);
         findViewById(R.id.permission_info).setVisibility(!hasRequiredPermissions ? View.VISIBLE : View.GONE);
         if (hasRequiredPermissions) {

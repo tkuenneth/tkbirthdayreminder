@@ -7,7 +7,7 @@ android {
         applicationId "com.thomaskuenneth.android.birthday"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 2020400
+        versionCode 2020401
         versionName "2.2.4"
     }
 
