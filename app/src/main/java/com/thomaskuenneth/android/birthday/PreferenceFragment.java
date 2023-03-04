@@ -41,9 +41,9 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
                     alarm_chooser.setVisible(false);
                 }
                 Preference p = new Preference(context);
-                p.setTitle(R.string.notification_channel_settings);
+                p.setTitle(R.string.notification_settings);
                 p.setKey("notification_channel_settings");
-                p.setIntent(createNotificationChannelSettingsIntent(requireContext()));
+                p.setIntent(createNotificationSettingsIntent(requireContext()));
                 getPreferenceScreen().addPreference(p);
             } else {
                 Preference p = new Preference(context);
@@ -83,10 +83,9 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static Intent createNotificationChannelSettingsIntent(Context context) {
-        Intent intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+    public static Intent createNotificationSettingsIntent(Context context) {
+        Intent intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
         intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.getPackageName());
-        intent.putExtra(Settings.EXTRA_CHANNEL_ID, Constants.CHANNEL_ID);
         return intent;
     }
 

@@ -11,6 +11,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.NotificationChannel;
@@ -31,6 +32,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -44,6 +46,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -77,6 +80,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
 
     private static final int APP_VERSION = BuildConfig.VERSION_CODE;
     private static final String HIDE_MESSAGE_KEY = "hideMessageAppVersion";
+    private static final String HIDE_MESSAGE_KEY_ALARMS = "hideMessageExactAlarms";
 
     private static final int DATE_DIALOG_ID = 3;
 
@@ -114,6 +118,9 @@ public class TKBirthdayReminder extends AppCompatActivity {
             Intent i = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
                     ContactsContract.Contacts.CONTENT_URI,
                     Long.toString(item.getId())));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                i.addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT | Intent.FLAG_ACTIVITY_NEW_TASK);
+            }
             startActivityForResult(i, RQ_SHOW_CONTACT);
         });
         if (savedInstanceState != null) {
@@ -136,6 +143,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         checkNotificationVisibility();
+        checkExactAlarmVisibility();
     }
 
     @Override
@@ -500,6 +508,13 @@ public class TKBirthdayReminder extends AppCompatActivity {
         return false;
     }
 
+    public static boolean shouldCheckAlarmSettings(AlarmManager am) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            return !am.canScheduleExactAlarms();
+        }
+        return false;
+    }
+
     private boolean hasPermission(String permission) {
         return checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
     }
@@ -650,11 +665,6 @@ public class TKBirthdayReminder extends AppCompatActivity {
         mainList.setAdapter(myListAdapter);
     }
 
-    /**
-     * Liest die Kontakte neu ein.
-     *
-     * @param forceRead Ignoriert evtl. bereits gelesene Kontakte
-     */
     protected void readContacts(final boolean forceRead) {
         final Handler h = new Handler(Looper.myLooper());
         Thread thread = new Thread(() -> {
@@ -694,36 +704,63 @@ public class TKBirthdayReminder extends AppCompatActivity {
 
     private void checkNotificationVisibility() {
         boolean visible = false;
+        ViewGroup root = findViewById(R.id.info_layout);
         if (shouldCheckNotificationVisibility() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            TextView info = findViewById(R.id.info);
-            String s = getString(R.string.check_notification_channel_settings);
-            String settings = getString(R.string.notification_channel_settings);
-            Spannable spannable = new SpannableString(s);
-            int pos = s.indexOf(settings);
-            if (pos >= 0) {
-                spannable.setSpan(new ClickableSpan() {
-                    @Override
-                    public void onClick(@NonNull View widget) {
-                        Intent i = PreferenceFragment.createNotificationChannelSettingsIntent(TKBirthdayReminder.this);
-                        startActivity(i);
-                    }
-                }, pos, pos + settings.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                info.setMovementMethod(LinkMovementMethod.getInstance());
-            }
-            info.setText(spannable);
-            Button b = findViewById(R.id.dismiss);
-            b.setOnClickListener(view -> {
-                SharedPreferences prefs = getSharedPreferences(this);
-                prefs.edit().putInt(HIDE_MESSAGE_KEY, APP_VERSION).apply();
-                findViewById(R.id.info_layout).setVisibility(View.GONE);
-            });
+            configureInfo(root,
+                    R.string.check_notification_settings,
+                    R.string.notification_settings,
+                    HIDE_MESSAGE_KEY,
+                    PreferenceFragment.createNotificationSettingsIntent(TKBirthdayReminder.this));
             visible = shouldCheckNotificationSettings(getSystemService(NotificationManager.class));
         }
-        findViewById(R.id.info_layout).setVisibility(visible ? View.VISIBLE : View.GONE);
+        root.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    private void checkExactAlarmVisibility() {
+        boolean visible = false;
+        ViewGroup root = findViewById(R.id.info_layout_alarms);
+        if (shouldCheckAlarmVisibility() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            configureInfo(root,
+                    R.string.exact_alarms_are_off,
+                    R.string.abc,
+                    HIDE_MESSAGE_KEY_ALARMS,
+                    new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM));
+            visible = shouldCheckAlarmSettings(getSystemService(AlarmManager.class));
+        }
+        root.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    private void configureInfo(ViewGroup root, int resIdMessage, int resIdLink, String prefsKey, Intent i) {
+        TextView info = root.findViewById(R.id.info);
+        String s = getString(resIdMessage);
+        String settings = getString(resIdLink);
+        Spannable spannable = new SpannableString(s);
+        int pos = s.indexOf(settings);
+        if (pos >= 0) {
+            spannable.setSpan(new ClickableSpan() {
+                @Override
+                public void onClick(@NonNull View widget) {
+                    startActivity(i);
+                }
+            }, pos, pos + settings.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            info.setMovementMethod(LinkMovementMethod.getInstance());
+        }
+        info.setText(spannable);
+        Button b = root.findViewById(R.id.dismiss);
+        b.setOnClickListener(view -> {
+            SharedPreferences prefs = getSharedPreferences(this);
+            prefs.edit().putInt(prefsKey, APP_VERSION).apply();
+            root.setVisibility(View.GONE);
+        });
     }
 
     private boolean shouldCheckNotificationVisibility() {
         int lastSavedVersion = getSharedPreferences(this).getInt(HIDE_MESSAGE_KEY, 0);
+        return lastSavedVersion < APP_VERSION;
+    }
+
+    private boolean shouldCheckAlarmVisibility() {
+        int lastSavedVersion = getSharedPreferences(this).getInt(HIDE_MESSAGE_KEY_ALARMS, 0);
         return lastSavedVersion < APP_VERSION;
     }
 }

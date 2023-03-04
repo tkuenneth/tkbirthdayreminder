@@ -12,6 +12,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -46,7 +47,7 @@ public class BootCompleteReceiver extends BroadcastReceiver {
             }
         }
         AlarmManager am = context.getSystemService(AlarmManager.class);
-        if (am != null) {
+        if ((am != null) && canScheduleExactAlarms(am)) {
             am.setExactAndAllowWhileIdle(AlarmManager.RTC, cal.getTimeInMillis(), sender);
             if (nextDay) {
                 Toast toast = Toast.makeText(context, Utils
@@ -56,5 +57,9 @@ public class BootCompleteReceiver extends BroadcastReceiver {
             }
         }
         TKBirthdayReminder.updateWidgets(context.getApplicationContext());
+    }
+
+    public static boolean canScheduleExactAlarms(AlarmManager am) {
+        return Build.VERSION.SDK_INT <= Build.VERSION_CODES.R || am.canScheduleExactAlarms();
     }
 }
