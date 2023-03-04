@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
+    <string name="access_contacts">To show upcoming birthdays, TKBirthdayReminder needs to access your contacts.</string>
     <string name="missing_permission">Missing permission</string>
+    <string name="request">Request</string>
 
     <string name="app_name">Birthdays</string>
     <string name="content_description_image">An image</string>

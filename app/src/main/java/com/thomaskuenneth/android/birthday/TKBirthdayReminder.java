@@ -106,6 +106,9 @@ public class TKBirthdayReminder extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        findViewById(R.id.requestPermissions).setOnClickListener((view) -> {
+            requestPermissions(PERMISSIONS, 0);
+        });
         mainList = findViewById(R.id.main_list);
         imageHeight = getImageHeight(getWindowManager());
         list = null;
@@ -140,13 +143,6 @@ public class TKBirthdayReminder extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        checkNotificationVisibility();
-        checkExactAlarmVisibility();
-    }
-
-    @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (list instanceof ArrayList) {
@@ -166,19 +162,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        boolean canRun = true;
-        for (int result : grantResults) {
-            if (result == PackageManager.PERMISSION_DENIED) {
-                canRun = false;
-                break;
-            }
-        }
-        if (canRun) {
-            run();
-        } else {
-            AlarmReceiver.showToastMissingPermission(this);
-            finish();
-        }
+        run();
     }
 
     @Override
@@ -318,6 +302,8 @@ public class TKBirthdayReminder extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+        menu.findItem(R.id.set_date).setVisible(hasRequiredPermissions());
+        menu.findItem(R.id.new_entry).setVisible(hasRequiredPermissions());
         return true;
     }
 
@@ -515,23 +501,25 @@ public class TKBirthdayReminder extends AppCompatActivity {
         return false;
     }
 
-    private boolean hasPermission(String permission) {
-        return checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
+    private boolean hasRequiredPermissions() {
+        for (String permission : PERMISSIONS) {
+            if (checkSelfPermission(permission) == PackageManager.PERMISSION_DENIED)
+                return false;
+        }
+        return true;
     }
 
     private void run() {
-        boolean canRun = true;
-        for (String p : PERMISSIONS) {
-            if (!hasPermission(p)) {
-                requestPermissions(PERMISSIONS, 0);
-                canRun = false;
-                break;
-            }
-        }
-        if (canRun) {
+        boolean hasRequiredPermissions = hasRequiredPermissions();
+        checkNotificationVisibility(hasRequiredPermissions);
+        checkExactAlarmVisibility(hasRequiredPermissions);
+        findViewById(R.id.main_list).setVisibility(hasRequiredPermissions ? View.VISIBLE : View.GONE);
+        findViewById(R.id.permission_info).setVisibility(!hasRequiredPermissions ? View.VISIBLE : View.GONE);
+        if (hasRequiredPermissions) {
             BootCompleteReceiver.startAlarm(this, true);
             readContacts(false);
         }
+        invalidateOptionsMenu();
     }
 
     private void updateViewsFromEvent() {
@@ -702,10 +690,10 @@ public class TKBirthdayReminder extends AppCompatActivity {
         showDialog(DATE_DIALOG_ID);
     }
 
-    private void checkNotificationVisibility() {
+    private void checkNotificationVisibility(boolean hasRequiredPermissions) {
         boolean visible = false;
         ViewGroup root = findViewById(R.id.info_layout);
-        if (shouldCheckNotificationVisibility() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (hasRequiredPermissions && shouldCheckNotificationVisibility() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             configureInfo(root,
                     R.string.check_notification_settings,
                     R.string.notification_settings,
@@ -716,10 +704,10 @@ public class TKBirthdayReminder extends AppCompatActivity {
         root.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
-    private void checkExactAlarmVisibility() {
+    private void checkExactAlarmVisibility(boolean hasRequiredPermissions) {
         boolean visible = false;
         ViewGroup root = findViewById(R.id.info_layout_alarms);
-        if (shouldCheckAlarmVisibility() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (hasRequiredPermissions && shouldCheckAlarmVisibility() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             configureInfo(root,
                     R.string.exact_alarms_are_off,
                     R.string.abc,

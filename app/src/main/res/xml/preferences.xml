@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!--
-	preferences.xml
-	TKBirthdayReminder (c) Thomas Künneth 2010 - 2020
-	Alle Rechte beim Autoren. All rights reserved.
--->
-
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/display_options">

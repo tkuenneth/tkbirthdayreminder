@@ -16,11 +16,42 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/info_layout" />
 
-    <ListView
-        android:id="@+id/main_list"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/info_layout_alarms"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true">
+
+        <ListView
+            android:id="@+id/main_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <RelativeLayout
+            android:id="@+id/permission_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="32dp">
+
+            <TextView
+                android:id="@+id/access_contacts"
+                style="@style/TextAppearance.AppCompat.Large"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/access_contacts" />
+
+            <Button
+                android:id="@+id/requestPermissions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/access_contacts"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:text="@string/request" />
+
+        </RelativeLayout>
+
+    </FrameLayout>
 
 </RelativeLayout>
