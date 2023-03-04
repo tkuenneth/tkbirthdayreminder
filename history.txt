@@ -1,3 +1,6 @@
+2.2.4
+- Nicer permission handling
+
 2.2.2
 - Code clean-up
 
