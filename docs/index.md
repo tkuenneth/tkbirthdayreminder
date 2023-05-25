@@ -7,6 +7,7 @@ layout: home
 <td valign="top" style="width: 40%; border: none">
 <!-- <img style="" src="assets/screenshots.gif" /> -->
 </td>
+<td valign="top" style="border: none">
 <p><strong>TKBirthdayReminder</strong> is a birthday list. The app includes a widget for the Android home screen. Once a day you receive notifications about upcoming birthdays. The birthday dates are stored in your Google Contacts. So, this app works ONLY with Google Contacts. You need to enable syncing with Google Contacts, too. Please note: Facebook birthdays are not supported.</p>
 
 <p>Set the time when you wish to be reminded. Depending on the Android version the actual time may differ from what you configured. The app reminds you on the day of a birthday. Additionally you can choose more days to be reminded in advance. Depending on the Android version you can choose which sound is played to remind you.</p>
