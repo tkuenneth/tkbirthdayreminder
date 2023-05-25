@@ -1,0 +1,7 @@
+theme: minima
+title: TKBirthdayReminder
+description: A birthday list for Android
+email: thomas@thomaskuenneth.eu
+author: Thomas Künneth
+header_pages:
+  - privacy.md
