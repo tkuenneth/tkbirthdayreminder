@@ -22,7 +22,7 @@ layout: home
 </ul>
 Download now!
 <br />
-<a href='https://play.google.com/store/apps/details?id=com.thomaskuenneth.android.birthday&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' width="40%"/></a>
+<a href='https://play.google.com/store/apps/details?id=com.thomaskuenneth.android.birthday&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img width='40%' alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/></a>
 </td>
 </tr>
 </table>
