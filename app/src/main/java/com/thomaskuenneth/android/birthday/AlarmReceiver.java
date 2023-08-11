@@ -6,6 +6,8 @@
  */
 package com.thomaskuenneth.android.birthday;
 
+import static com.thomaskuenneth.android.birthday.Utils.loadBitmap;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -83,7 +85,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                         b.builder.setGroup(Constants.TKBIRTHDAYREMINDER);
                     }
                     Date birthday = event.getBirthday();
-                    Bitmap picture = (wm != null) ? BirthdayItemListAdapter.loadBitmap(event,
+                    Bitmap picture = (wm != null) ? loadBitmap(event,
                             context, TKBirthdayReminder.getImageHeight(wm)) : null;
                     b.setContentTitle(event.getName())
                             .setLargeIcon(picture)

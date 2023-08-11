@@ -1,7 +1,7 @@
 /*
  * TKBirthdayReminder.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2022
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2023
  * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -52,12 +52,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -66,6 +67,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class TKBirthdayReminder extends AppCompatActivity {
 
@@ -93,7 +95,8 @@ public class TKBirthdayReminder extends AppCompatActivity {
     private static final int MENU_DIAL = R.string.menu_dial;
     private static final int MENU_SEND_SMS = R.string.menu_send_sms;
 
-    private ListView mainList;
+    private RecyclerView birthdaysList;
+    private BirthdayItemListAdapter birthdaysListAdapter;
     private EditText newEventYear;
     private Spinner newEventSpinnerDay, newEventSpinnerMonth;
     private Calendar newEventCal;
@@ -110,24 +113,13 @@ public class TKBirthdayReminder extends AppCompatActivity {
         findViewById(R.id.requestPermissions).setOnClickListener((view) -> {
             requestPermissions(PERMISSIONS, 0);
         });
-        mainList = findViewById(R.id.main_list);
         imageHeight = getImageHeight(getWindowManager());
         list = null;
         longClickedItem = null;
         newEventEvent = null;
-        mainList.setDivider(null);
-        mainList.setOnCreateContextMenuListener(this);
-        mainList.setOnItemClickListener((parent, view, position, id) -> {
-            BirthdayItem item = (BirthdayItem) mainList.getAdapter().getItem(
-                    position);
-            Intent i = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
-                    ContactsContract.Contacts.CONTENT_URI,
-                    Long.toString(item.getId())));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                i.addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT | Intent.FLAG_ACTIVITY_NEW_TASK);
-            }
-            startActivityForResult(i, RQ_SHOW_CONTACT);
-        });
+        birthdaysList = (RecyclerView) findViewById(R.id.birthdaysList);
+        birthdaysList.setLayoutManager(new LinearLayoutManager(this));
+        registerForContextMenu(birthdaysList);
         if (savedInstanceState != null) {
             newEventEvent = savedInstanceState.getParcelable(NEW_EVENT_EVENT);
             list = savedInstanceState.getParcelableArrayList(STATE_KEY);
@@ -205,9 +197,8 @@ public class TKBirthdayReminder extends AppCompatActivity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
-        AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        BirthdayItem item = (BirthdayItem) mainList.getAdapter()
-                .getItem(mi.position);
+        BirthdayItem item = birthdaysListAdapter.getLastLongClicked();
+        if (item == null) return;
         menu.setHeaderTitle(item.getName());
         if (item.getBirthday() != null) {
             menu.add(Menu.NONE, MENU_CHANGE_DATE, Menu.NONE,
@@ -229,7 +220,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        longClickedItem = (BirthdayItem) mainList.getAdapter().getItem(mi.position);
+        longClickedItem = birthdaysListAdapter.getItem(mi.position);
         switch (item.getItemId()) {
             case MENU_CHANGE_DATE:
                 showEditBirthdayDialog(longClickedItem);
@@ -489,15 +480,13 @@ public class TKBirthdayReminder extends AppCompatActivity {
     }
 
     public static boolean shouldCheckNotificationSettings(NotificationManager nm) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            if (!nm.areNotificationsEnabled())
-                return true;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                List<NotificationChannel> channels = nm.getNotificationChannels();
-                for (NotificationChannel channel : channels) {
-                    if (channel.getImportance() <= NotificationManager.IMPORTANCE_LOW) {
-                        return true;
-                    }
+        if (!nm.areNotificationsEnabled())
+            return true;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            List<NotificationChannel> channels = nm.getNotificationChannels();
+            for (NotificationChannel channel : channels) {
+                if (channel.getImportance() <= NotificationManager.IMPORTANCE_LOW) {
+                    return true;
                 }
             }
         }
@@ -528,7 +517,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
 
     private void run() {
         boolean hasRequiredPermissions = updateUI();
-        findViewById(R.id.main_list).setVisibility(hasRequiredPermissions ? View.VISIBLE : View.GONE);
+        findViewById(R.id.birthdaysList).setVisibility(hasRequiredPermissions ? View.VISIBLE : View.GONE);
         findViewById(R.id.permission_info).setVisibility(!hasRequiredPermissions ? View.VISIBLE : View.GONE);
         if (hasRequiredPermissions) {
             BootCompleteReceiver.startAlarm(this, true);
@@ -663,13 +652,23 @@ public class TKBirthdayReminder extends AppCompatActivity {
 
     private void setList(List<BirthdayItem> list) {
         this.list = list;
-        BirthdayItemListAdapter myListAdapter = new BirthdayItemListAdapter(
-                this, list, imageHeight);
-        mainList.setAdapter(myListAdapter);
+        birthdaysListAdapter = new BirthdayItemListAdapter(
+                this,
+                list,
+                imageHeight,
+                item -> {
+                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
+                            ContactsContract.Contacts.CONTENT_URI,
+                            Long.toString(item.getId())));
+                    i.addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivityForResult(i, RQ_SHOW_CONTACT);
+                }
+        );
+        birthdaysList.setAdapter(birthdaysListAdapter);
     }
 
     protected void readContacts(final boolean forceRead) {
-        final Handler h = new Handler(Looper.myLooper());
+        final Handler h = new Handler(Objects.requireNonNull(Looper.myLooper()));
         Thread thread = new Thread(() -> {
             Looper.prepare();
             if ((list == null) || forceRead) {

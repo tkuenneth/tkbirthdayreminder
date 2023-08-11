@@ -1,10 +1,12 @@
 /*
  * BirthdayWidget.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2010 - 2022
+ * TKBirthdayReminder (c) Thomas Künneth 2010 - 2023
  * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
+
+import static com.thomaskuenneth.android.birthday.Utils.loadBitmap;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -91,7 +93,7 @@ public class BirthdayWidget extends AppWidgetProvider {
                     WindowManager wm = context
                             .getSystemService(WindowManager.class);
                     if (wm != null) {
-                        Bitmap picture = BirthdayItemListAdapter.loadBitmap(item,
+                        Bitmap picture = loadBitmap(item,
                                 context, TKBirthdayReminder.getImageHeight(wm));
                         updateViews.setImageViewBitmap(R.id.icon, picture);
                     }

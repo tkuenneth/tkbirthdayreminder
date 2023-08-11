@@ -1,16 +1,25 @@
 /*
  * Utils.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2022
- *
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2023
  * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.provider.ContactsContract;
 import android.util.Log;
 
+import androidx.core.content.ContextCompat;
+
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -25,14 +34,11 @@ class Utils {
 
     static final int INVISIBLE_YEAR = 9996;
 
-    static final SimpleDateFormat FORMAT_YYYYMMDD = new SimpleDateFormat(
-            "yyyyMMdd", Locale.US);
+    static final SimpleDateFormat FORMAT_YYYYMMDD = new SimpleDateFormat("yyyyMMdd", Locale.US);
 
-    private static final DateFormat FORMAT_SHORT_DATE = SimpleDateFormat
-            .getDateInstance(DateFormat.SHORT);
+    private static final DateFormat FORMAT_SHORT_DATE = SimpleDateFormat.getDateInstance(DateFormat.SHORT);
 
-    private static final DateFormat FORMAT_SHORT_TIME = SimpleDateFormat
-            .getTimeInstance(DateFormat.SHORT);
+    private static final DateFormat FORMAT_SHORT_TIME = SimpleDateFormat.getTimeInstance(DateFormat.SHORT);
 
     static String getDateAsStringYYYY_MM_DD(Date date) {
         StringBuilder sb = new StringBuilder();
@@ -45,59 +51,44 @@ class Utils {
             } else {
                 sb.append(String.format(Locale.getDefault(), "%04d", year));
             }
-            sb.append(String.format(Locale.getDefault(), "-%02d-%02d", 1 + cal.get(Calendar.MONTH),
-                    cal.get(Calendar.DAY_OF_MONTH)));
+            sb.append(String.format(Locale.getDefault(), "-%02d-%02d", 1 + cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)));
         }
         return sb.toString();
     }
 
     static String getNotificationDateAsString(Context context, Date date) {
-        return TKBirthdayReminder.getStringFromResources(context,
-                R.string.next_notification, FORMAT_SHORT_DATE.format(date),
-                FORMAT_SHORT_TIME.format(date));
+        return TKBirthdayReminder.getStringFromResources(context, R.string.next_notification, FORMAT_SHORT_DATE.format(date), FORMAT_SHORT_TIME.format(date));
     }
 
     static String getBirthdayAsString(Context context, Date birthday) {
-        final SimpleDateFormat formatWeekday = new SimpleDateFormat(
-                "EEE", Locale.getDefault());
+        final SimpleDateFormat formatWeekday = new SimpleDateFormat("EEE", Locale.getDefault());
         if (birthday == null) {
-            return TKBirthdayReminder.getStringFromResources(context,
-                    R.string.no_birthday_set);
+            return TKBirthdayReminder.getStringFromResources(context, R.string.no_birthday_set);
         }
         Date buffer = new Date();
         int days = getBirthdayInDays(birthday, buffer);
         String when;
         if (days == 0) {
-            when = TKBirthdayReminder.getStringFromResources(context,
-                    R.string.today);
+            when = TKBirthdayReminder.getStringFromResources(context, R.string.today);
         } else if (days == 1) {
-            when = TKBirthdayReminder.getStringFromResources(context,
-                    R.string.tomorrow);
+            when = TKBirthdayReminder.getStringFromResources(context, R.string.tomorrow);
         } else if (days == -1) {
-            when = TKBirthdayReminder.getStringFromResources(context,
-                    R.string.yesterday);
+            when = TKBirthdayReminder.getStringFromResources(context, R.string.yesterday);
         } else if (days > 1) {
-            when = TKBirthdayReminder.getStringFromResources(context,
-                    R.string.in_n_days, days);
+            when = TKBirthdayReminder.getStringFromResources(context, R.string.in_n_days, days);
         } else {
-            when = TKBirthdayReminder.getStringFromResources(context,
-                    R.string.n_days_ago, -days);
+            when = TKBirthdayReminder.getStringFromResources(context, R.string.n_days_ago, -days);
         }
         int age = getAge(birthday);
         if (age < 0) {
-            return TKBirthdayReminder.getStringFromResources(context,
-                    R.string.birthday_no_year, when,
-                    formatWeekday.format(buffer));
+            return TKBirthdayReminder.getStringFromResources(context, R.string.birthday_no_year, when, formatWeekday.format(buffer));
         } else {
-            int resId = (days < 0) ? R.string.past
-                    : R.string.present_and_future;
-            return TKBirthdayReminder.getStringFromResources(context, resId,
-                    age, when, formatWeekday.format(buffer));
+            int resId = (days < 0) ? R.string.past : R.string.present_and_future;
+            return TKBirthdayReminder.getStringFromResources(context, resId, age, when, formatWeekday.format(buffer));
         }
     }
 
-    static String getBirthdayDateAsString(DateFormat format,
-                                          BirthdayItem item) {
+    static String getBirthdayDateAsString(DateFormat format, BirthdayItem item) {
         StringBuilder sb = new StringBuilder();
         Date birthday = item.getBirthday();
         if (birthday != null) {
@@ -138,9 +129,7 @@ class Utils {
     static String removeBirthdayFromString(String string) {
         StringBuilder sb = new StringBuilder();
         if (string != null) {
-            Pattern p = Pattern.compile(
-                    "(.*)Birthday=\\d\\d\\d\\d\\d\\d\\d\\d(.*)$",
-                    Pattern.DOTALL);
+            Pattern p = Pattern.compile("(.*)Birthday=\\d\\d\\d\\d\\d\\d\\d\\d(.*)$", Pattern.DOTALL);
             Matcher m = p.matcher(string.subSequence(0, string.length()));
             if (m.matches()) {
                 String group1 = trim(m.group(1));
@@ -160,8 +149,7 @@ class Utils {
     static Date getDateFromString(String string) {
         Date result = null;
         if (string != null) {
-            Pattern p = Pattern.compile(
-                    ".*Birthday=(\\d\\d\\d\\d\\d\\d\\d\\d).*$", Pattern.DOTALL);
+            Pattern p = Pattern.compile(".*Birthday=(\\d\\d\\d\\d\\d\\d\\d\\d).*$", Pattern.DOTALL);
             Matcher m = p.matcher(string.subSequence(0, string.length()));
             if (m.matches()) {
                 String date = m.group(1);
@@ -180,8 +168,7 @@ class Utils {
     static Date getDateFromString1(String string) {
         Date result = null;
         if (string != null) {
-            Pattern p = Pattern.compile("(\\d\\d\\d\\d).*(\\d\\d).*(\\d\\d)",
-                    Pattern.DOTALL);
+            Pattern p = Pattern.compile("(\\d\\d\\d\\d).*(\\d\\d).*(\\d\\d)", Pattern.DOTALL);
             Matcher m = p.matcher(string.subSequence(0, string.length()));
             if (m.matches()) {
                 String date = m.group(1) + m.group(2) + m.group(3);
@@ -198,13 +185,11 @@ class Utils {
                     try {
                         String group1 = m.group(1);
                         if (group1 != null) {
-                            cal.set(Calendar.MONTH,
-                                    Integer.parseInt(group1) - 1);
+                            cal.set(Calendar.MONTH, Integer.parseInt(group1) - 1);
                         }
                         String group2 = m.group(2);
                         if (group2 != null) {
-                            cal.set(Calendar.DAY_OF_MONTH,
-                                    Integer.parseInt(group2));
+                            cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(group2));
                         }
                         cal.set(Calendar.YEAR, INVISIBLE_YEAR);
                         result = cal.getTime();
@@ -242,5 +227,49 @@ class Utils {
         if (Log.isLoggable(tag, Log.ERROR)) {
             Log.e(tag, msg, tr);
         }
+    }
+
+    public static Bitmap loadBitmap(BirthdayItem item, Context context, int size) {
+        Bitmap picture = item.getPicture();
+        if ((picture != null) && (picture.isRecycled())) {
+            picture = null;
+        }
+        if (picture == null) {
+            Uri uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, item.getId());
+            try (InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(context.getContentResolver(), uri)) {
+                if (input != null) {
+                    picture = BitmapFactory.decodeStream(input);
+                } else {
+                    Drawable d = ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground);
+                    if (d != null) {
+                        picture = getBitmap(d);
+                    }
+                }
+                if (picture != null) {
+                    if (picture.getHeight() != size) {
+                        Bitmap temp = picture;
+                        float w = (float) picture.getWidth();
+                        float h = (float) picture.getHeight();
+                        int h2 = (int) (((h / w)) * size);
+                        picture = Bitmap.createScaledBitmap(temp, size, h2, false);
+                        if (temp != picture) {
+                            temp.recycle();
+                        }
+                    }
+                    item.setPicture(picture);
+                }
+            } catch (Throwable tr) {
+                Utils.logError(TAG, "loadBitmap()", tr);
+            }
+        }
+        return picture;
+    }
+
+    private static Bitmap getBitmap(Drawable vectorDrawable) {
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.draw(canvas);
+        return bitmap;
     }
 }

@@ -33,11 +33,11 @@
                 android:layout_below="@id/info_layout_alarms"
                 android:layout_alignParentBottom="true">
 
-                <ListView
-                    android:id="@+id/main_list"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/birthdaysList"
+                    android:nestedScrollingEnabled="true"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:nestedScrollingEnabled="true" />
+                    android:layout_height="match_parent" />
 
                 <RelativeLayout
                     android:id="@+id/permission_info"
