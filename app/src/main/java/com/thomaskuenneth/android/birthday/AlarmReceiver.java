@@ -1,7 +1,7 @@
 /*
  * AlarmReceiver.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2022
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2023
  * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;

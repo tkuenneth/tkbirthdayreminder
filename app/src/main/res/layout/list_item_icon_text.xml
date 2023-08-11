@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!--
-	list_item_icon_text.xml
-	TKBirthdayReminder (c) Thomas Künneth 2017 - 2021
-	Alle Rechte beim Autoren. All rights reserved.
--->
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/toplevel"
     android:layout_width="match_parent"

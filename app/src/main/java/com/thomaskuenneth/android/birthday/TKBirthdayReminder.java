@@ -106,6 +106,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        setSupportActionBar(findViewById(R.id.actionBar));
         findViewById(R.id.requestPermissions).setOnClickListener((view) -> {
             requestPermissions(PERMISSIONS, 0);
         });

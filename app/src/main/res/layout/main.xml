@@ -1,57 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/info_layout"
-        layout="@layout/message_with_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <include
-        android:id="@+id/info_layout_alarms"
-        layout="@layout/message_with_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/info_layout" />
-
-    <FrameLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/info_layout_alarms"
-        android:layout_alignParentBottom="true">
-
-        <ListView
-            android:id="@+id/main_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <RelativeLayout
-            android:id="@+id/permission_info"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="32dp">
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/access_contacts"
-                style="@style/TextAppearance.AppCompat.Large"
+            <include
+                android:id="@+id/info_layout"
+                layout="@layout/message_with_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <include
+                android:id="@+id/info_layout_alarms"
+                layout="@layout/message_with_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/access_contacts" />
+                android:layout_below="@id/info_layout" />
 
-            <Button
-                android:id="@+id/requestPermissions"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/access_contacts"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="16dp"
-                android:text="@string/request" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/info_layout_alarms"
+                android:layout_alignParentBottom="true">
+
+                <ListView
+                    android:id="@+id/main_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:nestedScrollingEnabled="true" />
+
+                <RelativeLayout
+                    android:id="@+id/permission_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="32dp">
+
+                    <TextView
+                        android:id="@+id/access_contacts"
+                        style="@style/TextAppearance.Material3.BodyLarge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hyphenationFrequency="full"
+                        android:text="@string/access_contacts" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/requestPermissions"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/access_contacts"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/request" />
+
+                </RelativeLayout>
+
+            </FrameLayout>
 
         </RelativeLayout>
 
-    </FrameLayout>
+    </androidx.core.widget.NestedScrollView>
 
-</RelativeLayout>
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/actionBar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
