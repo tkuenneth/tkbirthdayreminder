@@ -47,7 +47,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -358,19 +357,21 @@ public class TKBirthdayReminder extends AppCompatActivity {
     }
 
     public static int getImageHeight(Context context) {
-        WindowManager wm = context.getSystemService(WindowManager.class);
-        DisplayMetrics outMetrics = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(outMetrics);
-        if (outMetrics.densityDpi <= DisplayMetrics.DENSITY_LOW) {
-            return 32;
-        } else if (outMetrics.densityDpi <= DisplayMetrics.DENSITY_MEDIUM) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        if (metrics.densityDpi <= DisplayMetrics.DENSITY_LOW) {
+            return 36;
+        } else if (metrics.densityDpi <= DisplayMetrics.DENSITY_MEDIUM) {
             return 48;
-        } else if (outMetrics.densityDpi <= DisplayMetrics.DENSITY_HIGH) {
+        } else if (metrics.densityDpi <= DisplayMetrics.DENSITY_HIGH) {
+            return 72;
+        } else if (metrics.densityDpi <= DisplayMetrics.DENSITY_XHIGH) {
             return 96;
-        } else if (outMetrics.densityDpi <= DisplayMetrics.DENSITY_XHIGH) {
-            return 128;
-        } else {
+        } else if (metrics.densityDpi <= DisplayMetrics.DENSITY_XXHIGH) {
             return 144;
+        } else if (metrics.densityDpi <= DisplayMetrics.DENSITY_XXXHIGH) {
+            return 192;
+        } else {
+            return 256;
         }
     }
 
