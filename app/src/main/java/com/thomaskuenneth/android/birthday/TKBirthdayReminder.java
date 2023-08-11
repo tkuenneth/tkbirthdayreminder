@@ -57,8 +57,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.window.core.layout.WindowSizeClass;
+import androidx.window.core.layout.WindowWidthSizeClass;
+import androidx.window.layout.WindowMetrics;
+import androidx.window.layout.WindowMetricsCalculator;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -104,11 +109,19 @@ public class TKBirthdayReminder extends AppCompatActivity {
     private BirthdayItem longClickedItem;
     private List<BirthdayItem> list;
     private int imageHeight;
+    private boolean showList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        WindowMetrics windowMetrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(this);
+        float widthInDp = windowMetrics.getBounds().width() / (float) metrics.density;
+        float heightInDp = windowMetrics.getBounds().height() / (float) metrics.density;
+        WindowSizeClass windowSizeClass = WindowSizeClass.compute(widthInDp, heightInDp);
+
         setSupportActionBar(findViewById(R.id.actionBar));
         findViewById(R.id.requestPermissions).setOnClickListener((view) -> {
             requestPermissions(PERMISSIONS, 0);
@@ -117,9 +130,18 @@ public class TKBirthdayReminder extends AppCompatActivity {
         list = null;
         longClickedItem = null;
         newEventEvent = null;
+
         birthdaysList = (RecyclerView) findViewById(R.id.birthdaysList);
-        birthdaysList.setLayoutManager(new LinearLayoutManager(this));
         registerForContextMenu(birthdaysList);
+        if (windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.COMPACT)) {
+            showList = true;
+            birthdaysList.setLayoutManager(new LinearLayoutManager(this));
+        } else {
+            showList = false;
+            birthdaysList.setLayoutManager(new GridLayoutManager(this,
+                  2 /* windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.MEDIUM) ? 2 : 3 */));
+        }
+
         if (savedInstanceState != null) {
             newEventEvent = savedInstanceState.getParcelable(NEW_EVENT_EVENT);
             list = savedInstanceState.getParcelableArrayList(STATE_KEY);
@@ -655,6 +677,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
         birthdaysListAdapter = new BirthdayItemListAdapter(
                 this,
                 list,
+                showList,
                 imageHeight,
                 item -> {
                     Intent i = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(

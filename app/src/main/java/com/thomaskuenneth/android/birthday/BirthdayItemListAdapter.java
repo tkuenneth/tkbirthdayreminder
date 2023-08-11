@@ -36,10 +36,12 @@ public class BirthdayItemListAdapter extends RecyclerView.Adapter<BirthdayItemVi
     private final DateFormat format;
     private final Consumer<BirthdayItem> itemClicked;
     private BirthdayItem lastLongClicked;
+    private final boolean showList;
 
     public BirthdayItemListAdapter(
             Context context,
             List<BirthdayItem> list,
+            boolean showList,
             int height,
             Consumer<BirthdayItem> itemClicked
     ) {
@@ -51,6 +53,7 @@ public class BirthdayItemListAdapter extends RecyclerView.Adapter<BirthdayItemVi
                 context.getString(R.string.month_and_day), Locale.getDefault());
         this.itemClicked = itemClicked;
         this.lastLongClicked = null;
+        this.showList = showList;
 
         SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(context);
@@ -61,7 +64,7 @@ public class BirthdayItemListAdapter extends RecyclerView.Adapter<BirthdayItemVi
     @NonNull
     @Override
     public BirthdayItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.list_item_icon_text, parent, false);
+        View view = mInflater.inflate(showList ? R.layout.list_item_icon_text : R.layout.card, parent, false);
         return new BirthdayItemViewHolder(view);
     }
 
