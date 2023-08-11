@@ -1,14 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.thomaskuenneth.android.birthday"
-        minSdkVersion 23
-        targetSdkVersion 33
-        versionCode 2020401
-        versionName "2.2.4"
+        minSdk 23
+        //noinspection EditedTargetSdkVersion
+        targetSdk 34
+        versionCode 2020501
+        versionName "2.2.5"
     }
 
     buildTypes {
@@ -20,7 +21,9 @@ android {
 
     dependencies {
         implementation 'androidx.appcompat:appcompat:1.6.1'
-        implementation 'androidx.preference:preference:1.2.0'
+        implementation 'androidx.preference:preference:1.2.1'
+        implementation "com.google.android.material:material:1.9.0"
     }
+
     namespace 'com.thomaskuenneth.android.birthday'
 }
