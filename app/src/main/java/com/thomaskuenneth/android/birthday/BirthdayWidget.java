@@ -20,7 +20,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.RemoteViews;
 
 import java.text.DateFormat;
@@ -90,13 +89,12 @@ public class BirthdayWidget extends AppWidgetProvider {
                         zodiac = Zodiac.getSign(context, birthday);
                     }
 
-                    WindowManager wm = context
-                            .getSystemService(WindowManager.class);
-                    if (wm != null) {
-                        Bitmap picture = loadBitmap(item,
-                                context, TKBirthdayReminder.getImageHeight(wm));
-                        updateViews.setImageViewBitmap(R.id.icon, picture);
-                    }
+                    Bitmap picture = loadBitmap(
+                            item,
+                            context,
+                            TKBirthdayReminder.getImageHeight(context)
+                    );
+                    updateViews.setImageViewBitmap(R.id.icon, picture);
                 }
                 int opacity = WidgetPreferenceFragment.getOpacity(context);
                 int color = 0x000000;

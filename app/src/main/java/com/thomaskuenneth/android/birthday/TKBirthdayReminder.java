@@ -126,7 +126,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
         findViewById(R.id.requestPermissions).setOnClickListener((view) -> {
             requestPermissions(PERMISSIONS, 0);
         });
-        imageHeight = getImageHeight(getWindowManager());
+        imageHeight = getImageHeight(this);
         list = null;
         longClickedItem = null;
         newEventEvent = null;
@@ -139,7 +139,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
         } else {
             showList = false;
             birthdaysList.setLayoutManager(new GridLayoutManager(this,
-                  2 /* windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.MEDIUM) ? 2 : 3 */));
+                    2 /* windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.MEDIUM) ? 2 : 3 */));
         }
 
         if (savedInstanceState != null) {
@@ -357,7 +357,8 @@ public class TKBirthdayReminder extends AppCompatActivity {
                 Constants.TKBIRTHDAYREMINDER, Context.MODE_PRIVATE);
     }
 
-    public static int getImageHeight(WindowManager wm) {
+    public static int getImageHeight(Context context) {
+        WindowManager wm = context.getSystemService(WindowManager.class);
         DisplayMetrics outMetrics = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(outMetrics);
         if (outMetrics.densityDpi <= DisplayMetrics.DENSITY_LOW) {

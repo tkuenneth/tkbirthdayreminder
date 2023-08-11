@@ -25,7 +25,6 @@ import android.provider.ContactsContract;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
@@ -68,7 +67,6 @@ public class AlarmReceiver extends BroadcastReceiver {
             }
             if (visible > 0) {
                 StringBuilder sbNames = new StringBuilder();
-                WindowManager wm = context.getSystemService(WindowManager.class);
                 List<MyBuilder> builders = new ArrayList<>();
                 long when = System.currentTimeMillis();
                 int numNames = 0;
@@ -85,8 +83,11 @@ public class AlarmReceiver extends BroadcastReceiver {
                         b.builder.setGroup(Constants.TKBIRTHDAYREMINDER);
                     }
                     Date birthday = event.getBirthday();
-                    Bitmap picture = (wm != null) ? loadBitmap(event,
-                            context, TKBirthdayReminder.getImageHeight(wm)) : null;
+                    Bitmap picture = loadBitmap(
+                            event,
+                            context,
+                            TKBirthdayReminder.getImageHeight(context)
+                    );
                     b.setContentTitle(event.getName())
                             .setLargeIcon(picture)
                             .setContentText(Utils.getBirthdayAsString(context, birthday));
