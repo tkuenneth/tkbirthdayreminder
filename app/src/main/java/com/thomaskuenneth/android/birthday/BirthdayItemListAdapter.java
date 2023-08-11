@@ -1,7 +1,7 @@
 /*
  * BirthdayItemListAdapter.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2022
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2023
  * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -26,7 +26,6 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -48,7 +47,7 @@ class BirthdayItemListAdapter extends BaseAdapter {
 
     BirthdayItemListAdapter(Context context, List<BirthdayItem> list,
                             int height) {
-        this.mInflater = LayoutInflater.from(context);
+        mInflater = LayoutInflater.from(context);
         this.items = list;
         this.context = context;
         this.height = height;
@@ -79,7 +78,6 @@ class BirthdayItemListAdapter extends BaseAdapter {
 
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.list_item_icon_text, null);
-            convertView.setPadding(0, 4, 0, 4);
 
             holder = new ViewHolder();
             holder.textName = convertView.findViewById(R.id.text1);
@@ -115,12 +113,10 @@ class BirthdayItemListAdapter extends BaseAdapter {
             picture = null;
         }
         if (picture == null) {
-            InputStream input = null;
-            try {
-                Uri uri = ContentUris.withAppendedId(
-                        ContactsContract.Contacts.CONTENT_URI, item.getId());
-                input = ContactsContract.Contacts.openContactPhotoInputStream(
-                        context.getContentResolver(), uri);
+            Uri uri = ContentUris.withAppendedId(
+                    ContactsContract.Contacts.CONTENT_URI, item.getId());
+            try (InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(
+                    context.getContentResolver(), uri)) {
                 if (input != null) {
                     picture = BitmapFactory.decodeStream(input);
                 } else {
@@ -145,14 +141,6 @@ class BirthdayItemListAdapter extends BaseAdapter {
                 }
             } catch (Throwable tr) {
                 Utils.logError(TAG, "loadBitmap()", tr);
-            } finally {
-                if (input != null) {
-                    try {
-                        input.close();
-                    } catch (IOException e) {
-                        Utils.logError(TAG, "loadBitmap()", e);
-                    }
-                }
             }
         }
         return picture;

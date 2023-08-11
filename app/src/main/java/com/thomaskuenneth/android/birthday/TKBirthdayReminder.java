@@ -115,6 +115,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
         list = null;
         longClickedItem = null;
         newEventEvent = null;
+        mainList.setDivider(null);
         mainList.setOnCreateContextMenuListener(this);
         mainList.setOnItemClickListener((parent, view, position, id) -> {
             BirthdayItem item = (BirthdayItem) mainList.getAdapter().getItem(
@@ -181,14 +182,16 @@ public class TKBirthdayReminder extends AppCompatActivity {
             case (RQ_PICK_CONTACT):
                 if (resultCode == Activity.RESULT_OK) {
                     Uri contactData = data.getData();
-                    Cursor c = getContentResolver().query(contactData, null, null, null, null);
-                    if (c != null) {
-                        if (c.moveToFirst()) {
-                            longClickedItem = ContactsList.createItemFromCursor(
-                                    getContentResolver(), c);
-                            showEditBirthdayDialog(longClickedItem);
+                    if (contactData != null) {
+                        Cursor c = getContentResolver().query(contactData, null, null, null, null);
+                        if (c != null) {
+                            if (c.moveToFirst()) {
+                                longClickedItem = ContactsList.createItemFromCursor(
+                                        getContentResolver(), c);
+                                showEditBirthdayDialog(longClickedItem);
+                            }
+                            Utils.closeCursorCatchThrowable(c);
                         }
-                        Utils.closeCursorCatchThrowable(c);
                     }
                 }
                 break;
