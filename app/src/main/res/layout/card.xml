@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:cardView="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/toplevel"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
@@ -24,40 +23,44 @@
 
         <TextView
             android:id="@+id/text1"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:paddingVertical="16dp"
             android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+            cardView:layout_constraintEnd_toEndOf="parent"
             cardView:layout_constraintStart_toEndOf="@id/icon"
             cardView:layout_constraintTop_toTopOf="@id/icon" />
 
         <TextView
             android:id="@+id/text3"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            cardView:layout_constraintEnd_toEndOf="@id/text1"
             cardView:layout_constraintStart_toStartOf="@id/text1"
             cardView:layout_constraintTop_toBottomOf="@id/text1" />
 
         <TextView
             android:id="@+id/text4"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            cardView:layout_constraintEnd_toEndOf="@id/text1"
             cardView:layout_constraintStart_toStartOf="@id/text1"
             cardView:layout_constraintTop_toBottomOf="@id/text3" />
 
         <TextView
             android:id="@+id/text2"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingVertical="16dp"
             android:paddingStart="0dp"
             android:paddingEnd="32dp"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            cardView:layout_constraintEnd_toEndOf="@id/text1"
             cardView:layout_constraintStart_toStartOf="@id/text1"
             cardView:layout_constraintTop_toBottomOf="@id/text4" />
 

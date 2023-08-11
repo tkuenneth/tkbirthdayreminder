@@ -1,3 +1,9 @@
+/*
+ * LegalActivity.java
+ *
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2023
+ * All rights reserved.
+ */
 package com.thomaskuenneth.android.birthday;
 
 import android.os.Bundle;

@@ -266,9 +266,18 @@ class Utils {
     }
 
     private static Bitmap getBitmap(Drawable vectorDrawable) {
-        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(
+                vectorDrawable.getIntrinsicWidth(),
+                vectorDrawable.getIntrinsicHeight(),
+                Bitmap.Config.ARGB_8888
+        );
         Canvas canvas = new Canvas(bitmap);
-        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.setBounds(
+                0,
+                0,
+                canvas.getWidth(),
+                canvas.getHeight()
+        );
         vectorDrawable.draw(canvas);
         return bitmap;
     }

@@ -35,9 +35,9 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/birthdaysList"
-                    android:nestedScrollingEnabled="true"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:nestedScrollingEnabled="true" />
 
                 <RelativeLayout
                     android:id="@+id/permission_info"

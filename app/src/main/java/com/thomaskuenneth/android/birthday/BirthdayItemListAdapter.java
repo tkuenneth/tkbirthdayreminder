@@ -86,6 +86,7 @@ public class BirthdayItemListAdapter extends RecyclerView.Adapter<BirthdayItemVi
                 item));
         holder.textZodiac.setText(showAstrologicalSigns ? Zodiac.getSign(
                 context, birthday) : "");
+        holder.textZodiac.setVisibility(holder.textZodiac.length() > 0 ? View.VISIBLE : View.GONE);
         Bitmap picture = loadBitmap(item, context, height);
         holder.icon.setImageBitmap(picture);
     }
