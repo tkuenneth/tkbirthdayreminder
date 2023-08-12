@@ -31,6 +31,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.text.Editable;
@@ -124,20 +125,6 @@ public class TKBirthdayReminder extends AppCompatActivity {
         birthdaysList = (RecyclerView) findViewById(R.id.birthdaysList);
         registerForContextMenu(birthdaysList);
 
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
-        WindowMetrics windowMetrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(this);
-        float widthInDp = windowMetrics.getBounds().width() / (float) metrics.density;
-        float heightInDp = windowMetrics.getBounds().height() / (float) metrics.density;
-        WindowSizeClass windowSizeClass = WindowSizeClass.compute(widthInDp, heightInDp);
-        if (windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.COMPACT)) {
-            showList = true;
-            birthdaysList.setLayoutManager(new LinearLayoutManager(this));
-        } else {
-            showList = false;
-            birthdaysList.setLayoutManager(new GridLayoutManager(this,
-                    windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.MEDIUM) ? 2 : 3));
-        }
-
         if (savedInstanceState != null) {
             newEventEvent = savedInstanceState.getParcelable(NEW_EVENT_EVENT);
             list = savedInstanceState.getParcelableArrayList(STATE_KEY);
@@ -151,12 +138,28 @@ public class TKBirthdayReminder extends AppCompatActivity {
                 }
             }
         }
-        run();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        WindowMetrics windowMetrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(this);
+        float widthInDp = windowMetrics.getBounds().width() / (float) metrics.density;
+        float heightInDp = windowMetrics.getBounds().height() / (float) metrics.density;
+        WindowSizeClass windowSizeClass = WindowSizeClass.compute(widthInDp, heightInDp);
+        if (windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.COMPACT)) {
+            showList = true;
+            birthdaysList.setLayoutManager(new LinearLayoutManager(this));
+        } else {
+            showList = false;
+            birthdaysList.setLayoutManager(new GridLayoutManager(this,
+                    windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.EXPANDED)
+                            && PreferenceManager
+                            .getDefaultSharedPreferences(this).getBoolean("show_three_columns", true)
+                            ? 3 : 2));
+        }
+        run();
         updateUI();
     }
 

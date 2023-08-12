@@ -13,6 +13,11 @@
             android:key="hide_past_birthdays"
             android:title="@string/hide_past_birthdays" />
 
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="show_three_columns"
+            android:title="@string/show_three_columns" />
+
         <com.thomaskuenneth.android.birthday.WidgetPreference />
 
     </PreferenceCategory>
