@@ -229,40 +229,30 @@ class Utils {
         }
     }
 
-    public static Bitmap loadBitmap(BirthdayItem item, Context context, int size) {
-        Bitmap picture = item.getPicture();
-        if ((picture != null) && (picture.isRecycled())) {
-            picture = null;
-        }
-        if (picture == null) {
-            Uri uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, item.getId());
-            try (InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(context.getContentResolver(), uri)) {
-                if (input != null) {
-                    picture = BitmapFactory.decodeStream(input);
-                } else {
-                    Drawable d = ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground);
-                    if (d != null) {
-                        picture = getBitmap(d);
-                    }
+    public static Bitmap loadBitmap(BirthdayItem item, Context context) {
+        Uri uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, item.getId());
+        try (InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(context.getContentResolver(), uri)) {
+            Bitmap picture = null;
+            if (input != null) {
+                picture = BitmapFactory.decodeStream(input);
+            } else {
+                Drawable d = ContextCompat.getDrawable(context, R.drawable.ic_launcher_foreground);
+                if (d != null) {
+                    picture = getBitmap(d);
                 }
-                if (picture != null) {
-                    if (picture.getHeight() != size) {
-                        Bitmap temp = picture;
-                        float w = (float) picture.getWidth();
-                        float h = (float) picture.getHeight();
-                        int h2 = (int) (((h / w)) * size);
-                        picture = Bitmap.createScaledBitmap(temp, size, h2, false);
-                        if (temp != picture) {
-                            temp.recycle();
-                        }
-                    }
-                    item.setPicture(picture);
-                }
-            } catch (Throwable tr) {
-                Utils.logError(TAG, "loadBitmap()", tr);
             }
+            if (picture != null) {
+                Bitmap old = item.getPicture();
+                if (old != null && !old.isRecycled()) {
+                    old.recycle();
+                }
+                item.setPicture(picture);
+                return picture;
+            }
+        } catch (Throwable tr) {
+            Utils.logError(TAG, "loadBitmap()", tr);
         }
-        return picture;
+        return null;
     }
 
     private static Bitmap getBitmap(Drawable vectorDrawable) {

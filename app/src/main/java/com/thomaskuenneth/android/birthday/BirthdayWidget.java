@@ -14,7 +14,6 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
@@ -89,12 +88,10 @@ public class BirthdayWidget extends AppWidgetProvider {
                         zodiac = Zodiac.getSign(context, birthday);
                     }
 
-                    Bitmap picture = loadBitmap(
-                            item,
-                            context,
-                            TKBirthdayReminder.getImageHeight(context)
+                    updateViews.setImageViewBitmap(
+                            R.id.icon,
+                            loadBitmap(item, context)
                     );
-                    updateViews.setImageViewBitmap(R.id.icon, picture);
                 }
                 int opacity = WidgetPreferenceFragment.getOpacity(context);
                 int color = 0x000000;

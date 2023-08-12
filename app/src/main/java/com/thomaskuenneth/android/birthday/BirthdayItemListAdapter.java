@@ -10,7 +10,6 @@ import static com.thomaskuenneth.android.birthday.Utils.loadBitmap;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +31,6 @@ public class BirthdayItemListAdapter extends RecyclerView.Adapter<BirthdayItemVi
     private final List<BirthdayItem> items;
     private final Context context;
     private final boolean showAstrologicalSigns;
-    private final int height;
     private final DateFormat format;
     private final Consumer<BirthdayItem> itemClicked;
     private BirthdayItem lastLongClicked;
@@ -42,13 +40,11 @@ public class BirthdayItemListAdapter extends RecyclerView.Adapter<BirthdayItemVi
             Context context,
             List<BirthdayItem> list,
             boolean showList,
-            int height,
             Consumer<BirthdayItem> itemClicked
     ) {
         mInflater = LayoutInflater.from(context);
         this.items = list;
         this.context = context;
-        this.height = height;
         this.format = new SimpleDateFormat(
                 context.getString(R.string.month_and_day), Locale.getDefault());
         this.itemClicked = itemClicked;
@@ -82,13 +78,17 @@ public class BirthdayItemListAdapter extends RecyclerView.Adapter<BirthdayItemVi
         Date birthday = item.getBirthday();
         holder.textInfo.setText(Utils.getBirthdayAsString(context,
                 birthday));
-        holder.textDate.setText(Utils.getBirthdayDateAsString(format,
-                item));
-        holder.textZodiac.setText(showAstrologicalSigns ? Zodiac.getSign(
-                context, birthday) : "");
-        holder.textZodiac.setVisibility(holder.textZodiac.length() > 0 ? View.VISIBLE : View.GONE);
-        Bitmap picture = loadBitmap(item, context, height);
-        holder.icon.setImageBitmap(picture);
+        String birthdayDate = Utils.getBirthdayDateAsString(format,
+                item);
+        String sign = Zodiac.getSign(context, birthday);
+        if (holder.textZodiac != null) {
+            holder.textZodiac.setText(showAstrologicalSigns ? sign : "");
+            holder.textZodiac.setVisibility(holder.textZodiac.length() > 0 ? View.VISIBLE : View.GONE);
+        }
+        holder.textDate.setText(showAstrologicalSigns
+                ? String.format("%s (%s)", birthdayDate, sign)
+                : birthdayDate);
+        holder.icon.setImageBitmap(loadBitmap(item, context));
     }
 
     @Override

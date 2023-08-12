@@ -107,7 +107,6 @@ public class TKBirthdayReminder extends AppCompatActivity {
     private AnnualEvent newEventEvent;
     private BirthdayItem longClickedItem;
     private List<BirthdayItem> list;
-    private int imageHeight;
     private boolean showList;
 
     @Override
@@ -115,30 +114,28 @@ public class TKBirthdayReminder extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+        setSupportActionBar(findViewById(R.id.actionBar));
+        findViewById(R.id.requestPermissions).setOnClickListener((view) -> {
+            requestPermissions(PERMISSIONS, 0);
+        });
+        list = null;
+        longClickedItem = null;
+        newEventEvent = null;
+        birthdaysList = (RecyclerView) findViewById(R.id.birthdaysList);
+        registerForContextMenu(birthdaysList);
+
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         WindowMetrics windowMetrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(this);
         float widthInDp = windowMetrics.getBounds().width() / (float) metrics.density;
         float heightInDp = windowMetrics.getBounds().height() / (float) metrics.density;
         WindowSizeClass windowSizeClass = WindowSizeClass.compute(widthInDp, heightInDp);
-
-        setSupportActionBar(findViewById(R.id.actionBar));
-        findViewById(R.id.requestPermissions).setOnClickListener((view) -> {
-            requestPermissions(PERMISSIONS, 0);
-        });
-        imageHeight = getImageHeight(this);
-        list = null;
-        longClickedItem = null;
-        newEventEvent = null;
-
-        birthdaysList = (RecyclerView) findViewById(R.id.birthdaysList);
-        registerForContextMenu(birthdaysList);
         if (windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.COMPACT)) {
             showList = true;
             birthdaysList.setLayoutManager(new LinearLayoutManager(this));
         } else {
             showList = false;
             birthdaysList.setLayoutManager(new GridLayoutManager(this,
-                    2 /* windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.MEDIUM) ? 2 : 3 */));
+                    windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.MEDIUM) ? 2 : 3));
         }
 
         if (savedInstanceState != null) {
@@ -354,25 +351,6 @@ public class TKBirthdayReminder extends AppCompatActivity {
     public static SharedPreferences getSharedPreferences(Context context) {
         return context.getSharedPreferences(
                 Constants.TKBIRTHDAYREMINDER, Context.MODE_PRIVATE);
-    }
-
-    public static int getImageHeight(Context context) {
-        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        if (metrics.densityDpi <= DisplayMetrics.DENSITY_LOW) {
-            return 36;
-        } else if (metrics.densityDpi <= DisplayMetrics.DENSITY_MEDIUM) {
-            return 48;
-        } else if (metrics.densityDpi <= DisplayMetrics.DENSITY_HIGH) {
-            return 72;
-        } else if (metrics.densityDpi <= DisplayMetrics.DENSITY_XHIGH) {
-            return 96;
-        } else if (metrics.densityDpi <= DisplayMetrics.DENSITY_XXHIGH) {
-            return 144;
-        } else if (metrics.densityDpi <= DisplayMetrics.DENSITY_XXXHIGH) {
-            return 192;
-        } else {
-            return 256;
-        }
     }
 
     public static String getStringFromResources(Context context, int resId) {
@@ -680,7 +658,6 @@ public class TKBirthdayReminder extends AppCompatActivity {
                 this,
                 list,
                 showList,
-                imageHeight,
                 item -> {
                     Intent i = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
                             ContactsContract.Contacts.CONTENT_URI,

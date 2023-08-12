@@ -83,11 +83,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                         b.builder.setGroup(Constants.TKBIRTHDAYREMINDER);
                     }
                     Date birthday = event.getBirthday();
-                    Bitmap picture = loadBitmap(
-                            event,
-                            context,
-                            TKBirthdayReminder.getImageHeight(context)
-                    );
+                    Bitmap picture = loadBitmap(event, context);
                     b.setContentTitle(event.getName())
                             .setLargeIcon(picture)
                             .setContentText(Utils.getBirthdayAsString(context, birthday));
