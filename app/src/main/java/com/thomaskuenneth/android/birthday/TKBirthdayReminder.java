@@ -240,8 +240,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        longClickedItem = birthdaysListAdapter.getItem(mi.position);
+        longClickedItem = birthdaysListAdapter.getLastLongClicked();
         switch (item.getItemId()) {
             case MENU_CHANGE_DATE:
                 showEditBirthdayDialog(longClickedItem);
