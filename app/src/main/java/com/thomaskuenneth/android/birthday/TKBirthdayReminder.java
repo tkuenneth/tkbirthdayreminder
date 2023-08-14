@@ -716,7 +716,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
         if (hasRequiredPermissions && shouldCheckNotificationVisibility() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             configureInfo(root,
                     R.string.check_notification_settings,
-                    R.string.notification_settings,
+                    R.string.hide_message,
                     HIDE_MESSAGE_KEY,
                     PreferenceFragment.createNotificationSettingsIntent(TKBirthdayReminder.this));
             visible = shouldCheckNotificationSettings(getSystemService(NotificationManager.class));
@@ -730,7 +730,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
         if (hasRequiredPermissions && shouldCheckAlarmVisibility() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             configureInfo(root,
                     R.string.exact_alarms_are_off,
-                    R.string.abc,
+                    R.string.hide_message,
                     HIDE_MESSAGE_KEY_ALARMS,
                     new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM));
             visible = shouldCheckAlarmSettings(getSystemService(AlarmManager.class));
@@ -748,17 +748,17 @@ public class TKBirthdayReminder extends AppCompatActivity {
             spannable.setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(@NonNull View widget) {
-                    startActivity(i);
+                    SharedPreferences prefs = getSharedPreferences(TKBirthdayReminder.this);
+                    prefs.edit().putInt(prefsKey, APP_VERSION).apply();
+                    root.setVisibility(View.GONE);
                 }
             }, pos, pos + settings.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             info.setMovementMethod(LinkMovementMethod.getInstance());
         }
         info.setText(spannable);
-        Button b = root.findViewById(R.id.dismiss);
+        Button b = root.findViewById(R.id.check);
         b.setOnClickListener(view -> {
-            SharedPreferences prefs = getSharedPreferences(this);
-            prefs.edit().putInt(prefsKey, APP_VERSION).apply();
-            root.setVisibility(View.GONE);
+            startActivity(i);
         });
     }
 

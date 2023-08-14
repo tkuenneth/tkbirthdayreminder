@@ -76,11 +76,11 @@
 
     <string name="activity_not_found">No activity found</string>
 
-    <string name="check_notification_settings">Notifications are off or silent. Please check Notification settings.</string>
-    <string name="hide_message">Hide message</string>
+    <string name="check_notification_settings">Notifications are off or silent. Please check Notification settings, or hide this message.</string>
+    <string name="check">Check</string>
 
-    <string name="exact_alarms_are_off">To let TKBirthdayReminder notify you of upcoming birthdays, please allow setting Alarms and reminders.</string>
-    <string name="abc">Alarms and reminders</string>
+    <string name="exact_alarms_are_off">To let TKBirthdayReminder notify you of upcoming birthdays, please allow setting Alarms and reminders, or hide this message.</string>
+    <string name="hide_message">hide this message</string>
 
     <string name="welcome_text" translatable="false">Welcome to <b>TKBirthdayReminder</b>.
 If you have questions about this app, or if you think you have found a bug,

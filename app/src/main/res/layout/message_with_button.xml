@@ -11,17 +11,17 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_toStartOf="@id/dismiss"
+        android:layout_toStartOf="@id/check"
         android:hyphenationFrequency="full" />
 
     <Button
-        android:id="@+id/dismiss"
+        android:id="@+id/check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="0dp"
-        android:text="@string/hide_message" />
+        android:text="@string/check" />
 
 </RelativeLayout>
