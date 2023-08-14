@@ -14,6 +14,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
@@ -35,8 +36,11 @@ public class BirthdayWidget extends AppWidgetProvider {
         updateWidgets(context, appWidgetManager, appWidgetIds);
     }
 
-    public static void updateWidgets(Context context,
-                                     AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+    public static void updateWidgets(
+            Context context,
+            AppWidgetManager appWidgetManager,
+            int[] appWidgetIds
+    ) {
         RemoteViews updateViews = new RemoteViews(context.getPackageName(),
                 R.layout.birthdaywidget_layout);
         Thread t = new Thread(() -> {
@@ -48,6 +52,7 @@ public class BirthdayWidget extends AppWidgetProvider {
                 String zodiac = "";
                 String birthday_date = "";
                 String birthday2 = "";
+                Bitmap bitmap = null;
                 final int total = birthdays.size();
                 boolean moreThanOne = false;
                 if (total > 0) {
@@ -88,10 +93,7 @@ public class BirthdayWidget extends AppWidgetProvider {
                         zodiac = Zodiac.getSign(context, birthday);
                     }
 
-                    updateViews.setImageViewBitmap(
-                            R.id.icon,
-                            loadBitmap(item, context)
-                    );
+                    bitmap = loadBitmap(item, context);
                 }
                 int opacity = WidgetPreferenceFragment.getOpacity(context);
                 int color = 0x000000;
@@ -106,6 +108,8 @@ public class BirthdayWidget extends AppWidgetProvider {
                 updateViews.setTextViewText(R.id.text4, zodiac);
                 updateViews.setInt(R.id.text4, "setTextColor", Color.WHITE);
                 updateViews.setViewVisibility(R.id.text4, moreThanOne ? View.GONE : View.VISIBLE);
+                updateViews.setImageViewBitmap(R.id.icon, bitmap);
+                updateViews.setViewVisibility(R.id.no_brthdays, total > 0 ? View.GONE : View.VISIBLE);
 
                 Intent intent = new Intent(context, TKBirthdayReminder.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -114,7 +118,6 @@ public class BirthdayWidget extends AppWidgetProvider {
                 updateViews.setOnClickPendingIntent(R.id.birthdaywidget_layout,
                         pendingIntent);
                 appWidgetManager.updateAppWidget(appWidgetIds, updateViews);
-
             });
         });
         t.start();

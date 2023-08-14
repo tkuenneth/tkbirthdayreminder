@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
+	<string name="no_birthdays">Keine Geburtstage</string>
 	<string name="access_contacts">Um bevorstehende Geburtstage anzeigen zu können, muss TKBirthdayReminder auf Ihre Kontakte zugreifen.</string>
 	<string name="missing_permission">Fehlende Berechtigung</string>
 	<string name="request">Anfordern</string>
