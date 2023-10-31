@@ -13,12 +13,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class BootCompleteReceiver extends BroadcastReceiver {
+
+    public static final String KEY_NEXT_NOTIFICATION_TIME = "next_notification_time";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -50,10 +51,8 @@ public class BootCompleteReceiver extends BroadcastReceiver {
         if ((am != null) && canScheduleExactAlarms(am)) {
             am.setExactAndAllowWhileIdle(AlarmManager.RTC, cal.getTimeInMillis(), sender);
             if (nextDay) {
-                Toast toast = Toast.makeText(context, Utils
-                                .getNotificationDateAsString(context, cal.getTime()),
-                        Toast.LENGTH_LONG);
-                toast.show();
+                prefs.edit().putString(KEY_NEXT_NOTIFICATION_TIME, Utils
+                        .getNotificationDateAsString(context, cal.getTime())).apply();
             }
         }
         TKBirthdayReminder.updateWidgets(context.getApplicationContext());
