@@ -17,7 +17,12 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.Log;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+
+import com.google.android.material.appbar.AppBarLayout;
 
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -270,5 +275,16 @@ class Utils {
         );
         vectorDrawable.draw(canvas);
         return bitmap;
+    }
+
+    static void configureActionBar(AppCompatActivity activity) {
+        Toolbar actionBar = activity.findViewById(R.id.actionBar);
+        activity.setSupportActionBar(actionBar);
+        ViewCompat.setOnApplyWindowInsetsListener(actionBar, (v, insets) -> {
+            AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) v.getLayoutParams();
+            params.topMargin = insets.getSystemWindowInsetTop();
+            v.setLayoutParams(params);
+            return insets;
+        });
     }
 }

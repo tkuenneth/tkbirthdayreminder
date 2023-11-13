@@ -55,6 +55,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -112,17 +113,17 @@ public class TKBirthdayReminder extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-
-        setSupportActionBar(findViewById(R.id.actionBar));
+        Utils.configureActionBar(this);
         findViewById(R.id.requestPermissions).setOnClickListener((view) -> {
             requestPermissions(PERMISSIONS, 0);
         });
         list = null;
         longClickedItem = null;
         newEventEvent = null;
-        birthdaysList = (RecyclerView) findViewById(R.id.birthdaysList);
+        birthdaysList = findViewById(R.id.birthdaysList);
         registerForContextMenu(birthdaysList);
 
         if (savedInstanceState != null) {
@@ -145,8 +146,8 @@ public class TKBirthdayReminder extends AppCompatActivity {
         super.onResume();
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         WindowMetrics windowMetrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(this);
-        float widthInDp = windowMetrics.getBounds().width() / (float) metrics.density;
-        float heightInDp = windowMetrics.getBounds().height() / (float) metrics.density;
+        float widthInDp = windowMetrics.getBounds().width() / metrics.density;
+        float heightInDp = windowMetrics.getBounds().height() / metrics.density;
         WindowSizeClass windowSizeClass = WindowSizeClass.compute(widthInDp, heightInDp);
         if (windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.COMPACT)) {
             showList = true;

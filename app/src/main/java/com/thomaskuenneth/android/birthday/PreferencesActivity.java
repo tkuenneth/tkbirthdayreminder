@@ -8,6 +8,7 @@ package com.thomaskuenneth.android.birthday;
 
 import android.os.Bundle;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Objects;
@@ -16,9 +17,10 @@ public class PreferencesActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
-        setSupportActionBar(findViewById(R.id.actionBar));
+        Utils.configureActionBar(this);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportFragmentManager().beginTransaction().replace(R.id.settings,
                 new PreferenceFragment()).commit();
