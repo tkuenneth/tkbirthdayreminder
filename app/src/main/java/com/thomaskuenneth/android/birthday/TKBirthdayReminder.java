@@ -243,27 +243,25 @@ public class TKBirthdayReminder extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
         longClickedItem = birthdaysListAdapter.getLastLongClicked();
         switch (item.getItemId()) {
-            case MENU_CHANGE_DATE:
-                showEditBirthdayDialog(longClickedItem);
-                break;
-            case MENU_REMOVE_DATE:
+            case MENU_CHANGE_DATE -> showEditBirthdayDialog(longClickedItem);
+            case MENU_REMOVE_DATE -> {
                 longClickedItem.setBirthday(null);
                 updateContact(longClickedItem);
-                break;
-            case MENU_DIAL:
+            }
+            case MENU_DIAL -> {
                 Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"
                         + longClickedItem.getPrimaryPhoneNumber()));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-                break;
-            case MENU_SEND_SMS:
+            }
+            case MENU_SEND_SMS -> {
                 Uri smsUri = Uri.parse("smsto://"
                         + longClickedItem.getPrimaryPhoneNumber());
                 Intent sendIntent = new Intent(Intent.ACTION_SENDTO, smsUri);
                 sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 sendIntent.putExtra("sms_body", "");
                 startActivity(sendIntent);
-                break;
+            }
         }
         return true;
     }
