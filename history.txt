@@ -1,3 +1,6 @@
+2.2.7 (2020704)
+- Library and tools upgrades
+
 2.2.4
 - Nicer permission handling
 
