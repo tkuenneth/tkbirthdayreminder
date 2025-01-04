@@ -28,24 +28,38 @@
                 android:layout_below="@id/info_layout" />
 
             <FrameLayout
+                android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@id/info_layout_alarms"
                 android:layout_alignParentBottom="true">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/birthdaysList"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:nestedScrollingEnabled="true" />
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/birthdaysList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="true" />
+
+                    <com.thomaskuenneth.android.birthday.BottomSpace
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/birthdaysList" />
+
+                </RelativeLayout>
 
                 <TextView
-                    android:id="@+id/no_brthdays"
+                    android:id="@+id/no_birthdays"
                     style="@style/TextAppearance.Material3.DisplayMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="@string/no_birthdays" />
+                    android:text="@string/no_birthdays"
+                    android:visibility="gone" />
 
                 <RelativeLayout
                     android:id="@+id/permission_info"
@@ -54,14 +68,14 @@
                     android:layout_gravity="center"
                     android:layout_margin="32dp">
 
-                    <TextView
+                    <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/access_contacts"
-                        style="@style/TextAppearance.Material3.BodyLarge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:hyphenationFrequency="full"
-                        android:text="@string/access_contacts" />
+                        android:text="@string/access_contacts"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/requestPermissions"

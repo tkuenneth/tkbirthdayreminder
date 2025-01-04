@@ -8,8 +8,8 @@ android {
         applicationId "com.thomaskuenneth.android.birthday"
         minSdk 24
         targetSdk 35
-        versionCode 2020802
-        versionName "2.2.8"
+        versionCode 2020901
+        versionName "2.2.9"
     }
 
     buildTypes {
@@ -38,6 +38,7 @@ android {
         implementation "androidx.window:window-java:1.3.0"
         implementation "androidx.window:window-core:1.3.0"
     }
+
     buildFeatures {
         buildConfig true
     }

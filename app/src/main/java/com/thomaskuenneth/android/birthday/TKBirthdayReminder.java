@@ -522,7 +522,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
         boolean hasRequiredPermissions = updateUI();
         findViewById(R.id.birthdaysList).setVisibility(hasRequiredPermissions ? View.VISIBLE : View.GONE);
         findViewById(R.id.permission_info).setVisibility(!hasRequiredPermissions ? View.VISIBLE : View.GONE);
-        findViewById(R.id.no_brthdays).setVisibility(View.GONE);
+        findViewById(R.id.no_birthdays).setVisibility(View.GONE);
         if (hasRequiredPermissions) {
             BootCompleteReceiver.startAlarm(this, true);
             readContacts(false);
@@ -682,7 +682,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
             }
             h.post(() -> {
                 setList(list);
-                findViewById(R.id.no_brthdays).setVisibility(list.size() > 0 ? View.GONE : View.VISIBLE);
+                findViewById(R.id.no_birthdays).setVisibility(list.size() > 0 ? View.GONE : View.VISIBLE);
                 updateWidgets(TKBirthdayReminder.this);
             });
         });

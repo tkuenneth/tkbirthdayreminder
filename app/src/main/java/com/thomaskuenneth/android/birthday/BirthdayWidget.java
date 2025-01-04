@@ -109,7 +109,7 @@ public class BirthdayWidget extends AppWidgetProvider {
                 updateViews.setInt(R.id.text4, "setTextColor", Color.WHITE);
                 updateViews.setViewVisibility(R.id.text4, moreThanOne ? View.GONE : View.VISIBLE);
                 updateViews.setImageViewBitmap(R.id.icon, bitmap);
-                updateViews.setViewVisibility(R.id.no_brthdays, total > 0 ? View.GONE : View.VISIBLE);
+                updateViews.setViewVisibility(R.id.no_birthdays, total > 0 ? View.GONE : View.VISIBLE);
 
                 Intent intent = new Intent(context, TKBirthdayReminder.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

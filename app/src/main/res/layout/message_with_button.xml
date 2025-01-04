@@ -5,7 +5,7 @@
     android:paddingHorizontal="16dp"
     android:paddingVertical="8dp">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -14,7 +14,7 @@
         android:layout_toStartOf="@id/check"
         android:hyphenationFrequency="full" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
