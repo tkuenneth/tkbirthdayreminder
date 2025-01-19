@@ -1,7 +1,7 @@
 /*
  * ContactsList.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2022
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2025
  * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -14,7 +14,6 @@ import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
@@ -72,9 +71,9 @@ class ContactsList implements Comparator<BirthdayItem> {
     private void readContacts(final Context context) {
         ContentResolver contentResolver = context.getContentResolver();
         queryContacts(contentResolver);
-        Collections.sort(widget, this);
-        Collections.sort(notifications, this);
-        Collections.sort(main, this);
+        widget.sort(this);
+        notifications.sort(this);
+        main.sort(this);
     }
 
     private void queryContacts(ContentResolver contentResolver) {
@@ -99,10 +98,10 @@ class ContactsList implements Comparator<BirthdayItem> {
                     String name = item.getName();
                     Date date = item.getBirthday();
                     if ((name != null) && (date != null)) {
-                        String strYYYYMMDD = Utils.FORMAT_YYYYMMDD
+                        String str_YYYY_MM_DD = Utils.FORMAT_YYYYMMDD
                                 .format(date);
-                        Utils.logDebug(TAG, name + ": " + strYYYYMMDD);
-                        String key = name + strYYYYMMDD;
+                        Utils.logDebug(TAG, name + ": " + str_YYYY_MM_DD);
+                        String key = name + str_YYYY_MM_DD;
                         if (!ht.containsKey(key)) {
                             ht.put(key, Boolean.TRUE);
                             Date birthday = item.getBirthday();

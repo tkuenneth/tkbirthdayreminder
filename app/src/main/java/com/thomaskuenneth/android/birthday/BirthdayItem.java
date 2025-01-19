@@ -1,7 +1,7 @@
 /*
  * BirthdayItem.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2022
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2025
  * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -66,7 +66,7 @@ public class BirthdayItem implements Parcelable {
         this.picture = picture;
     }
 
-    public static final Parcelable.Creator<BirthdayItem> CREATOR = new Parcelable.Creator<BirthdayItem>() {
+    public static final Parcelable.Creator<BirthdayItem> CREATOR = new Parcelable.Creator<>() {
         public BirthdayItem createFromParcel(Parcel in) {
             String name = in.readString();
             Date birthday = null;

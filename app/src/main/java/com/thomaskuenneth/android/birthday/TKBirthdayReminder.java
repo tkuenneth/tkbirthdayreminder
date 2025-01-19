@@ -1,7 +1,7 @@
 /*
  * TKBirthdayReminder.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2023
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2025
  * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,12 +43,14 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.DisplayMetrics;
 import android.view.ContextMenu;
+import android.view.DisplayCutout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -58,6 +61,8 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -116,6 +121,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
         EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        applyDisplayCutout();
         Utils.configureActionBar(this);
         findViewById(R.id.requestPermissions).setOnClickListener((view) -> {
             requestPermissions(PERMISSIONS, 0);
@@ -138,6 +144,24 @@ public class TKBirthdayReminder extends AppCompatActivity {
                     }
                 }
             }
+        }
+    }
+
+    private void applyDisplayCutout() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            findViewById(R.id.top_level).setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+                @NonNull
+                @Override
+                public WindowInsets onApplyWindowInsets(@NonNull View view, @NonNull WindowInsets insets) {
+                    DisplayCutout displayCutout = insets.getDisplayCutout();
+                    if (displayCutout != null) {
+                        int left = displayCutout.getSafeInsetLeft();
+                        int right = displayCutout.getSafeInsetRight();
+                        view.setPadding(left, 0, right, 0);
+                    }
+                    return insets;
+                }
+            });
         }
     }
 
@@ -682,7 +706,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
             }
             h.post(() -> {
                 setList(list);
-                findViewById(R.id.no_birthdays).setVisibility(list.size() > 0 ? View.GONE : View.VISIBLE);
+                findViewById(R.id.no_birthdays).setVisibility(!list.isEmpty() ? View.GONE : View.VISIBLE);
                 updateWidgets(TKBirthdayReminder.this);
             });
         });
@@ -692,7 +716,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
     private int checkYear() {
         int intYear = Utils.INVISIBLE_YEAR;
         String s = newEventYear.getText().toString();
-        if (s.length() > 0) {
+        if (!s.isEmpty()) {
             try {
                 intYear = Integer.parseInt(s);
             } catch (Throwable thr) {

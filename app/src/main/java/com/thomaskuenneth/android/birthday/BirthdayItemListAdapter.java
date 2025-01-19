@@ -1,7 +1,7 @@
 /*
  * BirthdayItemListAdapter.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2023
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2025
  * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -67,9 +67,7 @@ public class BirthdayItemListAdapter extends RecyclerView.Adapter<BirthdayItemVi
     @Override
     public void onBindViewHolder(@NonNull BirthdayItemViewHolder holder, int position) {
         BirthdayItem item = items.get(position);
-        holder.itemView.setOnClickListener(view -> {
-            itemClicked.accept(item);
-        });
+        holder.itemView.setOnClickListener(view -> itemClicked.accept(item));
         holder.itemView.setOnLongClickListener(view -> {
             lastLongClicked = item;
             return false;
@@ -85,9 +83,7 @@ public class BirthdayItemListAdapter extends RecyclerView.Adapter<BirthdayItemVi
             holder.textZodiac.setText(showAstrologicalSigns ? sign : "");
             holder.textZodiac.setVisibility(holder.textZodiac.length() > 0 ? View.VISIBLE : View.GONE);
         }
-        holder.textDate.setText(showAstrologicalSigns
-                ? String.format("%s (%s)", birthdayDate, sign)
-                : birthdayDate);
+        holder.textDate.setText(birthdayDate);
         holder.icon.setImageBitmap(loadBitmap(item, context));
     }
 
