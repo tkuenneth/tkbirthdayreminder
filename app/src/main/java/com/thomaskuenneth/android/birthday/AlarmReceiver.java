@@ -1,7 +1,7 @@
 /*
  * AlarmReceiver.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2009 - 2023
+ * TKBirthdayReminder (c) Thomas Künneth 2009 - 2025
  * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -33,6 +33,7 @@ import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -54,8 +55,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         initChannels(context);
         Runnable r = () -> {
             ContactsList cl = new ContactsList(context);
-            List<BirthdayItem> listNotifications = cl
-                    .getNotificationsList();
+            List<BirthdayItem> list = cl.getNotificationsList();
+            HashMap<String, Boolean> accounts = new HashMap<>();
+            TKBirthdayReminder.clearAndFillAccountsMap(context, accounts, list);
+            List<BirthdayItem> listNotifications = TKBirthdayReminder.getFilteredList(accounts, list);
             int total = listNotifications.size();
             final int visible, remaining;
             if (total > MAX_NOTIFICATIONS) {

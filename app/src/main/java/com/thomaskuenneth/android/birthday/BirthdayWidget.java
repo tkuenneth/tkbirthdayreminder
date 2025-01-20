@@ -1,7 +1,7 @@
 /*
  * BirthdayWidget.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2010 - 2023
+ * TKBirthdayReminder (c) Thomas Künneth 2010 - 2025
  * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
@@ -25,6 +25,7 @@ import android.widget.RemoteViews;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,7 +46,10 @@ public class BirthdayWidget extends AppWidgetProvider {
                 R.layout.birthdaywidget_layout);
         Thread t = new Thread(() -> {
             ContactsList cl = new ContactsList(context);
-            List<BirthdayItem> birthdays = cl.getWidgetList();
+            List<BirthdayItem> list = cl.getWidgetList();
+            HashMap<String, Boolean> accounts = new HashMap<>();
+            TKBirthdayReminder.clearAndFillAccountsMap(context, accounts, list);
+            List<BirthdayItem> birthdays = TKBirthdayReminder.getFilteredList(accounts, list);
             Handler h = new Handler(Looper.getMainLooper());
             h.post(() -> {
                 String name = "";

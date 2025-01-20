@@ -368,6 +368,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
                     accounts.put(accountName, checked);
                     updatePreferences(accountName, checked);
                     filterList();
+                    updateWidgets(this);
                     return true;
                 });
             });
@@ -551,6 +552,28 @@ public class TKBirthdayReminder extends AppCompatActivity {
         return false;
     }
 
+    public static List<BirthdayItem> getFilteredList(HashMap<String, Boolean> accounts, List<BirthdayItem> list) {
+        List<BirthdayItem> filtered = new ArrayList<>();
+        for (BirthdayItem item : list) {
+            if (!item.isAccountNameSet() || Boolean.TRUE.equals(accounts.get(item.getAccountName()))) {
+                filtered.add(item);
+            }
+        }
+        return filtered;
+    }
+
+    public static void clearAndFillAccountsMap(Context context, HashMap<String, Boolean> accounts, List<BirthdayItem> list) {
+        accounts.clear();
+        SharedPreferences prefs = getSharedPreferences(context);
+        list.forEach(item -> {
+            if (item.isAccountNameSet()) {
+                String accountName = item.getAccountName();
+                boolean isChecked = prefs.getBoolean(getPreferencesKeyForAccountName(accountName), true);
+                accounts.put(accountName, isChecked);
+            }
+        });
+    }
+
     private boolean hasRequiredPermissions() {
         for (String permission : PERMISSIONS) {
             if (checkSelfPermission(permission) == PackageManager.PERMISSION_DENIED)
@@ -708,15 +731,9 @@ public class TKBirthdayReminder extends AppCompatActivity {
 
     private void setList(List<BirthdayItem> list) {
         this.list = list;
-        List<BirthdayItem> filtered = new ArrayList<>();
-        for (BirthdayItem item : list) {
-            if (!item.isAccountNameSet() || Boolean.TRUE.equals(accounts.get(item.getAccountName()))) {
-                filtered.add(item);
-            }
-        }
         birthdaysListAdapter = new BirthdayItemListAdapter(
                 this,
-                filtered,
+                getFilteredList(this.accounts, list),
                 showList,
                 item -> {
                     Intent i = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
@@ -739,7 +756,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
                 list = cl.getMainList();
             }
             h.post(() -> {
-                updateAccounts(list);
+                clearAndFillAccountsMap(this, accounts, list);
                 setList(list);
                 findViewById(R.id.no_birthdays).setVisibility(!list.isEmpty() ? View.GONE : View.VISIBLE);
                 updateWidgets(TKBirthdayReminder.this);
@@ -748,24 +765,12 @@ public class TKBirthdayReminder extends AppCompatActivity {
         thread.start();
     }
 
-    private void updateAccounts(List<BirthdayItem> list) {
-        accounts.clear();
-        SharedPreferences prefs = getSharedPreferences(TKBirthdayReminder.this);
-        list.forEach(item -> {
-            if (item.isAccountNameSet()) {
-                String accountName = item.getAccountName();
-                boolean isChecked = prefs.getBoolean(getPreferencesKeyForAccountName(accountName), true);
-                accounts.put(accountName, isChecked);
-            }
-        });
-    }
-
     private void updatePreferences(String accountName, boolean isChecked) {
         SharedPreferences prefs = getSharedPreferences(TKBirthdayReminder.this);
         prefs.edit().putBoolean(getPreferencesKeyForAccountName(accountName), isChecked).apply();
     }
 
-    private String getPreferencesKeyForAccountName(String accountName) {
+    private static String getPreferencesKeyForAccountName(String accountName) {
         return String.format("account_%s", accountName);
     }
 
