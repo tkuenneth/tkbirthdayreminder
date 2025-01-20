@@ -356,7 +356,8 @@ public class TKBirthdayReminder extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        Menu accountsMenu = menu.findItem(R.id.accounts).getSubMenu();
+        MenuItem subMenuItem = menu.findItem(R.id.accounts);
+        Menu accountsMenu = subMenuItem.getSubMenu();
         if (accountsMenu != null) {
             accountsMenu.clear();
             accounts.forEach((accountName, isChecked) -> {
@@ -372,6 +373,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
                     return true;
                 });
             });
+            subMenuItem.setVisible(accountsMenu.hasVisibleItems());
         }
         return super.onPrepareOptionsMenu(menu);
     }
