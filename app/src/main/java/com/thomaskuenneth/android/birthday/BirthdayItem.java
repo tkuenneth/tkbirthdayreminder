@@ -69,7 +69,11 @@ public class BirthdayItem implements Parcelable {
     }
 
     String getAccountName() {
-        return accountName;
+        return accountName != null ? accountName : "";
+    }
+
+    boolean isAccountNameSet() {
+        return accountName != null && !accountName.isEmpty() && !accountName.isBlank();
     }
 
     public static final Parcelable.Creator<BirthdayItem> CREATOR = new Parcelable.Creator<>() {

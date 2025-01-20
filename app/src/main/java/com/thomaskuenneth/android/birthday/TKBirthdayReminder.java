@@ -25,7 +25,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -46,7 +45,6 @@ import android.view.ContextMenu;
 import android.view.DisplayCutout;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,8 +59,6 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -76,6 +72,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -115,6 +112,13 @@ public class TKBirthdayReminder extends AppCompatActivity {
     private BirthdayItem longClickedItem;
     private List<BirthdayItem> list;
     private boolean showList;
+
+    private final HashMap<String, Boolean> accounts;
+
+    public TKBirthdayReminder() {
+        super();
+        accounts = new HashMap<>();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -344,11 +348,31 @@ public class TKBirthdayReminder extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
         menu.findItem(R.id.set_date).setVisible(hasRequiredPermissions());
         menu.findItem(R.id.new_entry).setVisible(hasRequiredPermissions());
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        Menu accountsMenu = menu.findItem(R.id.accounts).getSubMenu();
+        if (accountsMenu != null) {
+            accountsMenu.clear();
+            accounts.forEach((accountName, isChecked) -> {
+                MenuItem accountNameMenuItem = accountsMenu.add(accountName);
+                accountNameMenuItem.setCheckable(true);
+                accountNameMenuItem.setChecked(isChecked);
+                accountNameMenuItem.setOnMenuItemClickListener(item -> {
+                    boolean checked = !item.isChecked();
+                    accounts.put(accountName, checked);
+                    updatePreferences(accountName, checked);
+                    filterList();
+                    return true;
+                });
+            });
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -678,11 +702,21 @@ public class TKBirthdayReminder extends AppCompatActivity {
         }
     }
 
+    private void filterList() {
+        setList(list);
+    }
+
     private void setList(List<BirthdayItem> list) {
         this.list = list;
+        List<BirthdayItem> filtered = new ArrayList<>();
+        for (BirthdayItem item : list) {
+            if (!item.isAccountNameSet() || Boolean.TRUE.equals(accounts.get(item.getAccountName()))) {
+                filtered.add(item);
+            }
+        }
         birthdaysListAdapter = new BirthdayItemListAdapter(
                 this,
-                list,
+                filtered,
                 showList,
                 item -> {
                     Intent i = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(
@@ -705,12 +739,34 @@ public class TKBirthdayReminder extends AppCompatActivity {
                 list = cl.getMainList();
             }
             h.post(() -> {
+                updateAccounts(list);
                 setList(list);
                 findViewById(R.id.no_birthdays).setVisibility(!list.isEmpty() ? View.GONE : View.VISIBLE);
                 updateWidgets(TKBirthdayReminder.this);
             });
         });
         thread.start();
+    }
+
+    private void updateAccounts(List<BirthdayItem> list) {
+        accounts.clear();
+        SharedPreferences prefs = getSharedPreferences(TKBirthdayReminder.this);
+        list.forEach(item -> {
+            if (item.isAccountNameSet()) {
+                String accountName = item.getAccountName();
+                boolean isChecked = prefs.getBoolean(getPreferencesKeyForAccountName(accountName), true);
+                accounts.put(accountName, isChecked);
+            }
+        });
+    }
+
+    private void updatePreferences(String accountName, boolean isChecked) {
+        SharedPreferences prefs = getSharedPreferences(TKBirthdayReminder.this);
+        prefs.edit().putBoolean(getPreferencesKeyForAccountName(accountName), isChecked).apply();
+    }
+
+    private String getPreferencesKeyForAccountName(String accountName) {
+        return String.format("account_%s", accountName);
     }
 
     private int checkYear() {

@@ -83,6 +83,8 @@
     <string name="exact_alarms_are_off">To let TKBirthdayReminder notify you of upcoming birthdays, please allow setting Alarms and reminders, or hide this message.</string>
     <string name="hide_message">hide this message</string>
 
+    <string name="accounts">Accounts</string>
+
     <string name="welcome_text" translatable="false">Welcome to <b>TKBirthdayReminder</b>.
 If you have questions about this app, or if you think you have found a bug,
 please contact me by sending an email to tkbirthdayreminder@thomaskuenneth.de.

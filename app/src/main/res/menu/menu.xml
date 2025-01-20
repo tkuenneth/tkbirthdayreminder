@@ -19,6 +19,12 @@
         android:title="@string/settings" />
 
     <item
+        android:id="@+id/accounts"
+        android:title="@string/accounts">
+        <menu />
+    </item>
+
+    <item
         android:id="@+id/legal"
         android:title="@string/legal" />
 </menu>
