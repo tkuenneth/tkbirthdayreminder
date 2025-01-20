@@ -19,23 +19,25 @@ public class BirthdayItem implements Parcelable {
 
     private final String name;
     private final String primaryPhoneNumber;
+    private final String accountName;
 
     private Date birthday;
     private final long id;
     private Bitmap picture;
 
     BirthdayItem(String name, Date birthday, long id,
-                 String primaryPhoneNumber) {
-        this(name, birthday, id, primaryPhoneNumber, null);
+                 String primaryPhoneNumber, String accountName) {
+        this(name, birthday, id, primaryPhoneNumber, null, accountName);
     }
 
     private BirthdayItem(String name, Date birthday, long id,
-                         String primaryPhoneNumber, Bitmap picture) {
+                         String primaryPhoneNumber, Bitmap picture, String accountName) {
         this.name = name;
         this.birthday = birthday;
         this.id = id;
         this.primaryPhoneNumber = primaryPhoneNumber;
         this.picture = picture;
+        this.accountName = accountName;
     }
 
     String getName() {
@@ -66,6 +68,10 @@ public class BirthdayItem implements Parcelable {
         this.picture = picture;
     }
 
+    String getAccountName() {
+        return accountName;
+    }
+
     public static final Parcelable.Creator<BirthdayItem> CREATOR = new Parcelable.Creator<>() {
         public BirthdayItem createFromParcel(Parcel in) {
             String name = in.readString();
@@ -80,7 +86,8 @@ public class BirthdayItem implements Parcelable {
             }
             long id = in.readLong();
             String primaryPhoneNumber = in.readString();
-            return new BirthdayItem(name, birthday, id, primaryPhoneNumber);
+            String accountName = in.readString();
+            return new BirthdayItem(name, birthday, id, primaryPhoneNumber, accountName);
         }
 
         public BirthdayItem[] newArray(int size) {
@@ -105,5 +112,6 @@ public class BirthdayItem implements Parcelable {
         dest.writeString(date == null ? "" : date);
         dest.writeLong(id);
         dest.writeString(primaryPhoneNumber);
+        dest.writeString(accountName);
     }
 }

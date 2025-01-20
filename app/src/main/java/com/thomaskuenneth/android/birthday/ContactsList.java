@@ -6,6 +6,8 @@
  */
 package com.thomaskuenneth.android.birthday;
 
+import static com.thomaskuenneth.android.birthday.ContactsUtilsKt.getAccountTypeForContact;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,6 +20,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+
+import kotlin.Pair;
 
 class ContactsList implements Comparator<BirthdayItem> {
 
@@ -128,6 +132,8 @@ class ContactsList implements Comparator<BirthdayItem> {
             ContentResolver contentResolver, Cursor mainQueryCursor) {
         String contactId = mainQueryCursor.getString(mainQueryCursor
                 .getColumnIndexOrThrow(ContactsContract.Contacts._ID));
+        Pair<String, String> account = getAccountTypeForContact(contentResolver, contactId);
+        String accountName = account != null ? account.getFirst() : "";
         String displayName = mainQueryCursor.getString(mainQueryCursor
                 .getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
         String phoneNumber = null;
@@ -175,7 +181,7 @@ class ContactsList implements Comparator<BirthdayItem> {
             dataQueryCursor.close();
         }
         return new BirthdayItem(displayName, gebdt,
-                Long.parseLong(contactId), phoneNumber);
+                Long.parseLong(contactId), phoneNumber, accountName);
     }
 
     private boolean shouldAddToMainList(Date birthday, boolean hidePastBirthdays) {
