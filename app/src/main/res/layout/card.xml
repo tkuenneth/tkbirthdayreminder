@@ -9,7 +9,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingVertical="16dp">
 
         <ImageView
             android:id="@+id/icon"
@@ -21,20 +22,19 @@
             cardView:layout_constraintStart_toStartOf="parent"
             cardView:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:paddingTop="16dp"
             android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
             cardView:layout_constraintEnd_toEndOf="parent"
             cardView:layout_constraintStart_toEndOf="@id/icon"
             cardView:layout_constraintTop_toTopOf="@id/icon" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text2"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -45,18 +45,30 @@
             cardView:layout_constraintStart_toStartOf="@id/text1"
             cardView:layout_constraintTop_toBottomOf="@id/text1" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:gravity="bottom"
             android:maxLines="1"
-            android:paddingBottom="16dp"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
             cardView:layout_constraintBottom_toBottomOf="@id/icon"
-            cardView:layout_constraintEnd_toEndOf="@id/text1"
             cardView:layout_constraintStart_toStartOf="@id/text1" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/text4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="0dp"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            cardView:layout_constraintBaseline_toBaselineOf="@id/text3"
+            cardView:layout_constraintEnd_toEndOf="@id/text1"
+            cardView:layout_constraintStart_toEndOf="@id/text3" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
