@@ -8,8 +8,8 @@ android {
         applicationId "com.thomaskuenneth.android.birthday"
         minSdk 24
         targetSdk 35
-        versionCode 2030101
-        versionName "2.3.1"
+        versionCode 2030201
+        versionName "2.3.2"
     }
 
     buildTypes {

@@ -1,12 +1,13 @@
 /*
  * AlarmChooser.java
  *
- * TKBirthdayReminder (c) Thomas Künneth 2017 - 2023
+ * TKBirthdayReminder (c) Thomas Künneth 2017 - 2025
  * All rights reserved.
  */
 package com.thomaskuenneth.android.birthday;
 
 
+import android.app.AlarmManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.AttributeSet;
@@ -23,8 +24,11 @@ public class AlarmChooser extends DialogPreference {
         setDialogTitle(R.string.notification_time);
         setTitle(R.string.notification_time);
         SharedPreferences prefs = TKBirthdayReminder.getSharedPreferences(context);
-        String nextNotificationTime = prefs.getString(BootCompleteReceiver.KEY_NEXT_NOTIFICATION_TIME, null);
-        setSummary(nextNotificationTime);
+        boolean enabled = BootCompleteReceiver.canScheduleExactAlarms(context.getSystemService(AlarmManager.class));
+        setEnabled(enabled);
+        String summary = enabled ? prefs.getString(BootCompleteReceiver.KEY_NEXT_NOTIFICATION_TIME, null)
+                : context.getString(R.string.alarms_are_off);
+        setSummary(summary);
         setKey(KEY);
     }
 }

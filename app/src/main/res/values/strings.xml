@@ -80,8 +80,9 @@
     <string name="check_notification_settings">Notifications are off or silent. Please check Notification settings, or hide this message.</string>
     <string name="check">Check</string>
 
-    <string name="exact_alarms_are_off">To let TKBirthdayReminder notify you of upcoming birthdays, please allow setting Alarms and reminders, or hide this message.</string>
+    <string name="check_alarm_settings">To let TKBirthdayReminder notify you of upcoming birthdays, please allow setting Alarms and reminders, or hide this message.</string>
     <string name="hide_message">hide this message</string>
+    <string name="alarms_are_off">Setting alarms and reminders currently not allowed</string>>
 
     <string name="accounts">Accounts</string>
 

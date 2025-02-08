@@ -815,7 +815,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
         ViewGroup root = findViewById(R.id.info_layout_alarms);
         if (hasRequiredPermissions && shouldCheckAlarmVisibility() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             configureInfo(root,
-                    R.string.exact_alarms_are_off,
+                    R.string.check_alarm_settings,
                     R.string.hide_message,
                     HIDE_MESSAGE_KEY_ALARMS,
                     new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM));
