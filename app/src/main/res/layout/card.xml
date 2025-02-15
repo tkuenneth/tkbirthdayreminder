@@ -9,27 +9,26 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingVertical="16dp">
+        android:layout_height="wrap_content">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/icon"
             android:layout_width="128dp"
             android:layout_height="140dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="0dp"
             android:contentDescription="@string/content_description_image"
             android:scaleType="centerCrop"
-            cardView:shapeAppearance="@style/roundedImageView"
             cardView:layout_constraintBottom_toBottomOf="parent"
             cardView:layout_constraintStart_toStartOf="parent"
-            cardView:layout_constraintTop_toTopOf="parent" />
+            cardView:layout_constraintTop_toTopOf="parent"
+            cardView:shapeAppearance="@style/roundedImageView" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="0dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
@@ -52,6 +51,8 @@
             android:id="@+id/text3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="8dp"
             android:ellipsize="end"
             android:gravity="bottom"
             android:maxLines="1"
