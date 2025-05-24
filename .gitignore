@@ -8,3 +8,5 @@
 local.properties
 **/.DS_Store
 .kotlin/sessions/
+/docs/_site
+docs/Gemfile.lock
