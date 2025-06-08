@@ -2,17 +2,9 @@
 layout: home
 ---
 
-<table style="width: 100%; border: none">
-<tr style="background-color: transparent;">
-<td align="center" style="border: none">
-<strong>About</strong>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="privacy.html">Privacy Policy</a>
-</td>
-</tr>
-</table>
+<img style="box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); display: block; margin-left: auto; margin-right: auto; width: 50%;" src="./assets/TKBirthdayReminder-animated.gif" width="50%">
 
 <p><strong>TKBirthdayReminder</strong> is a simple, yet beautiful birthday list. Never forget about the birthdays of the ones you care for. Place a widget on your home screen and receive reminders about upcoming birthdays once a day. Customize the app to your needs, for example when to remind you. You can even set on which days ahead of a birthday you want to receive additional notifications.</p>
-
-<img style="border: solid; size: 1px; color: lightGrey; display: block; margin-left: auto; margin-right: auto; width: 50%;" src="./assets/TKBirthdayReminder-animated.gif" width="50%">
 
 <p>Also important:</p>
 
