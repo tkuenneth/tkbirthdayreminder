@@ -43,6 +43,7 @@
             android:layout_height="0dp"
             android:gravity="top"
             android:autoSizeTextType="uniform"
+            android:autoSizeMaxTextSize="16sp"
             android:autoSizeMinTextSize="8dp"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
             cardView:layout_constraintBottom_toTopOf="@id/text3"
