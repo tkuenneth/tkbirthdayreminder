@@ -20,6 +20,7 @@
 	<string name="notification_channel_name">Bevorstehende Geburtstage</string>
 	<string name="notification_sound_insistent">Benachrichtigungston wiederholen</string>
 	<string name="show_three_columns">Auf großen Bildschirmen drei Spalten verwenden</string>
+	<string name="show_cards_on_small_screens">Karten auf kleinen Bildschirmen anzeigen</string>
 
 	<string name="aries">Widder</string>
 	<string name="taurus">Stier</string>

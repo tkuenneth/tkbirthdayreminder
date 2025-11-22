@@ -23,6 +23,7 @@
     <string name="notification_channel_name">Upcoming birthdays</string>
     <string name="notification_sound_insistent">Repeat notification sound</string>
     <string name="show_three_columns">Show three columns on large screens</string>
+    <string name="show_cards_on_small_screens">Show cards on small screens</string>
 
     <string name="aries">Aries</string>
     <string name="taurus">Taurus</string>

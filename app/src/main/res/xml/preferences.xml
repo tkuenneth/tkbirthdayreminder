@@ -18,6 +18,11 @@
             android:key="show_three_columns"
             android:title="@string/show_three_columns" />
 
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="show_cards_on_small_screens"
+            android:title="@string/show_cards_on_small_screens" />
+
         <com.thomaskuenneth.android.birthday.WidgetPreference />
 
     </PreferenceCategory>

@@ -177,16 +177,23 @@ public class TKBirthdayReminder extends AppCompatActivity {
         float widthInDp = windowMetrics.getBounds().width() / metrics.density;
         float heightInDp = windowMetrics.getBounds().height() / metrics.density;
         WindowSizeClass windowSizeClass = WindowSizeClass.compute(widthInDp, heightInDp);
-        if (windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.COMPACT)) {
-            showList = true;
+        showList = windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.COMPACT)
+                && !PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean("show_cards_on_small_screens", true);
+        if (showList) {
             birthdaysList.setLayoutManager(new LinearLayoutManager(this));
         } else {
-            showList = false;
-            birthdaysList.setLayoutManager(new GridLayoutManager(this,
-                    windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.EXPANDED)
-                            && PreferenceManager
-                            .getDefaultSharedPreferences(this).getBoolean("show_three_columns", true)
-                            ? 3 : 2));
+            int spanCount;
+            if (windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.COMPACT)) {
+                spanCount = 1;
+            } else if (windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.EXPANDED)
+                    && PreferenceManager
+                    .getDefaultSharedPreferences(this).getBoolean("show_three_columns", true)) {
+                spanCount = 3;
+            } else {
+                spanCount = 2;
+            }
+            birthdaysList.setLayoutManager(new GridLayoutManager(this, spanCount));
         }
         run();
         updateUI();
