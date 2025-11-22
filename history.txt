@@ -1,4 +1,5 @@
 2.3.5 (2030501)
+- On small screens, cards are used; to revert to a list, just deactivate setting in preferences
 - Library and tools upgrades
 - Bugfix: text at the center of a card uses auto text size to make sure the text is not cut vertically
 
