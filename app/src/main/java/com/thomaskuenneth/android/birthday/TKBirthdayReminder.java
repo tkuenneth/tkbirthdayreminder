@@ -839,6 +839,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
         root.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
+    /** @noinspection SameParameterValue*/
     private void configureInfo(ViewGroup root, int resIdMessage, int resIdLink, String prefsKey, Intent i) {
         TextView info = root.findViewById(R.id.info);
         String s = getString(resIdMessage);
