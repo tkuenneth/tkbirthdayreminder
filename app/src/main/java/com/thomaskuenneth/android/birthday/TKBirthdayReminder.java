@@ -225,15 +225,23 @@ public class TKBirthdayReminder extends AppCompatActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     Uri contactData = data.getData();
                     if (contactData != null) {
-                        Cursor c = getContentResolver().query(contactData, null, null, null, null);
-                        if (c != null) {
-                            if (c.moveToFirst()) {
-                                longClickedItem = ContactsList.createItemFromCursor(
-                                        getContentResolver(), c);
-                                showEditBirthdayDialog(longClickedItem);
+                        // Use a Handler to post the query. This slight delay allows the
+                        // Contacts Provider to finish writing the new contact's data
+                        // before you query it, preventing a race condition.
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            Cursor c = getContentResolver().query(contactData, null, null, null, null);
+                            if (c != null) {
+                                try {
+                                    if (c.moveToFirst()) {
+                                        longClickedItem = ContactsList.createItemFromCursor(
+                                                getContentResolver(), c);
+                                        showEditBirthdayDialog(longClickedItem);
+                                    }
+                                } finally {
+                                    Utils.closeCursorCatchThrowable(c);
+                                }
                             }
-                            Utils.closeCursorCatchThrowable(c);
-                        }
+                        });
                     }
                 }
                 break;
