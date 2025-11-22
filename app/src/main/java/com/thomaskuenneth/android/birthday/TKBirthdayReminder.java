@@ -63,7 +63,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.window.core.layout.WindowSizeClass;
-import androidx.window.core.layout.WindowWidthSizeClass;
 import androidx.window.layout.WindowMetrics;
 import androidx.window.layout.WindowMetricsCalculator;
 
@@ -177,16 +176,17 @@ public class TKBirthdayReminder extends AppCompatActivity {
         float widthInDp = windowMetrics.getBounds().width() / metrics.density;
         float heightInDp = windowMetrics.getBounds().height() / metrics.density;
         WindowSizeClass windowSizeClass = WindowSizeClass.compute(widthInDp, heightInDp);
-        showList = windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.COMPACT)
+        boolean isWindowSizeClassCompact = !windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND);
+        showList = isWindowSizeClassCompact
                 && !PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean("show_cards_on_small_screens", true);
         if (showList) {
             birthdaysList.setLayoutManager(new LinearLayoutManager(this));
         } else {
             int spanCount;
-            if (windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.COMPACT)) {
+            if (isWindowSizeClassCompact) {
                 spanCount = 1;
-            } else if (windowSizeClass.getWindowWidthSizeClass().equals(WindowWidthSizeClass.EXPANDED)
+            } else if (windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
                     && PreferenceManager
                     .getDefaultSharedPreferences(this).getBoolean("show_three_columns", true)) {
                 spanCount = 3;
