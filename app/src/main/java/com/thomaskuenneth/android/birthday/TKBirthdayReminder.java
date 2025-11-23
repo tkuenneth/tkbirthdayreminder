@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -150,6 +151,12 @@ public class TKBirthdayReminder extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        updateUiUsingWindowSizeClasses();
+    }
+
     private void applyDisplayCutout() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             findViewById(R.id.top_level).setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
@@ -171,31 +178,7 @@ public class TKBirthdayReminder extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
-        WindowMetrics windowMetrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(this);
-        float widthInDp = windowMetrics.getBounds().width() / metrics.density;
-        float heightInDp = windowMetrics.getBounds().height() / metrics.density;
-        WindowSizeClass windowSizeClass = WindowSizeClass.compute(widthInDp, heightInDp);
-        boolean isWindowSizeClassCompact = !windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND);
-        showList = isWindowSizeClassCompact
-                && !PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean("show_cards_on_small_screens", true);
-        if (showList) {
-            birthdaysList.setLayoutManager(new LinearLayoutManager(this));
-        } else {
-            int spanCount;
-            if (isWindowSizeClassCompact) {
-                spanCount = 1;
-            } else if (windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
-                    && PreferenceManager
-                    .getDefaultSharedPreferences(this).getBoolean("show_three_columns", true)) {
-                spanCount = 3;
-            } else {
-                spanCount = 2;
-            }
-            birthdaysList.setLayoutManager(new GridLayoutManager(this, spanCount));
-        }
-        run();
+        updateUiUsingWindowSizeClasses();
     }
 
     @Override
@@ -838,7 +821,9 @@ public class TKBirthdayReminder extends AppCompatActivity {
         root.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
-    /** @noinspection SameParameterValue*/
+    /**
+     * @noinspection SameParameterValue
+     */
     private void configureInfo(ViewGroup root, int resIdMessage, int resIdLink, String prefsKey, Intent i) {
         TextView info = root.findViewById(R.id.info);
         String s = getString(resIdMessage);
@@ -871,5 +856,33 @@ public class TKBirthdayReminder extends AppCompatActivity {
     private boolean shouldCheckAlarmVisibility() {
         int lastSavedVersion = getSharedPreferences(this).getInt(HIDE_MESSAGE_KEY_ALARMS, 0);
         return lastSavedVersion < APP_VERSION;
+    }
+
+    private void updateUiUsingWindowSizeClasses() {
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        WindowMetrics windowMetrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(this);
+        float widthInDp = windowMetrics.getBounds().width() / metrics.density;
+        float heightInDp = windowMetrics.getBounds().height() / metrics.density;
+        WindowSizeClass windowSizeClass = WindowSizeClass.compute(widthInDp, heightInDp);
+        boolean isWindowSizeClassCompact = !windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND);
+        showList = isWindowSizeClassCompact
+                && !PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean("show_cards_on_small_screens", true);
+        if (showList) {
+            birthdaysList.setLayoutManager(new LinearLayoutManager(this));
+        } else {
+            int spanCount;
+            if (isWindowSizeClassCompact) {
+                spanCount = 1;
+            } else if (windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
+                    && PreferenceManager
+                    .getDefaultSharedPreferences(this).getBoolean("show_three_columns", true)) {
+                spanCount = 3;
+            } else {
+                spanCount = 2;
+            }
+            birthdaysList.setLayoutManager(new GridLayoutManager(this, spanCount));
+        }
+        run();
     }
 }
