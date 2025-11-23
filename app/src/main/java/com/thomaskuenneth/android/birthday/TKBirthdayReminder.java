@@ -169,8 +169,8 @@ public class TKBirthdayReminder extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         WindowMetrics windowMetrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(this);
         float widthInDp = windowMetrics.getBounds().width() / metrics.density;
@@ -196,7 +196,6 @@ public class TKBirthdayReminder extends AppCompatActivity {
             birthdaysList.setLayoutManager(new GridLayoutManager(this, spanCount));
         }
         run();
-        updateUI();
     }
 
     @Override
